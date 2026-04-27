@@ -1,0 +1,65 @@
+.root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.content {
+  width: min(420px, 100%);
+  padding: 84px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand {
+  margin: 0;
+  line-height: 0.9;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-align: center;
+  color: #ff5a1f;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.brandRun {
+  display: block;
+  font-size: 72px;
+}
+
+.brandSync {
+  display: block;
+  font-size: 56px;
+  text-transform: none;
+}
+
+.tagline {
+  margin: 6px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1b1b1b;
+}
+
+.illustrationWrap {
+  margin-top: 26px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.illustration {
+  width: min(360px, 100%);
+  height: auto;
+}
+
+.cta {
+  margin-top: auto;
+  width: 100%;
+  padding-top: 12px;
+  display: grid;
+  place-items: center;
+}
+

@@ -1,0 +1,33 @@
+.root {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #fff;
+}
+
+.card {
+  width: min(420px, 100%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 18px 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: #111;
+}
+
+.desc {
+  margin: 10px 0 0;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.error {
+  margin: 10px 0 0;
+  font-weight: 700;
+  color: #d32f2f;
+}
