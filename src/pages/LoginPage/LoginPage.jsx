@@ -10,9 +10,11 @@ export default function LoginPage() {
       return;
     }
 
-    const redirectUri =
-      process.env.REACT_APP_KAKAO_REDIRECT_URI ||
-      `${window.location.origin}/oauth/kakao/callback`;
+    const redirectUri = process.env.REACT_APP_KAKAO_REDIRECT_URI;
+    if (!redirectUri) {
+      alert("REACT_APP_KAKAO_REDIRECT_URI 환경변수가 필요해요.");
+      return;
+    }
 
     const state = createOauthState();
     const url = new URL("https://kauth.kakao.com/oauth/authorize");

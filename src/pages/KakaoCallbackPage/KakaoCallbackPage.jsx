@@ -27,9 +27,11 @@ export default function KakaoCallbackPage() {
       }
 
       try {
-        const redirectUri =
-          process.env.REACT_APP_KAKAO_REDIRECT_URI ||
-          `${window.location.origin}/oauth/kakao/callback`;
+        const redirectUri = process.env.REACT_APP_KAKAO_REDIRECT_URI;
+        if (!redirectUri) {
+          setError('REACT_APP_KAKAO_REDIRECT_URI 환경변수가 필요해요.');
+          return;
+        }
 
         const { accessToken } = await exchangeKakaoCode({ code, redirectUri });
         if (!accessToken) {
