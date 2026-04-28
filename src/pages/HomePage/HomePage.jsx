@@ -11,6 +11,7 @@ export default function HomePage() {
       <p style={{ marginTop: 8, color: "rgba(0,0,0,0.65)" }}>
         access token이 메모리에 있어요: {token ? "YES" : "NO"}
       </p>
+      <h2>테스트용 페이지입니다.</h2>
     </main>
   );
 }
