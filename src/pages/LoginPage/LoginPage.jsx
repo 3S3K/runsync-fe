@@ -29,16 +29,30 @@ export default function LoginPage() {
   return (
     <main className={styles.root}>
       <section className={styles.content} aria-label="런싱크 로그인">
-        <h1 className={styles.brand} aria-label="RUN sync">
-          <span className={styles.brandRun}>RUN</span>
-          <span className={styles.brandSync}>sync</span>
-        </h1>
+        <div className={styles.hero}>
+          <h1 className={styles.brand} aria-label="RUN sync">
+            <span className={styles.brandRun}>RUN</span>
+            <span className={styles.brandSync}>sync</span>
+          </h1>
 
-        <p className={styles.tagline}>러닝을 더 쉽게, 꾸준하게</p>
+          <p className={styles.tagline}>러닝을 더 쉽게, 꾸준하게</p>
+        </div>
 
-        {/* <div className={styles.illustrationWrap} aria-hidden="true">
-          <img className={styles.illustration} src={loginIllustration} alt="" />
-        </div> */}
+        <div className={styles.illustrationWrap} aria-hidden="true">
+          <div className={styles.sun} />
+          <div className={styles.track}>
+            <span className={styles.trackLine} />
+            <span className={styles.trackLine} />
+          </div>
+          <div className={styles.runner}>
+            <span className={styles.runnerHead} />
+            <span className={styles.runnerBody} />
+            <span className={styles.runnerArmFront} />
+            <span className={styles.runnerArmBack} />
+            <span className={styles.runnerLegFront} />
+            <span className={styles.runnerLegBack} />
+          </div>
+        </div>
 
         <div className={styles.cta}>
           <KakaoLoginButton onClick={handleKakaoLogin} />
