@@ -14,4 +14,3 @@ export function consumeOauthState() {
   sessionStorage.removeItem(KEY);
   return state;
 }
-
