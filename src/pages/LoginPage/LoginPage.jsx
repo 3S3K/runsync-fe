@@ -1,16 +1,7 @@
 import styles from './LoginPage.module.css';
 import KakaoLoginButton from '../../components/KakaoLoginButton/KakaoLoginButton';
+import { createOauthState } from '../../utils/oauthState';
 
-const OAUTH_STATE_KEY = 'runsync.oauth.state.kakao';
-
-function createOauthState() {
-  const state =
-    typeof crypto?.randomUUID === 'function'
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  sessionStorage.setItem(OAUTH_STATE_KEY, state);
-  return state;
-}
 
 export default function LoginPage() {
   const handleKakaoLogin = () => {
