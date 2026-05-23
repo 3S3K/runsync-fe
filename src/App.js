@@ -1,10 +1,10 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import LoginPage from './pages/LoginPage/LoginPage';
-import KakaoCallbackPage from './pages/KakaoCallbackPage/KakaoCallbackPage';
-import HomePage from './pages/HomePage/HomePage';
-import { getAccessToken, setAccessToken } from './utils/tokens';
-import { refreshAccessToken } from './api/auth';
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import KakaoCallbackPage from "./pages/KakaoCallbackPage/KakaoCallbackPage";
+import HomePage from "./pages/HomePage/HomePage";
+import { getAccessToken, setAccessToken } from "./utils/tokens";
+import { refreshAccessToken } from "./api/auth";
 
 function App() {
   const [isBootstrapping, setIsBootstrapping] = useState(true);
@@ -36,9 +36,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />} />
-        <Route path="/home" element={isAuthed ? <HomePage /> : <Navigate to="/" replace />} />
-        <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
+        <Route
+          path="/"
+          element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />}
+        />
+        <Route
+          path="/home"
+          element={isAuthed ? <HomePage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/login/oauth2/code/kakao"
+          element={<KakaoCallbackPage />}
+        />
       </Routes>
     </BrowserRouter>
   );
