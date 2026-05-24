@@ -40,9 +40,10 @@ function App() {
           path="/"
           element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />}
         />
+        {/* TODO: 개발 확인용 — 배포 전 인증 가드 복구 */}
         <Route
           path="/home"
-          element={isAuthed ? <HomePage /> : <Navigate to="/" replace />}
+          element={<HomePage />}
         />
         <Route
           path="/login/oauth2/code/kakao"
