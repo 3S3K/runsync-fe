@@ -36,10 +36,6 @@ export default function LoginPage() {
 
         <p className={styles.tagline}>러닝을 더 쉽게, 꾸준하게</p>
 
-        {/* <div className={styles.illustrationWrap} aria-hidden="true">
-          <img className={styles.illustration} src={loginIllustration} alt="" />
-        </div> */}
-
         <div className={styles.cta}>
           <KakaoLoginButton onClick={handleKakaoLogin} />
         </div>

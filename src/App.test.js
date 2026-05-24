@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 
 import App from './App';
 
@@ -8,5 +8,8 @@ jest.mock('./api/auth', () => ({
 
 test('renders login page when not authenticated', async () => {
   render(<App />);
-  expect(await screen.findByText(/러닝을 더 쉽게, 꾸준하게/i)).toBeInTheDocument();
+
+  await waitFor(() => {
+    expect(screen.getByText(/러닝을 더 쉽게, 꾸준하게/i)).toBeInTheDocument();
+  });
 });

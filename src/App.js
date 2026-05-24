@@ -52,36 +52,18 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={
-            isAuthed ? (
-              <Navigate
-                to="/home"
-                replace
-              />
-            ) : (
-              <LoginPage />
-            )
-          }
+          element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />}
         />
         <Route
           path="/home"
-          element={
-            isAuthed ? (
-              <HomePage />
-            ) : (
-              <Navigate
-                to="/"
-                replace
-              />
-            )
-          }
+          element={isAuthed ? <HomePage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/search"
           element={<SearchPage />}
         />
         <Route
-          path="/oauth/kakao/callback"
+          path="/login/oauth2/code/kakao"
           element={<KakaoCallbackPage />}
         />
       </Routes>
