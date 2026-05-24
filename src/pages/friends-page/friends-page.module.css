@@ -1,0 +1,77 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background: #e0e0e0;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  background: #ebebeb;
+  overflow: hidden;
+}
+
+.mapSection {
+  position: relative;
+  flex: 0 0 40%;
+  min-height: 240px;
+  max-height: 42vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mapSectionCompact {
+  /* alias for shared layout */
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(16px, env(safe-area-inset-top)) 16px 0;
+  pointer-events: none;
+}
+
+.header > * {
+  pointer-events: auto;
+}
+
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.myButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #243b55;
+  box-shadow: 0 4px 16px rgba(36, 59, 85, 0.35);
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+}
+
+@media (min-width: 481px) {
+  .shell {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+  }
+}

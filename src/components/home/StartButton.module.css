@@ -1,0 +1,23 @@
+.button {
+  width: 100%;
+  height: 58px;
+  border: none;
+  border-radius: 14px;
+  background: #ff5a1f;
+  box-shadow: 0 6px 20px rgba(255, 90, 31, 0.4);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #fff;
+  cursor: pointer;
+}
+
+.button:active {
+  transform: scale(0.99);
+  background: #f05218;
+}
+
+.button:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.5);
+  outline-offset: 3px;
+}

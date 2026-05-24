@@ -1,0 +1,33 @@
+/* 지도 마커 · 친구 목록 공통 상태 색상 (flat class) */
+
+.dotMe {
+  background: #4caf50;
+}
+
+.avatarBorderMe {
+  border-color: #4caf50;
+}
+
+.dotRunning {
+  background: #42a5f5;
+}
+
+.avatarBorderRunning {
+  border-color: #42a5f5;
+}
+
+.dotRecent {
+  background: #42a5f5;
+}
+
+.avatarBorderRecent {
+  border-color: #42a5f5;
+}
+
+.dotOffline {
+  background: #bdbdbd;
+}
+
+.avatarBorderOffline {
+  border-color: #bdbdbd;
+}
