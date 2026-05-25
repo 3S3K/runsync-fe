@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import FriendsListPanel from '../../components/friends/friends-list-panel';
 import FriendButton from '../../components/home/FriendButton';
@@ -10,9 +11,12 @@ import { currentUser, friends } from '../../data/friends';
 import styles from './HomePage.module.css';
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
 
-  const handleMyClick = () => {};
+  const handleMyClick = () => {
+    navigate('/mypage');
+  };
 
   const handleFriendsClick = () => {
     setIsFriendsOpen((prev) => !prev);

@@ -22,7 +22,7 @@ export default function FriendListItem({
         <img
           className={styles.avatar}
           src={avatarSrc}
-          alt=""
+          alt={name}
         />
       </div>
       <div className={styles.body}>

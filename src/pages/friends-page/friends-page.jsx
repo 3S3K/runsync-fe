@@ -32,7 +32,7 @@ export default function FriendsPage() {
               <button
                 type="button"
                 className={styles.myButton}
-                onClick={() => navigate('/home')}
+                onClick={() => navigate('/mypage')}
               >
                 MY
               </button>

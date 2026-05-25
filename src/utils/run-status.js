@@ -35,8 +35,8 @@ export function toMapMarker(person) {
     status: person.status,
     top: person.mapPosition.top,
     left: person.mapPosition.left,
-    initial: person.name.charAt(0),
+    initial: person.name?.charAt(0) || '?',
     imageSrc: person.avatarSrc,
-    imageAlt: person.name,
+    imageAlt: person.name || '',
   };
 }

@@ -42,19 +42,17 @@ function App() {
           path="/"
           element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />}
         />
-        {/* TODO: 배포 전 인증 가드 복구 — element={isAuthed ? <HomePage /> : <Navigate to="/" replace />} */}
         <Route
           path="/home"
-          element={<HomePage />}
+          element={isAuthed ? <HomePage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/friends"
-          element={<FriendsPage />}
+          element={isAuthed ? <FriendsPage /> : <Navigate to="/" replace />}
         />
-        {/* TODO: 배포 전 인증 가드 복구 */}
         <Route
           path="/mypage"
-          element={<Mypage />}
+          element={isAuthed ? <Mypage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/login/oauth2/code/kakao"
