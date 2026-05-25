@@ -5,29 +5,29 @@ export function SearchForm({
   onChange,
   onSearch,
 }) {
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      onSearch();
-    }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSearch();
   };
 
   return (
-    <div className={styles.root}>
+    <form
+      className={styles.root}
+      onSubmit={handleSubmit}
+    >
       <input
         type="search"
         className={styles.input}
         value={value}
         placeholder="검색어를 입력하세요"
         onChange={(event) => onChange(event.target.value)}
-        onKeyDown={handleKeyDown}
       />
       <button
-        type="button"
+        type="submit"
         className={styles.button}
-        onClick={onSearch}
       >
         검색
       </button>
-    </div>
+    </form>
   );
 }
