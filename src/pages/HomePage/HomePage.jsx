@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { RoundIconButton } from '../../components/common/round-icon-button';
 import FriendsListPanel from '../../components/friends/friends-list-panel';
 import FriendButton from '../../components/home/FriendButton';
 import RunningMap from '../../components/home/RunningMap';
@@ -40,13 +41,11 @@ export default function HomePage() {
               location="Seoul"
             />
             <div className={styles.headerRight}>
-              <button
-                type="button"
-                className={styles.myButton}
+              <RoundIconButton
+                label="MY"
+                variant="navy"
                 onClick={handleMyClick}
-              >
-                MY
-              </button>
+              />
               <FriendButton onClick={handleFriendsClick} />
             </div>
           </header>
