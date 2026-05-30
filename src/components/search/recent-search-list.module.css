@@ -1,0 +1,62 @@
+.list {
+  margin: 0;
+  padding: 0;
+}
+
+.empty {
+  margin: 0;
+  padding: 16px 0;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  list-style: none;
+}
+
+.termButton {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 15px;
+  color: #1b1b1b;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.termButton:focus-visible {
+  outline: 2px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
+}
+
+.removeButton {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  color: #d32f2f;
+  background: rgba(211, 47, 47, 0.08);
+}
+
+.removeButton:focus-visible {
+  outline: 2px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
+}
