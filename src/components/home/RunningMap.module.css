@@ -79,6 +79,12 @@
   overflow: hidden;
 }
 
+.initial {
+  font-size: 15px;
+  font-weight: 800;
+  color: #243b55;
+}
+
 .green .avatar {
   border-color: #4caf50;
 }
