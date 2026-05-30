@@ -54,6 +54,18 @@
   border-radius: 50%;
 }
 
+.green .statusDot {
+  background: #4caf50;
+}
+
+.blue .statusDot {
+  background: #42a5f5;
+}
+
+.purple .statusDot {
+  background: #9c27b0;
+}
+
 .avatar {
   display: flex;
   align-items: center;
@@ -71,6 +83,16 @@
   font-size: 15px;
   font-weight: 800;
   color: #243b55;
+.green .avatar {
+  border-color: #4caf50;
+}
+
+.blue .avatar {
+  border-color: #42a5f5;
+}
+
+.purple .avatar {
+  border-color: #9c27b0;
 }
 
 .avatarImage {

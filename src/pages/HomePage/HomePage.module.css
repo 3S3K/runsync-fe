@@ -87,6 +87,17 @@
     rgba(235, 235, 235, 0.85) 24%,
     #ebebeb 100%
   );
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  padding: 16px 20px max(20px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+
+.footer > * {
+  pointer-events: auto;
 }
 
 @media (min-width: 481px) {

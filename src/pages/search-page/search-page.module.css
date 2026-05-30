@@ -1,0 +1,35 @@
+.root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.content {
+  width: min(420px, 100%);
+  padding: 48px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #1b1b1b;
+}
+
+.recentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recentTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.55);
+}

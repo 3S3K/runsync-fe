@@ -7,33 +7,47 @@ import HomePage from "./pages/HomePage/HomePage";
 import Mypage from "./pages/mypage/mypage";
 import { getAccessToken, setAccessToken } from "./utils/tokens";
 import { refreshAccessToken } from "./api/auth";
+import SearchPage from './pages/search-page/search-page';
+
 
 function App() {
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isAuthed, setIsAuthed] = useState(Boolean(getAccessToken()));
 
   useEffect(() => {
-    const run = async () => {
-      // 이미 있으면(콜백 직후) 스킵
+    let cancelled = false;
+
+    const bootstrap = async () => {
       if (getAccessToken()) {
-        setIsAuthed(true);
-        setIsBootstrapping(false);
+        if (!cancelled) {
+          setIsAuthed(true);
+          setIsBootstrapping(false);
+        }
         return;
       }
 
       const { accessToken } = await refreshAccessToken();
+      if (cancelled) {
+        return;
+      }
+
       if (accessToken) {
         setAccessToken(accessToken);
         setIsAuthed(true);
       }
-
       setIsBootstrapping(false);
     };
 
-    run();
+    void bootstrap();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  if (isBootstrapping) return null;
+  if (isBootstrapping) {
+    return null;
+  }
 
   return (
     <BrowserRouter>
@@ -53,6 +67,10 @@ function App() {
         <Route
           path="/mypage"
           element={isAuthed ? <Mypage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/search"
+          element={<SearchPage />}
         />
         <Route
           path="/login/oauth2/code/kakao"
