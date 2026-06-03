@@ -1,25 +1,43 @@
 .page {
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   justify-content: center;
-  background: #e0e0e0;
+  background: #e8e8e8;
+  overflow: hidden;
 }
 
 .shell {
+  --navy: #0f2f4a;
+  --orange: #ff6b2c;
+  --coral-bg: #fff1f1;
+  --coral: #ff6b6b;
+  --green: #45b85a;
+  --text: #111111;
+  --sub-text: #8a8f98;
+
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 480px;
-  min-height: 100dvh;
-  background: #f5f5f5;
+  width: min(100vw, 430px);
+  max-width: 430px;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  background: #f7f8fa;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  padding: max(12px, env(safe-area-inset-top)) 12px 12px;
+  padding: max(12px, env(safe-area-inset-top)) 16px 12px;
   background: #fff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
@@ -28,7 +46,7 @@
   margin: 0;
   font-size: 17px;
   font-weight: 800;
-  color: #111;
+  color: var(--navy);
   letter-spacing: -0.3px;
 }
 
@@ -36,42 +54,80 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   padding: 0;
   border: none;
   border-radius: 50%;
   background: transparent;
-  font-size: 20px;
-  color: #111;
   cursor: pointer;
 }
 
 .iconButton:focus-visible {
-  outline: 3px solid rgba(76, 175, 80, 0.45);
+  outline: 3px solid rgba(255, 107, 44, 0.35);
   outline-offset: 2px;
+}
+
+.backIcon {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid var(--navy);
+  border-bottom: 2px solid var(--navy);
+  transform: rotate(45deg) translate(2px, -1px);
+}
+
+.settingsIcon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--navy);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    0 -7px 0 -4px var(--navy),
+    0 7px 0 -4px var(--navy);
+}
+
+.content {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.loadingState {
+  padding: 12px 20px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub-text);
+  text-align: center;
 }
 
 .hero {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 20px 24px;
-  background: rgba(76, 175, 80, 0.08);
+  padding: 36px 20px 40px;
+  background: linear-gradient(
+    180deg,
+    rgba(69, 184, 90, 0.14) 0%,
+    rgba(69, 184, 90, 0.06) 45%,
+    rgba(247, 248, 250, 0) 100%
+  );
 }
 
 .avatarBlock {
   position: relative;
+  margin-top: 12px;
   margin-bottom: 16px;
 }
 
 .avatarRing {
-  width: 112px;
-  height: 112px;
-  border: 4px solid transparent;
+  width: 108px;
+  height: 108px;
   border-radius: 50%;
   overflow: hidden;
-  background: #fff;
+  background: #f5f5f5;
+  box-shadow: 0 4px 20px rgba(15, 47, 74, 0.1);
 }
 
 .avatarImage {
@@ -83,19 +139,20 @@
 
 .avatarDot {
   position: absolute;
-  right: 4px;
-  bottom: 4px;
-  width: 16px;
-  height: 16px;
+  right: 5px;
+  bottom: 5px;
+  width: 17px;
+  height: 17px;
   border: 3px solid #fff;
   border-radius: 50%;
+  background: var(--green);
 }
 
 .name {
   margin: 0 0 6px;
   font-size: 24px;
   font-weight: 800;
-  color: #111;
+  color: var(--navy);
   letter-spacing: -0.4px;
 }
 
@@ -103,7 +160,7 @@
   margin: 0 0 14px;
   font-size: 14px;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--sub-text);
 }
 
 .statusPill {
@@ -111,68 +168,89 @@
   align-items: center;
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgba(76, 175, 80, 0.15);
+  background: rgba(69, 184, 90, 0.1);
   font-size: 13px;
   font-weight: 700;
-  color: #2e7d32;
+  color: var(--green);
 }
 
 .statsCard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin: 16px 16px 0;
-  padding: 20px 12px;
+  margin: 8px 16px 0;
+  padding: 26px 8px;
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 16px rgba(15, 47, 74, 0.08);
 }
 
 .statItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-align: center;
+  border-right: 1px solid rgba(15, 47, 74, 0.08);
+}
+
+.statItem:last-child {
+  border-right: none;
 }
 
 .statLabel {
   font-size: 12px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--sub-text);
 }
 
 .statValue {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
-  color: #111;
+  color: var(--text);
   letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.statItemTime {
+  padding: 0 2px;
+}
+
+.statValueTime {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sub-text);
+  letter-spacing: 0;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .statUnit {
   font-size: 13px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--sub-text);
 }
 
 .activitySection {
-  flex: 1;
   margin: 20px 16px 0;
-  padding: 0 4px;
+  padding: 22px 18px 20px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 2px 16px rgba(15, 47, 74, 0.08);
 }
 
 .activityHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .activityTitle {
   margin: 0;
   font-size: 17px;
   font-weight: 800;
-  color: #111;
+  color: var(--navy);
   letter-spacing: -0.3px;
 }
 
@@ -182,7 +260,7 @@
   background: transparent;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--sub-text);
   cursor: pointer;
 }
 
@@ -193,25 +271,56 @@
 }
 
 .activityItem {
+  padding: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.activityButton {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.activityButton:focus-visible {
+  outline: 3px solid rgba(255, 107, 44, 0.35);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.activityItemStatic {
   display: flex;
   align-items: center;
   gap: 14px;
   padding: 14px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .activityItem:last-child {
   border-bottom: none;
+  padding-bottom: 0;
 }
 
 .activityIcon {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(76, 175, 80, 0.15);
-  background-image: radial-gradient(circle at 50% 45%, #4caf50 0%, #4caf50 28%, transparent 29%);
-  box-shadow: inset 0 0 0 2px rgba(76, 175, 80, 0.25);
+  background: var(--coral-bg);
+  color: var(--orange);
+}
+
+.runningIcon {
+  width: 22px;
+  height: 22px;
+  color: var(--orange);
 }
 
 .activityBody {
@@ -223,53 +332,52 @@
 }
 
 .activityDate {
-  font-size: 14px;
-  font-weight: 700;
-  color: #111;
-}
-
-.activityMetrics {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sub-text);
 }
 
 .activityDistance {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
-  color: #111;
+  color: var(--text);
+  letter-spacing: -0.2px;
 }
 
 .activityDuration {
+  flex-shrink: 0;
   font-size: 14px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--sub-text);
 }
 
 .footer {
   flex-shrink: 0;
-  padding: 20px 16px max(24px, env(safe-area-inset-bottom));
+  margin-top: 20px;
+  padding: 0 16px max(28px, env(safe-area-inset-bottom));
+  background: transparent;
 }
 
 .editButton {
   width: 100%;
   padding: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 12px;
-  background: #fff;
-  font-size: 15px;
+  border: none;
+  border-radius: 14px;
+  background: var(--navy);
+  box-shadow: 0 4px 14px rgba(15, 47, 74, 0.22);
+  font-size: 16px;
   font-weight: 700;
-  color: #111;
+  color: #fff;
   cursor: pointer;
 }
 
 .editButton:focus-visible {
-  outline: 3px solid rgba(76, 175, 80, 0.45);
+  outline: 3px solid rgba(255, 107, 44, 0.35);
   outline-offset: 2px;
 }
 
-@media (min-width: 481px) {
+@media (min-width: 431px) {
   .shell {
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
   }
 }
