@@ -3,7 +3,7 @@ import {
   getMyRecords,
   getMySummary,
 } from '../api/userApi';
-import { normalizeAccessTokenForStorage } from './access-token-header';
+import { getAccessToken } from './tokens';
 
 const CACHE_TTL_MS = 30_000;
 
@@ -12,9 +12,7 @@ let cachedToken = '';
 let cachedAt = 0;
 
 function getCacheKey() {
-  return normalizeAccessTokenForStorage(
-    localStorage.getItem('accessToken') || '',
-  );
+  return getAccessToken() || '';
 }
 
 function createFetchPromise() {

@@ -16,6 +16,10 @@ function ProfileAvatar({ src, alt }) {
   }, [src]);
 
   const handleImageError = () => {
+    if (avatarSrc === DEFAULT_PROFILE_AVATAR_SRC) {
+      return;
+    }
+
     setAvatarSrc(DEFAULT_PROFILE_AVATAR_SRC);
   };
 

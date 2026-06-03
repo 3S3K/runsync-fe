@@ -8,12 +8,10 @@ import {
   fetchMypageUserApisOnce,
 } from '../utils/fetch-mypage-user-apis';
 import { clearCachedUserRecords } from '../utils/user-records-store';
-import { normalizeAccessTokenForStorage } from '../utils/access-token-header';
+import { getAccessToken } from '../utils/tokens';
 
 function hasAccessTokenInStorage() {
-  return Boolean(normalizeAccessTokenForStorage(
-    localStorage.getItem('accessToken') || '',
-  ));
+  return Boolean(getAccessToken());
 }
 
 function logUserApiSuccess(response) {
