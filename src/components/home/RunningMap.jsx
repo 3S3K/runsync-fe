@@ -1,53 +1,53 @@
-import { currentUser, friends } from '../../data/friends';
-import { isVisibleOnMap, toMapMarker } from '../../utils/run-status';
+import { useMemo } from 'react';
 
-import MapMarker from './map-marker';
+import { useGeolocation } from '../../hooks/use-geolocation';
+import { DEFAULT_CENTER } from '../../utils/geolocation';
+import KakaoMap from '../map/kakao-map';
+
 import styles from './RunningMap.module.css';
 
-const MAP_LABELS = [
-  { id: 'union', text: 'UNION', top: '28%', left: '18%' },
-  { id: 'street', text: 'STREET', top: '42%', left: '52%' },
-  { id: 'friend', text: 'FRIEND', top: '58%', left: '72%' },
-];
+export default function RunningMap() {
+  const { position, status, error, requestLocation } = useGeolocation();
 
-export default function RunningMap({ compact = false }) {
-  const peopleOnMap = compact
-    ? [currentUser]
-    : [currentUser, ...friends].filter((person) => isVisibleOnMap(person.status));
+  const center = position ?? DEFAULT_CENTER;
 
-  const markers = peopleOnMap.map(toMapMarker);
+  const markers = useMemo(() => {
+    if (!position) {
+      return [];
+    }
+
+    return [{ id: 'me', lat: position.lat, lng: position.lng, title: '내 위치' }];
+  }, [position]);
+
+  const showGuide = status === 'denied' || status === 'error' || status === 'unsupported';
 
   return (
     <div
       className={styles.map}
       aria-label="지도 영역"
-      role="img"
     >
-      <div
-        className={styles.grid}
-        aria-hidden="true"
+      <KakaoMap
+        center={center}
+        markers={markers}
+        className={styles.mapCanvas}
       />
-      {MAP_LABELS.map((label) => (
-        <span
-          key={label.id}
-          className={styles.label}
-          style={{ top: label.top, left: label.left }}
-          aria-hidden="true"
+      {showGuide ? (
+        <div
+          className={styles.guide}
+          role="status"
         >
-          {label.text}
-        </span>
-      ))}
-      {markers.map((marker) => (
-        <MapMarker
-          key={marker.id}
-          status={marker.status}
-          top={marker.top}
-          left={marker.left}
-          initial={marker.initial}
-          imageSrc={marker.imageSrc}
-          imageAlt={marker.imageAlt}
-        />
-      ))}
+          <p className={styles.guideText}>{error}</p>
+          {status !== 'unsupported' ? (
+            <button
+              type="button"
+              className={styles.guideButton}
+              onClick={requestLocation}
+            >
+              다시 시도
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
