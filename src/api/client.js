@@ -28,7 +28,7 @@ function processRefreshQueue(error, token = null) {
 }
 
 function isReissueRequest(url = '') {
-  return url.includes('/api/auth/reissue/token');
+  return url.includes('/api/auth/reissue');
 }
 
 apiClient.interceptors.request.use((config) => {

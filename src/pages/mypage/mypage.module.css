@@ -270,6 +270,15 @@
   list-style: none;
 }
 
+.activityEmpty {
+  margin: 0;
+  padding: 20px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sub-text);
+  text-align: center;
+}
+
 .activityItem {
   padding: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);

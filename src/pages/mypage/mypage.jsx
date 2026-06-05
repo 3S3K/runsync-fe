@@ -40,6 +40,7 @@ export default function Mypage() {
     stats,
     activities,
     isLoading,
+    isUsingMockData,
   } = useMypageData();
 
   const dotClass = getDotClassName(user.status);
@@ -145,6 +146,11 @@ export default function Mypage() {
                 더보기 &gt;
               </button>
             </div>
+            {!isUsingMockData && activities.length === 0 ? (
+              <p className={styles.activityEmpty}>
+                최근 러닝 기록이 없습니다.
+              </p>
+            ) : (
             <ul className={styles.activityList}>
               {activities.map((activity) => {
                 if (activity.recordId) {
@@ -206,6 +212,7 @@ export default function Mypage() {
                 );
               })}
             </ul>
+            )}
           </section>
         </div>
 

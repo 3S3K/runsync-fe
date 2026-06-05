@@ -7,7 +7,8 @@ import { getAccessToken } from './tokens';
 
 const CACHE_TTL_MS = 30_000;
 
-let cachedPromise = null;
+let inflightPromise = null;
+let cachedSuccessPromise = null;
 let cachedToken = '';
 let cachedAt = 0;
 
@@ -15,7 +16,20 @@ function getCacheKey() {
   return getAccessToken() || '';
 }
 
-function createFetchPromise() {
+function clearMypageUserApisCacheState() {
+  inflightPromise = null;
+  cachedSuccessPromise = null;
+  cachedToken = '';
+  cachedAt = 0;
+}
+
+function hasApiFailure({ myInfoResult, summaryResult, recordsResult }) {
+  return [myInfoResult, summaryResult, recordsResult].some(
+    (result) => result.status === 'rejected',
+  );
+}
+
+function fetchMypageUserApis() {
   return Promise.allSettled([
     getMyInfo(),
     getMySummary(),
@@ -31,30 +45,47 @@ export function fetchMypageUserApisOnce() {
   const token = getCacheKey();
 
   if (!token) {
-    cachedPromise = null;
-    cachedToken = '';
-    cachedAt = 0;
+    clearMypageUserApisCacheState();
     return null;
   }
 
   const now = Date.now();
-  const isCacheValid = cachedPromise
+  const isSuccessCacheValid = cachedSuccessPromise
     && cachedToken === token
     && now - cachedAt < CACHE_TTL_MS;
 
-  if (isCacheValid) {
-    return cachedPromise;
+  if (isSuccessCacheValid) {
+    return cachedSuccessPromise;
   }
 
-  cachedToken = token;
-  cachedAt = now;
-  cachedPromise = createFetchPromise();
+  if (inflightPromise) {
+    return inflightPromise;
+  }
 
-  return cachedPromise;
+  inflightPromise = fetchMypageUserApis()
+    .then((payload) => {
+      if (hasApiFailure(payload)) {
+        clearMypageUserApisCacheState();
+        return payload;
+      }
+
+      cachedToken = token;
+      cachedAt = now;
+      cachedSuccessPromise = Promise.resolve(payload);
+
+      return payload;
+    })
+    .catch((error) => {
+      clearMypageUserApisCacheState();
+      throw error;
+    })
+    .finally(() => {
+      inflightPromise = null;
+    });
+
+  return inflightPromise;
 }
 
 export function invalidateMypageUserApisCache() {
-  cachedPromise = null;
-  cachedToken = '';
-  cachedAt = 0;
+  clearMypageUserApisCacheState();
 }

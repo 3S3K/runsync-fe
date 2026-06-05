@@ -10,7 +10,7 @@ const reissueClient = axios.create({
 });
 
 export async function requestTokenReissue() {
-  const response = await reissueClient.post('/api/auth/reissue/token');
+  const response = await reissueClient.post('/api/auth/reissue');
   const accessToken = extractAccessTokenFromResponse(response);
 
   if (accessToken) {

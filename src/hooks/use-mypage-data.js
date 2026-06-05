@@ -58,6 +58,7 @@ function processApiResults(myInfoResult, summaryResult, recordsResult) {
 export function useMypageData() {
   const [data, setData] = useState(getMockMypageData());
   const [isLoading, setIsLoading] = useState(true);
+  const [isUsingMockData, setIsUsingMockData] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -65,6 +66,7 @@ export function useMypageData() {
     const applyMockFallback = () => {
       clearCachedUserRecords();
       setData(getMockMypageData());
+      setIsUsingMockData(true);
     };
 
     const loadMypageData = async () => {
@@ -104,11 +106,15 @@ export function useMypageData() {
         } = processApiResults(myInfoResult, summaryResult, recordsResult);
 
         if (hasAnyApiSuccess) {
+          const recordsLoadedFromApi = recordsResult.status === 'fulfilled';
+
           setData(mapMypageData(
             summaryResponse ?? { data: {} },
             recordsResponse ?? { data: { records: [] } },
             myInfoResponse ?? { data: {} },
+            { recordsLoadedFromApi },
           ));
+          setIsUsingMockData(false);
         } else {
           applyMockFallback();
         }
@@ -136,5 +142,6 @@ export function useMypageData() {
     stats: data.stats,
     activities: data.activities,
     isLoading,
+    isUsingMockData,
   };
 }

@@ -5,6 +5,7 @@ import KakaoCallbackPage from "./pages/KakaoCallbackPage/KakaoCallbackPage";
 import FriendsPage from "./pages/friends-page/friends-page";
 import HomePage from "./pages/HomePage/HomePage";
 import Mypage from "./pages/mypage/mypage";
+import RunningRecordPage from "./pages/running-record/running-record-page";
 import { getAccessToken, setAccessToken } from "./utils/tokens";
 import { refreshAccessToken } from "./api/auth";
 import SearchPage from './pages/search-page/search-page';
@@ -67,6 +68,10 @@ function App() {
         <Route
           path="/mypage"
           element={isAuthed ? <Mypage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/running-record/:id"
+          element={isAuthed ? <RunningRecordPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/search"

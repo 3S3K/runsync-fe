@@ -4,7 +4,7 @@ import {
   formatDurationHms,
   formatKoreanDateTime,
 } from './record-formatters';
-import { setCachedUserRecords } from './user-records-store';
+import { setCachedUserRecords, clearCachedUserRecords } from './user-records-store';
 
 const TOTAL_TIME_PLACEHOLDER = '--:--:--';
 
@@ -29,7 +29,12 @@ export function getMockMypageData() {
   };
 }
 
-export function mapMypageData(summaryResponse, recordsResponse, myInfoResponse) {
+export function mapMypageData(
+  summaryResponse,
+  recordsResponse,
+  myInfoResponse,
+  { recordsLoadedFromApi = false } = {},
+) {
   const summary = summaryResponse?.data ?? {};
   const recordsPayload = recordsResponse?.data ?? {};
   const myInfo = myInfoResponse?.data ?? {};
@@ -40,6 +45,8 @@ export function mapMypageData(summaryResponse, recordsResponse, myInfoResponse) 
 
   if (records.length > 0) {
     setCachedUserRecords(records);
+  } else if (recordsLoadedFromApi) {
+    clearCachedUserRecords();
   }
 
   return {
@@ -58,13 +65,13 @@ export function mapMypageData(summaryResponse, recordsResponse, myInfoResponse) 
       totalTime: TOTAL_TIME_PLACEHOLDER,
       totalRuns: monthlyStats.totalRunCount ?? mock.stats.totalRuns,
     },
-    activities: mapMypageActivities(records, mock.activities),
+    activities: mapMypageActivities(records, mock.activities, recordsLoadedFromApi),
   };
 }
 
-function mapMypageActivities(records, mockActivities) {
+function mapMypageActivities(records, mockActivities, recordsLoadedFromApi) {
   if (!Array.isArray(records) || records.length === 0) {
-    return mockActivities;
+    return recordsLoadedFromApi ? [] : mockActivities;
   }
 
   return records.map((record, index) => {
