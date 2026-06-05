@@ -20,7 +20,6 @@ export default function KakaoMap({
   const sdkStatus = useKakaoLoader();
   const containerRef = useRef(null);
   const mapRef = useRef(null);
-  const markerObjectsRef = useRef([]);
 
   // SDK 준비되면 지도 1회 생성
   useEffect(() => {
@@ -33,27 +32,35 @@ export default function KakaoMap({
       center: new kakao.maps.LatLng(center.lat, center.lng),
       level,
     });
-  }, [sdkStatus, center, level]);
+  }, [sdkStatus, center.lat, center.lng, level]);
 
   // center 변경 시 중심 이동
   useEffect(() => {
-    if (!mapRef.current || !center) {
+    if (!mapRef.current) {
       return;
     }
 
     const { kakao } = window;
     mapRef.current.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
-  }, [center]);
+  }, [center.lat, center.lng]);
 
-  // markers 변경 시 다시 그림
+  // level 변경 시 확대 레벨 갱신
   useEffect(() => {
-    if (sdkStatus !== 'ready' || !mapRef.current) {
+    if (!mapRef.current) {
       return;
     }
 
+    mapRef.current.setLevel(level);
+  }, [level]);
+
+  // markers 변경/언마운트 시 마커 그리고 정리
+  useEffect(() => {
+    if (sdkStatus !== 'ready' || !mapRef.current) {
+      return undefined;
+    }
+
     const { kakao } = window;
-    markerObjectsRef.current.forEach((marker) => marker.setMap(null));
-    markerObjectsRef.current = markers.map((marker) => {
+    const created = markers.map((marker) => {
       const kakaoMarker = new kakao.maps.Marker({
         position: new kakao.maps.LatLng(marker.lat, marker.lng),
         title: marker.title,
@@ -61,6 +68,8 @@ export default function KakaoMap({
       kakaoMarker.setMap(mapRef.current);
       return kakaoMarker;
     });
+
+    return () => created.forEach((marker) => marker.setMap(null));
   }, [sdkStatus, markers]);
 
   if (sdkStatus === 'error') {
