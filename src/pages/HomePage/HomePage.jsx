@@ -1,70 +1,108 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import FriendsListPanel from '../../components/friends/friends-list-panel';
 import FriendButton from '../../components/home/FriendButton';
 import RunningMap from '../../components/home/RunningMap';
+import RunRecordForm from '../../components/home/run-record-form';
+import RunningStats from '../../components/home/running-stats';
 import StartButton from '../../components/home/StartButton';
 import StatusBadge from '../../components/home/StatusBadge';
-import { currentUser, friends } from '../../data/friends';
+import StopButton from '../../components/home/stop-button';
+import { useRunTracker } from '../../hooks/use-run-tracker';
 
 import styles from './HomePage.module.css';
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [isFriendsOpen, setIsFriendsOpen] = useState(false);
+  const run = useRunTracker();
+
+  const isIdle = run.status === 'idle';
+  const isRunning = run.status === 'running';
+  const isFinished = run.status === 'finished';
 
   const handleMyClick = () => {
     navigate('/mypage');
   };
 
   const handleFriendsClick = () => {
-    setIsFriendsOpen((prev) => !prev);
+    navigate('/friends');
   };
 
-  const handleAddFriend = () => {};
+  const handleStart = async () => {
+    try {
+      await run.start();
+    } catch (error) {
+      console.error('러닝 시작 실패', error);
+    }
+  };
 
-  const handleStartClick = () => {};
+  const handleStop = async () => {
+    try {
+      await run.stop();
+    } catch (error) {
+      console.error('러닝 종료 실패', error);
+    }
+  };
 
-  const mapSectionClassName = isFriendsOpen
-    ? `${styles.mapSection} ${styles.mapSectionCompact}`
-    : styles.mapSection;
+  const handleSaveRecord = async (record) => {
+    try {
+      await run.saveRecord(record);
+    } catch (error) {
+      console.error('기록 저장 실패', error);
+    }
+  };
 
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
-        <div className={mapSectionClassName}>
+        <div className={styles.mapSection}>
           <header className={styles.header}>
             <StatusBadge
               temperature="18°"
               location="Seoul"
             />
-            <div className={styles.headerRight}>
-              <button
-                type="button"
-                className={styles.myButton}
-                onClick={handleMyClick}
-              >
-                MY
-              </button>
-              <FriendButton onClick={handleFriendsClick} />
-            </div>
+            {isIdle ? (
+              <div className={styles.headerRight}>
+                <button
+                  type="button"
+                  className={styles.myButton}
+                  onClick={handleMyClick}
+                >
+                  MY
+                </button>
+                <FriendButton onClick={handleFriendsClick} />
+              </div>
+            ) : null}
           </header>
 
-          <RunningMap compact={isFriendsOpen} />
+          <RunningMap position={isIdle ? null : run.position} />
         </div>
 
-        {isFriendsOpen ? (
-          <FriendsListPanel
-            currentUser={currentUser}
-            friends={friends}
-            onAddFriend={handleAddFriend}
-          />
-        ) : (
+        {isRunning ? (
+          <div className={styles.runFooter}>
+            {run.error ? <p className={styles.runError}>{run.error}</p> : null}
+            <RunningStats
+              elapsedSeconds={run.elapsedSeconds}
+              distance={run.distance}
+            />
+            <StopButton onClick={handleStop} />
+          </div>
+        ) : null}
+
+        {isFinished ? (
+          <div className={styles.runFooter}>
+            <RunningStats
+              elapsedSeconds={run.elapsedSeconds}
+              distance={run.distance}
+            />
+            <RunRecordForm onSubmit={handleSaveRecord} />
+          </div>
+        ) : null}
+
+        {isIdle ? (
           <footer className={styles.footer}>
-            <StartButton onClick={handleStartClick} />
+            <StartButton onClick={handleStart} />
           </footer>
-        )}
+        ) : null}
       </div>
     </main>
   );
