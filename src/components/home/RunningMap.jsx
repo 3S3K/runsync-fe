@@ -6,9 +6,16 @@ import KakaoMap from '../map/kakao-map';
 
 import styles from './RunningMap.module.css';
 
-export default function RunningMap() {
-  const { position, status, error, requestLocation } = useGeolocation();
+/**
+ * 홈/러닝 지도. position 을 받으면 그 위치를 따라가고(러닝 중),
+ * 없으면 자체 현재 위치 조회 + 권한 안내를 사용한다(idle).
+ * @param {{ lat: number, lng: number } | null} [position] 외부에서 주입하는 추적 위치
+ * @param {boolean} [isTracking] 러닝 추적 중 여부 (true면 권한 안내 숨김)
+ */
+export default function RunningMap({ position: trackingPosition = null, isTracking = false }) {
+  const { position: geoPosition, status, error, requestLocation } = useGeolocation();
 
+  const position = trackingPosition ?? geoPosition;
   const center = position ?? DEFAULT_CENTER;
 
   const markers = useMemo(() => {
@@ -19,7 +26,9 @@ export default function RunningMap() {
     return [{ id: 'me', lat: position.lat, lng: position.lng, title: '내 위치' }];
   }, [position]);
 
-  const showGuide = status === 'denied' || status === 'error' || status === 'unsupported';
+  const showGuide =
+    !isTracking &&
+    (status === 'denied' || status === 'error' || status === 'unsupported');
 
   return (
     <div
