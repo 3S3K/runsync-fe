@@ -40,3 +40,54 @@ export function formatKoreanDateTime(isoString) {
 
   return `${parts.month}.${parts.day}(${parts.weekday}) ${hours}:${minutes}`;
 }
+
+export function formatDurationShort(totalSeconds) {
+  const seconds = Number(totalSeconds);
+  if (Number.isNaN(seconds) || seconds < 0) return '00:00';
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  if (hours > 0) {
+    return formatDurationHms(seconds);
+  }
+
+  return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+}
+
+export function formatAveragePace(pace) {
+  const numericPace = Number(pace);
+  if (Number.isNaN(numericPace)) return '-';
+
+  const minutes = Math.floor(numericPace);
+  const seconds = Math.round((numericPace - minutes) * 60);
+
+  return `${minutes}'${String(seconds).padStart(2, '0')}"`;
+}
+
+export function formatRecordTimeMeta(isoString) {
+  const parts = getKoreaWallClock(isoString);
+  if (!parts) return '';
+
+  const period = parts.hour < 12 ? '오전' : '오후';
+  const hour12 = parts.hour % 12 || 12;
+  const minutes = String(parts.minute).padStart(2, '0');
+
+  return `${parts.month}.${parts.day}(${parts.weekday}) · ${period} ${hour12}:${minutes}`;
+}
+
+export function formatRecordTitle(isoString) {
+  const parts = getKoreaWallClock(isoString);
+  if (!parts) return '러닝 기록';
+
+  return `${parts.month}월 ${parts.day}일 러닝`;
+}
+
+export function formatKoreanEndTime(isoString, durationSeconds) {
+  const startDate = new Date(isoString);
+  if (Number.isNaN(startDate.getTime())) return '';
+
+  const endDate = new Date(startDate.getTime() + Number(durationSeconds) * 1000);
+  return formatKoreanDateTime(endDate.toISOString());
+}

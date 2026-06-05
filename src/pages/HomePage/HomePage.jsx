@@ -8,12 +8,14 @@ import RunningMap from '../../components/home/RunningMap';
 import StartButton from '../../components/home/StartButton';
 import StatusBadge from '../../components/home/StatusBadge';
 import { currentUser, friends } from '../../data/friends';
+import { useHomeRunSession } from '../../hooks/use-home-run-session';
 
 import styles from './HomePage.module.css';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
+  const { isRunning, handleRunButtonClick } = useHomeRunSession();
 
   const handleMyClick = () => {
     navigate('/mypage');
@@ -24,8 +26,6 @@ export default function HomePage() {
   };
 
   const handleAddFriend = () => {};
-
-  const handleStartClick = () => {};
 
   const mapSectionClassName = isFriendsOpen
     ? `${styles.mapSection} ${styles.mapSectionCompact}`
@@ -61,7 +61,10 @@ export default function HomePage() {
           />
         ) : (
           <footer className={styles.footer}>
-            <StartButton onClick={handleStartClick} />
+            <StartButton
+              onClick={handleRunButtonClick}
+              label={isRunning ? 'STOP' : 'START'}
+            />
           </footer>
         )}
       </div>
