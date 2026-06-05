@@ -110,6 +110,8 @@ export function useRunTracker() {
           (geoError) => setError(getGeolocationErrorMessage(geoError)),
           GEO_OPTIONS,
         );
+      } else {
+        setError('이 브라우저는 위치 기능을 지원하지 않아요.');
       }
 
       timerIdRef.current = setInterval(() => {
@@ -147,7 +149,10 @@ export function useRunTracker() {
         endTime: new Date().toISOString(),
         totalDistance: distanceRef.current,
       });
+      setError(null);
       setStatus('finished');
+    } catch {
+      setError('러닝 종료에 실패했어요. 다시 시도해 주세요.');
     } finally {
       busyRef.current = false;
     }
@@ -168,11 +173,15 @@ export function useRunTracker() {
   }, [clearTracking]);
 
   const saveRecord = useCallback(async (record) => {
-    if (sessionIdRef.current) {
-      await saveRunRecord(sessionIdRef.current, record);
-    }
+    try {
+      if (sessionIdRef.current) {
+        await saveRunRecord(sessionIdRef.current, record);
+      }
 
-    reset();
+      reset();
+    } catch {
+      setError('기록 저장에 실패했어요. 다시 시도해 주세요.');
+    }
   }, [reset]);
 
   // 언마운트 시 추적 정리

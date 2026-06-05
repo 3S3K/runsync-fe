@@ -74,7 +74,10 @@ export default function HomePage() {
             ) : null}
           </header>
 
-          <RunningMap position={isIdle ? null : run.position} />
+          <RunningMap
+            position={isIdle ? null : run.position}
+            isTracking={!isIdle}
+          />
         </div>
 
         {isRunning ? (
@@ -90,6 +93,7 @@ export default function HomePage() {
 
         {isFinished ? (
           <div className={styles.runFooter}>
+            {run.error ? <p className={styles.runError}>{run.error}</p> : null}
             <RunningStats
               elapsedSeconds={run.elapsedSeconds}
               distance={run.distance}

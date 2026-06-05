@@ -68,6 +68,7 @@ export default function RunRecordForm({ onSubmit }) {
               value={values[name]}
               placeholder={placeholder}
               step={step}
+              min="0"
               inputMode="decimal"
               onChange={handleChange}
             />

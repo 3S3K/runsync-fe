@@ -10,8 +10,9 @@ import styles from './RunningMap.module.css';
  * 홈/러닝 지도. position 을 받으면 그 위치를 따라가고(러닝 중),
  * 없으면 자체 현재 위치 조회 + 권한 안내를 사용한다(idle).
  * @param {{ lat: number, lng: number } | null} [position] 외부에서 주입하는 추적 위치
+ * @param {boolean} [isTracking] 러닝 추적 중 여부 (true면 권한 안내 숨김)
  */
-export default function RunningMap({ position: trackingPosition = null }) {
+export default function RunningMap({ position: trackingPosition = null, isTracking = false }) {
   const { position: geoPosition, status, error, requestLocation } = useGeolocation();
 
   const position = trackingPosition ?? geoPosition;
@@ -26,7 +27,7 @@ export default function RunningMap({ position: trackingPosition = null }) {
   }, [position]);
 
   const showGuide =
-    !trackingPosition &&
+    !isTracking &&
     (status === 'denied' || status === 'error' || status === 'unsupported');
 
   return (
