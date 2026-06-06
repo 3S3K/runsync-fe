@@ -3,6 +3,8 @@ import { profileStats, recentActivities } from '../data/profile';
 import {
   formatDurationHms,
   formatKoreanDateTime,
+  formatPaceFromDistanceAndDuration,
+  parseDurationHmsToSeconds,
 } from './record-formatters';
 import { setCachedUserRecords, clearCachedUserRecords } from './user-records-store';
 
@@ -24,6 +26,8 @@ export function getMockMypageData() {
       totalDistanceKm: profileStats.totalDistanceKm,
       totalTime: profileStats.totalTime,
       totalRuns: profileStats.totalRuns,
+      monthlyGoalKm: profileStats.monthlyGoalKm,
+      averagePaceLabel: profileStats.averagePaceLabel,
     },
     activities: recentActivities.map((activity) => ({ ...activity })),
   };
@@ -64,9 +68,29 @@ export function mapMypageData(
       totalDistanceKm: monthlyStats.totalDistance ?? mock.stats.totalDistanceKm,
       totalTime: TOTAL_TIME_PLACEHOLDER,
       totalRuns: monthlyStats.totalRunCount ?? mock.stats.totalRuns,
+      monthlyGoalKm: mock.stats.monthlyGoalKm,
+      averagePaceLabel: computeAveragePaceLabel(records) ?? mock.stats.averagePaceLabel,
     },
     activities: mapMypageActivities(records, mock.activities, recordsLoadedFromApi),
   };
+}
+
+function computeAveragePaceLabel(records) {
+  if (!Array.isArray(records) || records.length === 0) {
+    return null;
+  }
+
+  const totalDistance = records.reduce(
+    (sum, record) => sum + Number(record.distance ?? 0),
+    0,
+  );
+  const totalSeconds = records.reduce(
+    (sum, record) => sum + Number(record.durationSeconds ?? 0),
+    0,
+  );
+
+  const paceLabel = formatPaceFromDistanceAndDuration(totalDistance, totalSeconds);
+  return paceLabel === '-' ? null : paceLabel;
 }
 
 function mapMypageActivities(records, mockActivities, recordsLoadedFromApi) {
@@ -85,6 +109,11 @@ function mapMypageActivities(records, mockActivities, recordsLoadedFromApi) {
         || '',
       distanceKm: Number(record.distance ?? 0),
       duration: formatDurationHms(record.durationSeconds),
+      durationSeconds: Number(record.durationSeconds ?? 0),
+      paceLabel: formatPaceFromDistanceAndDuration(
+        record.distance,
+        record.durationSeconds,
+      ),
     };
   });
 }

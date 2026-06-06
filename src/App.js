@@ -58,6 +58,10 @@ function App() {
           element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />}
         />
         <Route
+          path="/login"
+          element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />}
+        />
+        <Route
           path="/home"
           element={isAuthed ? <HomePage /> : <Navigate to="/" replace />}
         />

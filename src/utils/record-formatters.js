@@ -58,12 +58,34 @@ export function formatDurationShort(totalSeconds) {
 
 export function formatAveragePace(pace) {
   const numericPace = Number(pace);
-  if (Number.isNaN(numericPace)) return '-';
+  if (Number.isNaN(numericPace) || numericPace <= 0) return '-';
 
   const minutes = Math.floor(numericPace);
   const seconds = Math.round((numericPace - minutes) * 60);
 
   return `${minutes}'${String(seconds).padStart(2, '0')}"`;
+}
+
+export function formatPaceFromDistanceAndDuration(distanceKm, durationSeconds) {
+  const distance = Number(distanceKm);
+  const duration = Number(durationSeconds);
+
+  if (!distance || distance <= 0 || !duration || duration <= 0) {
+    return '-';
+  }
+
+  return formatAveragePace((duration / 60) / distance);
+}
+
+export function parseDurationHmsToSeconds(durationText = '') {
+  const parts = String(durationText).split(':').map(Number);
+
+  if (parts.length !== 3 || parts.some(Number.isNaN)) {
+    return 0;
+  }
+
+  const [hours, minutes, seconds] = parts;
+  return hours * 3600 + minutes * 60 + seconds;
 }
 
 export function formatRecordTimeMeta(isoString) {

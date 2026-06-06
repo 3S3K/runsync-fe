@@ -1,8 +1,8 @@
 import { apiClient, unwrapApiData } from './client';
 import { toSessionIdNumber } from '../utils/run-session-payloads';
 
-export async function startRunSession({ startTime }) {
-  const response = await apiClient.post('/api/run-sessions', { startTime });
+export async function startRunSession(payload) {
+  const response = await apiClient.post('/api/run-sessions', payload);
   return unwrapApiData(response);
 }
 

@@ -1,28 +1,53 @@
 .button {
-  width: 100%;
-  height: auto;
-  border: none;
-  background: transparent;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: none;
+  width: 100%;
+  height: 54px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 999px;
+  background: #fee500;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
   cursor: pointer;
 }
 
-.image {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
-
 .button:active {
-  transform: none;
+  transform: scale(0.99);
 }
 
 .button:focus-visible {
   outline: 3px solid rgba(255, 90, 31, 0.35);
   outline-offset: 3px;
+}
+
+.inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.talkIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 44px;
+  height: 26px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #000000;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #fee500;
+}
+
+.label {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.9);
+  letter-spacing: -0.35px;
+  line-height: 1;
 }

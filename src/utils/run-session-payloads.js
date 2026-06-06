@@ -1,13 +1,9 @@
 const DEFAULT_LATITUDE = 37.5665;
 const DEFAULT_LONGITUDE = 126.978;
 
-export function toIsoDateTime(date = new Date()) {
-  return date.toISOString();
-}
-
-export function buildRunSessionStartPayload(startedAt = Date.now()) {
+export function buildRunSessionStartPayload() {
   return {
-    startTime: toIsoDateTime(new Date(startedAt)),
+    startTime: new Date(Date.now() - 1000).toISOString(),
   };
 }
 

@@ -1,28 +1,24 @@
 .page {
-  height: 100vh;
-  height: 100dvh;
-  display: flex;
-  justify-content: center;
-  background: #e8e8e8;
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #f7f8fa;
 }
 
 .shell {
   --navy: #0f2f4a;
   --orange: #ff6b2c;
   --coral-bg: #fff1f1;
-  --coral: #ff6b6b;
   --green: #45b85a;
   --text: #111111;
   --sub-text: #8a8f98;
 
   display: flex;
   flex-direction: column;
-  width: min(100vw, 430px);
+  width: 100%;
   max-width: 430px;
-  height: 100vh;
-  height: 100dvh;
-  max-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
   background: #f7f8fa;
   overflow-x: hidden;
   overflow-y: auto;
@@ -32,7 +28,7 @@
 .header {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -48,6 +44,10 @@
   font-weight: 800;
   color: var(--navy);
   letter-spacing: -0.3px;
+}
+
+.settingsWrap {
+  position: relative;
 }
 
 .iconButton {
@@ -77,21 +77,53 @@
   transform: rotate(45deg) translate(2px, -1px);
 }
 
-.settingsIcon {
-  display: block;
+.moreIcon {
+  width: 22px;
+  height: 22px;
+  color: var(--navy);
+}
+
+.settingsMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  min-width: 168px;
+  padding: 8px 0;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(15, 47, 74, 0.08);
+  box-shadow: 0 10px 28px rgba(15, 47, 74, 0.14);
+}
+
+.settingsMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 14px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  text-align: left;
+  cursor: pointer;
+}
+
+.settingsMenuItem:hover {
+  background: rgba(15, 47, 74, 0.04);
+}
+
+.settingsMenuIcon {
   width: 18px;
   height: 18px;
-  border: 2px solid var(--navy);
-  border-radius: 50%;
-  box-shadow:
-    inset 0 0 0 1px #fff,
-    0 -7px 0 -4px var(--navy),
-    0 7px 0 -4px var(--navy);
+  color: var(--sub-text);
 }
 
 .content {
   flex: 0 0 auto;
-  overflow: visible;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
 
 .loadingState {
@@ -103,31 +135,109 @@
 }
 
 .hero {
+  position: relative;
+  overflow: hidden;
+  padding: 14px 16px 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(69, 184, 90, 0.24) 0%,
+    rgba(126, 206, 145, 0.14) 28%,
+    rgba(214, 241, 221, 0.42) 62%,
+    #ffffff 100%
+  );
+}
+
+.heroBackdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.heroOrbPrimary,
+.heroOrbSecondary {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0.5px);
+}
+
+.heroOrbPrimary {
+  top: -20px;
+  right: -8px;
+  width: 96px;
+  height: 96px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 107, 44, 0.07) 0%,
+    rgba(255, 107, 44, 0.03) 58%,
+    transparent 72%
+  );
+}
+
+.heroOrbSecondary {
+  top: 18px;
+  left: -18px;
+  width: 72px;
+  height: 72px;
+  background: radial-gradient(
+    circle,
+    rgba(69, 184, 90, 0.08) 0%,
+    rgba(69, 184, 90, 0.03) 60%,
+    transparent 74%
+  );
+}
+
+.profileBlock {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 36px 20px 40px;
-  background: linear-gradient(
-    180deg,
-    rgba(69, 184, 90, 0.14) 0%,
-    rgba(69, 184, 90, 0.06) 45%,
-    rgba(247, 248, 250, 0) 100%
-  );
+}
+
+.profileMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .avatarBlock {
   position: relative;
-  margin-top: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
+}
+
+.avatarBlock::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(255, 255, 255, 0.72) 52%,
+    rgba(255, 255, 255, 0.18) 72%,
+    transparent 100%
+  );
+  transform: translate(-50%, -50%);
 }
 
 .avatarRing {
+  position: relative;
+  z-index: 1;
   width: 108px;
   height: 108px;
   border-radius: 50%;
   overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.95);
   background: #f5f5f5;
-  box-shadow: 0 4px 20px rgba(15, 47, 74, 0.1);
+  box-shadow:
+    0 8px 22px rgba(69, 184, 90, 0.14),
+    0 0 0 6px rgba(255, 255, 255, 0.42);
 }
 
 .avatarImage {
@@ -141,6 +251,7 @@
   position: absolute;
   right: 5px;
   bottom: 5px;
+  z-index: 2;
   width: 17px;
   height: 17px;
   border: 3px solid #fff;
@@ -149,7 +260,7 @@
 }
 
 .name {
-  margin: 0 0 6px;
+  margin: 0;
   font-size: 24px;
   font-weight: 800;
   color: var(--navy);
@@ -157,7 +268,7 @@
 }
 
 .handle {
-  margin: 0 0 14px;
+  margin: 0;
   font-size: 14px;
   font-weight: 500;
   color: var(--sub-text);
@@ -166,29 +277,112 @@
 .statusPill {
   display: inline-flex;
   align-items: center;
-  padding: 8px 16px;
+  margin-top: 2px;
+  padding: 6px 14px;
   border-radius: 999px;
-  background: rgba(69, 184, 90, 0.1);
+  background: rgba(69, 184, 90, 0.12);
+  border: 1px solid rgba(69, 184, 90, 0.18);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.monthlyRunSummary {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--sub-text);
+}
+
+.monthlyRunSummary strong {
+  color: var(--green);
+  font-weight: 800;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+}
+
+.goalCard,
+.statsCard,
+.activitySection {
+  margin: 8px 12px 0;
+  padding: 14px 14px 12px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 2px 14px rgba(15, 47, 74, 0.07);
+}
+
+.goalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.goalProgressText {
   font-size: 13px;
   font-weight: 700;
   color: var(--green);
 }
 
-.statsCard {
+.goalDistance {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.goalDistance strong {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+
+.goalDistanceDivider,
+.goalDistanceUnit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sub-text);
+}
+
+.goalDistanceDivider {
+  margin: 0 4px;
+}
+
+.goalProgressTrack {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(15, 47, 74, 0.08);
+  overflow: hidden;
+}
+
+.goalProgressFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #45b85a 0%, #5fd074 100%);
+}
+
+.statsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin: 8px 16px 0;
-  padding: 26px 8px;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 2px 16px rgba(15, 47, 74, 0.08);
+  gap: 4px;
+  margin-top: 10px;
 }
 
 .statItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
+  padding: 4px 2px;
   text-align: center;
   border-right: 1px solid rgba(15, 47, 74, 0.08);
 }
@@ -197,70 +391,58 @@
   border-right: none;
 }
 
+.statIconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 107, 44, 0.1);
+  color: var(--orange);
+}
+
+.statIcon {
+  width: 18px;
+  height: 18px;
+}
+
 .statLabel {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--sub-text);
 }
 
 .statValue {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--text);
   letter-spacing: -0.3px;
-  line-height: 1.2;
-}
-
-.statItemTime {
-  padding: 0 2px;
-}
-
-.statValueTime {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--sub-text);
-  letter-spacing: 0;
-  line-height: 1.25;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  line-height: 1.15;
 }
 
 .statUnit {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--sub-text);
-}
-
-.activitySection {
-  margin: 20px 16px 0;
-  padding: 22px 18px 20px;
-  border-radius: 20px;
-  background: #fff;
-  box-shadow: 0 2px 16px rgba(15, 47, 74, 0.08);
 }
 
 .activityHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.activityTitle {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--navy);
-  letter-spacing: -0.3px;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .viewMoreButton {
-  padding: 4px 0;
+  flex-shrink: 0;
+  padding: 0;
   border: none;
   background: transparent;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--sub-text);
+  font-weight: 700;
+  color: var(--orange);
   cursor: pointer;
 }
 
@@ -271,25 +453,62 @@
 }
 
 .activityEmpty {
-  margin: 0;
-  padding: 20px 0 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--sub-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 12px 16px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fafbfc 0%, #f3f5f8 100%);
+  border: 1px dashed rgba(15, 47, 74, 0.1);
   text-align: center;
 }
 
+.activityEmptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 107, 44, 0.1);
+  color: var(--orange);
+}
+
+.activityEmptyIconSvg {
+  width: 22px;
+  height: 22px;
+}
+
+.activityEmptyTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.activityEmptyText {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--sub-text);
+}
+
 .activityItem {
-  padding: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.activityButton {
+.activityButton,
+.activityItemStatic {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
-  padding: 14px 0;
+  padding: 11px 0;
+}
+
+.activityButton {
   border: none;
   background: transparent;
   text-align: left;
@@ -302,16 +521,8 @@
   border-radius: 8px;
 }
 
-.activityItemStatic {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 0;
-}
-
 .activityItem:last-child {
   border-bottom: none;
-  padding-bottom: 0;
 }
 
 .activityIcon {
@@ -319,17 +530,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: var(--coral-bg);
   color: var(--orange);
 }
 
 .runningIcon {
-  width: 22px;
-  height: 22px;
-  color: var(--orange);
+  width: 20px;
+  height: 20px;
 }
 
 .activityBody {
@@ -337,55 +547,36 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
 }
 
 .activityDate {
   font-size: 13px;
-  font-weight: 500;
-  color: var(--sub-text);
-}
-
-.activityDistance {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: -0.2px;
-}
-
-.activityDuration {
-  flex-shrink: 0;
-  font-size: 14px;
   font-weight: 600;
+  color: var(--navy);
+}
+
+.activityMeta {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
   color: var(--sub-text);
 }
 
-.footer {
+.activityChevron {
   flex-shrink: 0;
-  margin-top: 20px;
-  padding: 0 16px max(28px, env(safe-area-inset-bottom));
-  background: transparent;
-}
-
-.editButton {
-  width: 100%;
-  padding: 16px;
-  border: none;
-  border-radius: 14px;
-  background: var(--navy);
-  box-shadow: 0 4px 14px rgba(15, 47, 74, 0.22);
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-}
-
-.editButton:focus-visible {
-  outline: 3px solid rgba(255, 107, 44, 0.35);
-  outline-offset: 2px;
+  width: 20px;
+  height: 20px;
+  color: #c5c9d0;
 }
 
 @media (min-width: 431px) {
+  .page {
+    display: flex;
+    justify-content: center;
+    background: #e8e8e8;
+  }
+
   .shell {
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
   }

@@ -19,8 +19,7 @@ export function isActiveRunSessionConflict(error) {
 
   const message = String(responseData.message || '');
 
-  return responseData.statusCode === 3001
-    || message.includes('이미 진행 중인 러닝 세션');
+  return message.includes('이미 진행 중인 러닝 세션');
 }
 
 export function getActiveRunSessionConflictMessage(error) {

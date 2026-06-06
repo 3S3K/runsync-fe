@@ -152,10 +152,13 @@ export function useHomeRunSession() {
 
   const startApiSession = useCallback(async () => {
     isApiModeRef.current = true;
-    const startedAt = Date.now();
+    const startBody = buildRunSessionStartPayload();
+    const startedAt = Date.parse(startBody.startTime);
+
+    console.log('startRunSession body', startBody);
 
     try {
-      const response = await startRunSession(buildRunSessionStartPayload(startedAt));
+      const response = await startRunSession(startBody);
       const sessionId = response?.data?.sessionId;
 
       if (!sessionId) {
@@ -180,10 +183,7 @@ export function useHomeRunSession() {
         return;
       }
 
-      console.error(
-        '[useHomeRunSession] POST /api/run-sessions failed',
-        error.response?.data || error,
-      );
+      console.error('startRunSession failed', error.response?.data || error);
     }
   }, [restoreLocalApiSession, startLocationUpdates]);
 
