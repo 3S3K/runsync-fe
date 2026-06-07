@@ -7,6 +7,7 @@ import RunningStats from '../../components/home/running-stats';
 import StartButton from '../../components/home/StartButton';
 import StatusBadge from '../../components/home/StatusBadge';
 import StopButton from '../../components/home/stop-button';
+import { useRunRealtime } from '../../hooks/use-run-realtime';
 import { useRunTracker } from '../../hooks/use-run-tracker';
 
 import styles from './HomePage.module.css';
@@ -18,6 +19,13 @@ export default function HomePage() {
   const isIdle = run.status === 'idle';
   const isRunning = run.status === 'running';
   const isFinished = run.status === 'finished';
+
+  const realtime = useRunRealtime({
+    isRunning,
+    sessionId: run.sessionId,
+    position: run.position,
+  });
+  const runError = run.error || realtime.error;
 
   const handleMyClick = () => {
     navigate('/mypage');
@@ -77,12 +85,13 @@ export default function HomePage() {
           <RunningMap
             position={isIdle ? null : run.position}
             isTracking={!isIdle}
+            friendMarkers={realtime.friendMarkers}
           />
         </div>
 
         {isRunning ? (
           <div className={styles.runFooter}>
-            {run.error ? <p className={styles.runError}>{run.error}</p> : null}
+            {runError ? <p className={styles.runError}>{runError}</p> : null}
             <RunningStats
               elapsedSeconds={run.elapsedSeconds}
               distance={run.distance}

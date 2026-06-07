@@ -11,20 +11,26 @@ import styles from './RunningMap.module.css';
  * 없으면 자체 현재 위치 조회 + 권한 안내를 사용한다(idle).
  * @param {{ lat: number, lng: number } | null} [position] 외부에서 주입하는 추적 위치
  * @param {boolean} [isTracking] 러닝 추적 중 여부 (true면 권한 안내 숨김)
+ * @param {Array<{ id: number, lat: number, lng: number, title?: string }>} [friendMarkers] 친구 실시간 위치 마커
  */
-export default function RunningMap({ position: trackingPosition = null, isTracking = false }) {
+export default function RunningMap({
+  position: trackingPosition = null,
+  isTracking = false,
+  friendMarkers = [],
+}) {
   const { position: geoPosition, status, error, requestLocation } = useGeolocation();
 
   const position = trackingPosition ?? geoPosition;
   const center = position ?? DEFAULT_CENTER;
 
   const markers = useMemo(() => {
-    if (!position) {
-      return [];
+    const list = [...friendMarkers];
+    if (position) {
+      list.unshift({ id: 'me', lat: position.lat, lng: position.lng, title: '내 위치' });
     }
 
-    return [{ id: 'me', lat: position.lat, lng: position.lng, title: '내 위치' }];
-  }, [position]);
+    return list;
+  }, [position, friendMarkers]);
 
   const showGuide =
     !isTracking &&
