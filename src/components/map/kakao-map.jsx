@@ -2,7 +2,49 @@ import { useEffect, useRef } from 'react';
 
 import { useKakaoLoader } from '../../hooks/use-kakao-loader';
 
+import defaultAvatar from '../../assets/runner-man.png';
 import styles from './kakao-map.module.css';
+
+const MARKER_RING_COLOR = {
+  me: '#42a5f5',
+  RUNNING: '#4caf50',
+  OFFLINE: '#9e9e9e',
+};
+
+function getRingColor(marker) {
+  if (marker.id === 'me') {
+    return MARKER_RING_COLOR.me;
+  }
+
+  return MARKER_RING_COLOR[marker.status] || MARKER_RING_COLOR.OFFLINE;
+}
+
+// CustomOverlay 에 들어갈 원형 아바타 DOM (CSS 모듈이 안 먹어 인라인 스타일 사용)
+function createMarkerElement(marker) {
+  const wrapper = document.createElement('div');
+  wrapper.title = marker.title || '';
+  wrapper.style.cssText = [
+    'width:44px',
+    'height:44px',
+    'border-radius:50%',
+    `border:3px solid ${getRingColor(marker)}`,
+    'background:#fff',
+    'box-shadow:0 2px 8px rgba(0,0,0,0.25)',
+    'overflow:hidden',
+  ].join(';');
+
+  const img = document.createElement('img');
+  img.src = marker.profileImage || defaultAvatar;
+  img.alt = marker.title || '';
+  img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+  img.onerror = () => {
+    img.onerror = null;
+    img.src = defaultAvatar;
+  };
+
+  wrapper.appendChild(img);
+  return wrapper;
+}
 
 /**
  * props 로 받은 좌표에 카카오 지도를 그리는 범용 컴포넌트.
@@ -20,6 +62,7 @@ export default function KakaoMap({
   const sdkStatus = useKakaoLoader();
   const containerRef = useRef(null);
   const mapRef = useRef(null);
+  const overlaysRef = useRef(new Map());
 
   // SDK 준비되면 지도 1회 생성
   useEffect(() => {
@@ -53,24 +96,61 @@ export default function KakaoMap({
     mapRef.current.setLevel(level);
   }, [level]);
 
-  // markers 변경/언마운트 시 마커 그리고 정리
+  // markers 변경 시 id 기준으로 갱신 (전체 재생성 방지 → 깜빡임/성능 개선)
   useEffect(() => {
     if (sdkStatus !== 'ready' || !mapRef.current) {
-      return undefined;
+      return;
     }
 
     const { kakao } = window;
-    const created = markers.map((marker) => {
-      const kakaoMarker = new kakao.maps.Marker({
-        position: new kakao.maps.LatLng(marker.lat, marker.lng),
-        title: marker.title,
-      });
-      kakaoMarker.setMap(mapRef.current);
-      return kakaoMarker;
+    const overlays = overlaysRef.current;
+    const seen = new Set();
+
+    markers.forEach((marker) => {
+      seen.add(marker.id);
+      const position = new kakao.maps.LatLng(marker.lat, marker.lng);
+      const existing = overlays.get(marker.id);
+
+      if (existing) {
+        existing.overlay.setPosition(position);
+        // 상태/프로필/이름이 바뀐 경우에만 내용 교체
+        if (
+          existing.data.status !== marker.status ||
+          existing.data.profileImage !== marker.profileImage ||
+          existing.data.title !== marker.title
+        ) {
+          existing.overlay.setContent(createMarkerElement(marker));
+        }
+        existing.data = marker;
+      } else {
+        const overlay = new kakao.maps.CustomOverlay({
+          position,
+          content: createMarkerElement(marker),
+          xAnchor: 0.5,
+          yAnchor: 0.5,
+        });
+        overlay.setMap(mapRef.current);
+        overlays.set(marker.id, { overlay, data: marker });
+      }
     });
 
-    return () => created.forEach((marker) => marker.setMap(null));
+    // 더 이상 없는 마커 제거
+    overlays.forEach((value, id) => {
+      if (!seen.has(id)) {
+        value.overlay.setMap(null);
+        overlays.delete(id);
+      }
+    });
   }, [sdkStatus, markers]);
+
+  // 언마운트 시 오버레이 전부 정리
+  useEffect(
+    () => () => {
+      overlaysRef.current.forEach((value) => value.overlay.setMap(null));
+      overlaysRef.current.clear();
+    },
+    [],
+  );
 
   if (sdkStatus === 'error') {
     return (
