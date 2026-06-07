@@ -23,14 +23,16 @@ export default function RunningMap({
   const position = trackingPosition ?? geoPosition;
   const center = position ?? DEFAULT_CENTER;
 
+  const lat = position?.lat;
+  const lng = position?.lng;
   const markers = useMemo(() => {
     const list = [...friendMarkers];
-    if (position) {
-      list.unshift({ id: 'me', lat: position.lat, lng: position.lng, title: '내 위치' });
+    if (lat != null && lng != null) {
+      list.unshift({ id: 'me', lat, lng, title: '내 위치' });
     }
 
     return list;
-  }, [position, friendMarkers]);
+  }, [lat, lng, friendMarkers]);
 
   const showGuide =
     !isTracking &&

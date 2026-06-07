@@ -85,7 +85,10 @@ export function useRunRealtime({ isRunning, sessionId, position }) {
 
       const locationSub = subscribe(`/topic/location/${id}`, (payload) => {
         const data = payload?.data;
-        if (data) {
+        if (
+          typeof data?.latitude === 'number' &&
+          typeof data?.longitude === 'number'
+        ) {
           setLocations((prev) => ({
             ...prev,
             [id]: { lat: data.latitude, lng: data.longitude },
@@ -119,9 +122,11 @@ export function useRunRealtime({ isRunning, sessionId, position }) {
     };
   }, [connected, friends, subscribe]);
 
-  // 3) 내 위치 발행
+  // 3) 내 위치 발행 (좌표 원시값으로 의존 → 불필요 발행 방지)
+  const lat = position?.lat;
+  const lng = position?.lng;
   useEffect(() => {
-    if (!connected || !position) {
+    if (!connected || lat == null || lng == null) {
       return;
     }
 
@@ -129,27 +134,26 @@ export function useRunRealtime({ isRunning, sessionId, position }) {
       type: 'LOCATION_UPDATE',
       data: {
         sessionId,
-        latitude: position.lat,
-        longitude: position.lng,
+        latitude: lat,
+        longitude: lng,
       },
     });
-  }, [connected, position, sessionId, publish]);
+  }, [connected, lat, lng, sessionId, publish]);
 
   // 4) 위치가 들어온 친구만 마커로
   const friendMarkers = useMemo(
     () =>
       friends
-        .filter(
-          (friend) =>
-            locations[friend.friendUserId] &&
-            statuses[friend.friendUserId] !== 'OFFLINE',
-        )
+        .filter((friend) => {
+          const status = statuses[friend.friendUserId] ?? friend.activityStatus;
+          return locations[friend.friendUserId] && status !== 'OFFLINE';
+        })
         .map((friend) => ({
           id: friend.friendUserId,
           lat: locations[friend.friendUserId].lat,
           lng: locations[friend.friendUserId].lng,
           title: friend.nickname,
-          status: statuses[friend.friendUserId],
+          status: statuses[friend.friendUserId] ?? friend.activityStatus,
           profileImage: friend.profileImage,
         })),
     [friends, locations, statuses],

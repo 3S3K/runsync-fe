@@ -55,6 +55,10 @@ export function useStomp(enabled) {
     }
 
     return client.subscribe(destination, (message) => {
+      if (!message || !message.body) {
+        return;
+      }
+
       let payload = message.body;
       try {
         payload = JSON.parse(message.body);
