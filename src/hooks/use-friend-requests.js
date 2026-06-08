@@ -29,20 +29,16 @@ export function useFriendRequests() {
 
   const load = useCallback(async () => {
     setStatus('loading');
-    const [receivedResult, sentResult] = await Promise.allSettled([
-      getReceivedRequests(),
-      getSentRequests(),
-    ]);
-
-    if (sentResult.status === 'fulfilled') {
-      setSent(sentResult.value);
-    }
-
-    if (receivedResult.status === 'fulfilled') {
-      setReceived(receivedResult.value);
+    try {
+      const [receivedList, sentList] = await Promise.all([
+        getReceivedRequests(),
+        getSentRequests(),
+      ]);
+      setReceived(receivedList);
+      setSent(sentList);
       setError(null);
       setStatus('success');
-    } else {
+    } catch {
       setError('친구 요청을 불러오지 못했어요.');
       setStatus('error');
     }
