@@ -1,28 +1,73 @@
 .button {
-  width: 100%;
-  height: auto;
-  border: none;
-  background: transparent;
-  padding: 0;
+  position: static;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: none;
+  width: 90%;
+  max-width: 390px;
+  height: 64px;
+  margin: 0;
+  padding: 0 28px;
+  border: none;
+  border-radius: 26px;
+  background: #fee500;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
-.image {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
-
 .button:active {
-  transform: none;
+  transform: scale(0.99);
 }
 
 .button:focus-visible {
   outline: 3px solid rgba(255, 90, 31, 0.35);
   outline-offset: 3px;
+}
+
+.inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.iconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  color: #1a1a1a;
+}
+
+.kakaoIcon {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+
+.label {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.45px;
+  line-height: 1;
+}
+
+@media (max-width: 390px) {
+  .button {
+    width: 88%;
+    height: 60px;
+  }
+
+  .label {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 431px) {
+  .button {
+    max-width: 380px;
+  }
 }

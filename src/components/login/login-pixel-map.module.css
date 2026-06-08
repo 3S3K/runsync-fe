@@ -1,0 +1,68 @@
+.mapWrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+}
+
+.mapSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.courseKmText {
+  fill: #7a4528;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.courseNameText {
+  fill: #7a4528;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.runnerMale {
+  position: absolute;
+  top: 4%;
+  right: 4%;
+  width: clamp(52px, 16vw, 68px);
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.08));
+}
+
+.runnerFemale {
+  position: absolute;
+  bottom: 2%;
+  left: 2%;
+  width: clamp(52px, 16vw, 68px);
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.08));
+}
+
+.sparkleOne,
+.sparkleTwo {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background:
+    linear-gradient(#ffd84d 0 0) center/2px 8px no-repeat,
+    linear-gradient(90deg, #ffd84d 0 0) center/8px 2px no-repeat;
+  opacity: 0.9;
+}
+
+.sparkleOne {
+  top: 8%;
+  right: 22%;
+}
+
+.sparkleTwo {
+  top: 12%;
+  right: 18%;
+  transform: scale(0.8);
+}

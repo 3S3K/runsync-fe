@@ -6,7 +6,8 @@ import FriendsPage from "./pages/friends-page/friends-page";
 import FriendRequestsPage from "./pages/friend-requests-page/friend-requests-page";
 import HomePage from "./pages/HomePage/HomePage";
 import Mypage from "./pages/mypage/mypage";
-import { getAccessToken, setAccessToken } from "./utils/tokens";
+import RunningRecordPage from "./pages/running-record/running-record-page";
+import { AUTH_CLEARED_EVENT, getAccessToken, setAccessToken } from "./utils/tokens";
 import { refreshAccessToken } from "./api/auth";
 import SearchPage from './pages/search-page/search-page';
 
@@ -27,22 +28,40 @@ function App() {
         return;
       }
 
-      const { accessToken } = await refreshAccessToken();
-      if (cancelled) {
-        return;
-      }
+      try {
+        const { accessToken } = await refreshAccessToken();
+        if (cancelled) {
+          return;
+        }
 
-      if (accessToken) {
-        setAccessToken(accessToken);
-        setIsAuthed(true);
+        if (accessToken) {
+          setAccessToken(accessToken);
+          setIsAuthed(true);
+        }
+      } catch {
+        // API unavailable — stay unauthenticated
+      } finally {
+        if (!cancelled) {
+          setIsBootstrapping(false);
+        }
       }
-      setIsBootstrapping(false);
     };
 
     void bootstrap();
 
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleAuthCleared = () => {
+      setIsAuthed(false);
+    };
+
+    window.addEventListener(AUTH_CLEARED_EVENT, handleAuthCleared);
+    return () => {
+      window.removeEventListener(AUTH_CLEARED_EVENT, handleAuthCleared);
     };
   }, []);
 
@@ -55,6 +74,10 @@ function App() {
       <Routes>
         <Route
           path="/"
+          element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />}
+        />
+        <Route
+          path="/login"
           element={isAuthed ? <Navigate to="/home" replace /> : <LoginPage />}
         />
         <Route
@@ -72,6 +95,10 @@ function App() {
         <Route
           path="/mypage"
           element={isAuthed ? <Mypage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/running-record/:id"
+          element={isAuthed ? <RunningRecordPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/search"

@@ -41,32 +41,36 @@ export async function exchangeKakaoCode({ code, redirectUri }) {
 }
 
 export async function refreshAccessToken() {
-  const res = await fetch(`${API_BASE_URL}/api/auth/reissue`, {
-    method: "POST",
-    credentials: "include",
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/auth/reissue`, {
+      method: "POST",
+      credentials: "include",
+    });
 
-  if (!res.ok) {
+    if (!res.ok) {
+      return { accessToken: "" };
+    }
+
+    const authHeader =
+      res.headers.get("authorization") || res.headers.get("Authorization") || "";
+    const xAccessToken =
+      res.headers.get("x-access-token") ||
+      res.headers.get("X-Access-Token") ||
+      "";
+    const bearer = authHeader.startsWith("Bearer ")
+      ? authHeader.slice("Bearer ".length)
+      : authHeader;
+    const accessTokenFromHeader = bearer || xAccessToken;
+
+    if (accessTokenFromHeader) return { accessToken: accessTokenFromHeader };
+
+    const contentType = res.headers.get("content-type") || "";
+    const isJson = contentType.includes("application/json");
+    const body = isJson ? await res.json().catch(() => null) : null;
+    const accessTokenFromBody =
+      body?.accessToken || body?.access || body?.data?.accessToken || "";
+    return { accessToken: accessTokenFromBody };
+  } catch {
     return { accessToken: "" };
   }
-
-  const authHeader =
-    res.headers.get("authorization") || res.headers.get("Authorization") || "";
-  const xAccessToken =
-    res.headers.get("x-access-token") ||
-    res.headers.get("X-Access-Token") ||
-    "";
-  const bearer = authHeader.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length)
-    : authHeader;
-  const accessTokenFromHeader = bearer || xAccessToken;
-
-  if (accessTokenFromHeader) return { accessToken: accessTokenFromHeader };
-
-  const contentType = res.headers.get("content-type") || "";
-  const isJson = contentType.includes("application/json");
-  const body = isJson ? await res.json().catch(() => null) : null;
-  const accessTokenFromBody =
-    body?.accessToken || body?.access || body?.data?.accessToken || "";
-  return { accessToken: accessTokenFromBody };
 }

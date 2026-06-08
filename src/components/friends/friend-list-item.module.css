@@ -33,6 +33,18 @@
   object-fit: cover;
 }
 
+.avatarFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 18px;
+  font-weight: 800;
+  color: #243b55;
+  background: #e8edf2;
+}
+
 .body {
   flex: 1;
   min-width: 0;
