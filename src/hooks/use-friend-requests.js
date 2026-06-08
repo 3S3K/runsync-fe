@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   acceptFriendRequest,
   getReceivedRequests,
+  getSentRequests,
   rejectFriendRequest,
 } from '../api/friend';
 
@@ -20,6 +21,7 @@ import {
  */
 export function useFriendRequests() {
   const [received, setReceived] = useState([]);
+  const [sent, setSent] = useState([]);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState(null);
   const [processingIds, setProcessingIds] = useState([]);
@@ -27,13 +29,21 @@ export function useFriendRequests() {
 
   const load = useCallback(async () => {
     setStatus('loading');
-    try {
-      const list = await getReceivedRequests();
-      setReceived(list);
+    const [receivedResult, sentResult] = await Promise.allSettled([
+      getReceivedRequests(),
+      getSentRequests(),
+    ]);
+
+    if (sentResult.status === 'fulfilled') {
+      setSent(sentResult.value);
+    }
+
+    if (receivedResult.status === 'fulfilled') {
+      setReceived(receivedResult.value);
       setError(null);
       setStatus('success');
-    } catch {
-      setError('받은 요청을 불러오지 못했어요.');
+    } else {
+      setError('친구 요청을 불러오지 못했어요.');
       setStatus('error');
     }
   }, []);
@@ -65,5 +75,5 @@ export function useFriendRequests() {
   const accept = useCallback((requestId) => respond(requestId, 'accept'), [respond]);
   const reject = useCallback((requestId) => respond(requestId, 'reject'), [respond]);
 
-  return { received, status, error, processingIds, accept, reject, reload: load };
+  return { received, sent, status, error, processingIds, accept, reject, reload: load };
 }

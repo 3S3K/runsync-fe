@@ -6,6 +6,7 @@ export default function FriendsListPanel({
   friends,
   onAddFriend,
   onRemoveFriend,
+  onViewRequests,
 }) {
   return (
     <section
@@ -14,13 +15,24 @@ export default function FriendsListPanel({
     >
       <div className={styles.header}>
         <h2 className={styles.title}>나의 친구 목록</h2>
-        <button
-          type="button"
-          className={styles.addButton}
-          onClick={onAddFriend}
-        >
-          + 친구 추가
-        </button>
+        <div className={styles.headerActions}>
+          {onViewRequests ? (
+            <button
+              type="button"
+              className={styles.requestsButton}
+              onClick={onViewRequests}
+            >
+              받은 요청
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className={styles.addButton}
+            onClick={onAddFriend}
+          >
+            + 친구 추가
+          </button>
+        </div>
       </div>
 
       <ul className={styles.list}>
