@@ -1,23 +1,47 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import FriendsListPanel from '../../components/friends/friends-list-panel';
 import FriendButton from '../../components/home/FriendButton';
 import RunningMap from '../../components/home/RunningMap';
 import StatusBadge from '../../components/home/StatusBadge';
-import { currentUser, friends } from '../../data/friends';
+import { useFriends } from '../../hooks/use-friends';
+import { getFriendStatusLabel, toFriendStatus } from '../../utils/friend-status';
 
 import styles from './friends-page.module.css';
 
 export default function FriendsPage() {
   const navigate = useNavigate();
-  const [isFriendsOpen] = useState(true);
+  const { me, friends, status, error, removeFriend } = useFriends();
 
-  const handleFriendsClick = () => {
-    navigate('/home');
+  const currentUser = me
+    ? {
+        id: me.id,
+        name: me.nickname,
+        status: 'me',
+        statusLabel: '나',
+        avatarSrc: me.profileImage,
+      }
+    : null;
+
+  const friendItems = friends.map((friend) => ({
+    id: friend.friendUserId,
+    name: friend.nickname,
+    status: toFriendStatus(friend.activityStatus),
+    statusLabel: getFriendStatusLabel(friend.activityStatus),
+    avatarSrc: friend.profileImage,
+  }));
+
+  const handleRemoveFriend = async (friendUserId) => {
+    if (!window.confirm('친구를 삭제할까요?')) {
+      return;
+    }
+
+    try {
+      await removeFriend(friendUserId);
+    } catch {
+      // 삭제 실패 안내는 추후 토스트로 보강
+    }
   };
-
-  const handleAddFriend = () => {};
 
   return (
     <main className={styles.page}>
@@ -36,16 +60,28 @@ export default function FriendsPage() {
               >
                 MY
               </button>
-              <FriendButton onClick={handleFriendsClick} />
+              <FriendButton onClick={() => navigate('/home')} />
             </div>
           </header>
-          <RunningMap compact={isFriendsOpen} />
+          <RunningMap />
         </div>
-        <FriendsListPanel
-          currentUser={currentUser}
-          friends={friends}
-          onAddFriend={handleAddFriend}
-        />
+
+        {status === 'loading' ? (
+          <div className={styles.stateMessage}>친구 목록을 불러오는 중...</div>
+        ) : null}
+
+        {status === 'error' ? (
+          <div className={styles.stateMessage}>{error}</div>
+        ) : null}
+
+        {status === 'success' ? (
+          <FriendsListPanel
+            currentUser={currentUser}
+            friends={friendItems}
+            onAddFriend={() => navigate('/search')}
+            onRemoveFriend={handleRemoveFriend}
+          />
+        ) : null}
       </div>
     </main>
   );

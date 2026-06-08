@@ -70,6 +70,13 @@
   cursor: pointer;
 }
 
+.stateMessage {
+  padding: 32px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
 @media (min-width: 481px) {
   .shell {
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
