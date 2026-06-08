@@ -14,3 +14,12 @@ export async function getFriends() {
   const body = await apiFetch('/api/friends');
   return body?.data ?? [];
 }
+
+/**
+ * 친구 삭제. (로그인 필요)
+ * @param {number} friendUserId
+ * @returns {Promise<void>}
+ */
+export async function deleteFriend(friendUserId) {
+  await apiFetch(`/api/friends/${friendUserId}`, { method: 'DELETE' });
+}

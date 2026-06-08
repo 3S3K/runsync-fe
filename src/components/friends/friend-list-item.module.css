@@ -99,3 +99,19 @@
   color: rgba(0, 0, 0, 0.45);
   white-space: nowrap;
 }
+
+.deleteButton {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.deleteButton:active {
+  background: #f3f4f6;
+}

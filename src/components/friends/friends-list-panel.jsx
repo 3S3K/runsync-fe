@@ -5,6 +5,7 @@ export default function FriendsListPanel({
   currentUser,
   friends,
   onAddFriend,
+  onRemoveFriend,
 }) {
   return (
     <section
@@ -23,23 +24,24 @@ export default function FriendsListPanel({
       </div>
 
       <ul className={styles.list}>
-        <FriendListItem
-          key={currentUser.id}
-          name={currentUser.name}
-          handle={currentUser.handle}
-          status={currentUser.status}
-          statusLabel={currentUser.statusLabel}
-          avatarSrc={currentUser.avatarSrc}
-          isCurrentUser
-        />
+        {currentUser ? (
+          <FriendListItem
+            key={currentUser.id}
+            name={currentUser.name}
+            status={currentUser.status}
+            statusLabel={currentUser.statusLabel}
+            avatarSrc={currentUser.avatarSrc}
+            isCurrentUser
+          />
+        ) : null}
         {friends.map((friend) => (
           <FriendListItem
             key={friend.id}
             name={friend.name}
-            handle={friend.handle}
             status={friend.status}
             statusLabel={friend.statusLabel}
             avatarSrc={friend.avatarSrc}
+            onDelete={() => onRemoveFriend(friend.id)}
           />
         ))}
       </ul>
