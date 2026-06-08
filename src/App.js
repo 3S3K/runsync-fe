@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import KakaoCallbackPage from "./pages/KakaoCallbackPage/KakaoCallbackPage";
 import FriendsPage from "./pages/friends-page/friends-page";
+import FriendRequestsPage from "./pages/friend-requests-page/friend-requests-page";
 import HomePage from "./pages/HomePage/HomePage";
 import Mypage from "./pages/mypage/mypage";
 import RunningRecordPage from "./pages/running-record/running-record-page";
@@ -75,6 +76,10 @@ function App() {
         <Route
           path="/friends"
           element={isAuthed ? <FriendsPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/friends/requests"
+          element={isAuthed ? <FriendRequestsPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/mypage"
