@@ -39,7 +39,7 @@ export default function FriendsPage() {
     try {
       await removeFriend(friendUserId);
     } catch {
-      // 삭제 실패 안내는 추후 토스트로 보강
+      window.alert('친구 삭제에 실패했어요. 잠시 후 다시 시도해 주세요.');
     }
   };
 

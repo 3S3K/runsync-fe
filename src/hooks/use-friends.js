@@ -25,20 +25,19 @@ export function useFriends() {
 
     const [meResult, friendsResult] = await Promise.allSettled([getMe(), getFriends()]);
 
+    // 내 정보 실패는 허용 ("나" 행만 비움)
     if (meResult.status === 'fulfilled') {
       setMe(meResult.value);
     }
+
+    // 친구 목록은 핵심이라 실패하면 에러 (빈 목록 ≠ 로드 실패)
     if (friendsResult.status === 'fulfilled') {
       setFriends(friendsResult.value);
-    }
-
-    // 둘 다 실패할 때만 에러 (하나만 성공해도 화면은 표시)
-    if (meResult.status === 'rejected' && friendsResult.status === 'rejected') {
-      setError('친구 목록을 불러오지 못했어요.');
-      setStatus('error');
-    } else {
       setError(null);
       setStatus('success');
+    } else {
+      setError('친구 목록을 불러오지 못했어요.');
+      setStatus('error');
     }
   }, []);
 
