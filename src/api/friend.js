@@ -23,3 +23,16 @@ export async function getFriends() {
 export async function deleteFriend(friendUserId) {
   await apiFetch(`/api/friends/${friendUserId}`, { method: 'DELETE' });
 }
+
+/**
+ * 친구 요청 보내기. (로그인 필요)
+ * @param {number} receiverId 요청 받을 사용자 ID
+ * @returns {Promise<{ requestId: number, status: string }>}
+ */
+export async function sendFriendRequest(receiverId) {
+  const body = await apiFetch('/api/friends/requests', {
+    method: 'POST',
+    body: JSON.stringify({ receiverId }),
+  });
+  return body?.data;
+}
