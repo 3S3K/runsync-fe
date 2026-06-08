@@ -24,9 +24,11 @@ export function useUserSearch() {
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState(null);
   const [requestingIds, setRequestingIds] = useState([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const searchSeqRef = useRef(0); // 마지막 검색만 반영 (race 방지)
   const inFlightRef = useRef(new Set()); // 요청 중복 전송 방지
+  const loadingMoreRef = useRef(false); // 더보기 중복 호출 방지
 
   const search = useCallback(async (nickname) => {
     const trimmed = nickname.trim();
@@ -59,10 +61,12 @@ export function useUserSearch() {
   }, []);
 
   const loadMore = useCallback(async () => {
-    if (!hasNext || !keyword) {
+    if (!hasNext || !keyword || loadingMoreRef.current) {
       return;
     }
 
+    loadingMoreRef.current = true;
+    setIsLoadingMore(true);
     const seq = searchSeqRef.current;
     try {
       const data = await searchUsers(keyword, { cursor: nextCursor });
@@ -74,6 +78,9 @@ export function useUserSearch() {
       setNextCursor(data?.nextCursor ?? null);
     } catch {
       // 추가 로드 실패는 무시 (다시 시도 가능)
+    } finally {
+      loadingMoreRef.current = false;
+      setIsLoadingMore(false);
     }
   }, [hasNext, keyword, nextCursor]);
 
@@ -95,5 +102,15 @@ export function useUserSearch() {
     }
   }, []);
 
-  return { users, status, error, hasNext, requestingIds, search, loadMore, requestFriend };
+  return {
+    users,
+    status,
+    error,
+    hasNext,
+    requestingIds,
+    isLoadingMore,
+    search,
+    loadMore,
+    requestFriend,
+  };
 }

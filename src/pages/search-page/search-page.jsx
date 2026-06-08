@@ -21,6 +21,7 @@ export default function SearchPage() {
     error,
     hasNext,
     requestingIds,
+    isLoadingMore,
     search,
     loadMore,
     requestFriend,
@@ -100,8 +101,9 @@ export default function SearchPage() {
                     type="button"
                     className={styles.moreButton}
                     onClick={loadMore}
+                    disabled={isLoadingMore}
                   >
-                    더 보기
+                    {isLoadingMore ? '로딩 중...' : '더 보기'}
                   </button>
                 ) : null}
               </>
