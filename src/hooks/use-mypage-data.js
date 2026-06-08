@@ -71,6 +71,12 @@ export function useMypageData() {
       setIsUsingMockData(true);
     };
 
+    const applyEmptyFallback = () => {
+      clearCachedUserRecords();
+      setData(getEmptyMypageData());
+      setIsUsingMockData(false);
+    };
+
     const loadMypageData = async () => {
       setIsLoading(true);
 
@@ -87,7 +93,7 @@ export function useMypageData() {
         const fetchPromise = fetchMypageUserApisOnce();
 
         if (!fetchPromise) {
-          applyMockFallback();
+          applyEmptyFallback();
           setIsLoading(false);
           return;
         }
@@ -137,12 +143,12 @@ export function useMypageData() {
           ));
           setIsUsingMockData(false);
         } else {
-          applyMockFallback();
+          applyEmptyFallback();
         }
       } catch (error) {
         console.error('[useMypageData] loadMypageData failed', error);
         if (isMounted) {
-          applyMockFallback();
+          applyEmptyFallback();
         }
       } finally {
         if (isMounted) {
