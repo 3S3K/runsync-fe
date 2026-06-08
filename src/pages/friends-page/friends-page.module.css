@@ -24,10 +24,6 @@
   flex-direction: column;
 }
 
-.mapSectionCompact {
-  /* alias for shared layout */
-}
-
 .header {
   position: absolute;
   top: 0;

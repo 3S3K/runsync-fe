@@ -1,28 +1,33 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import FriendsListPanel from '../../components/friends/friends-list-panel';
 import FriendButton from '../../components/home/FriendButton';
 import RunningMap from '../../components/home/RunningMap';
 import StatusBadge from '../../components/home/StatusBadge';
-import { currentUser, friends } from '../../data/friends';
+import { useFriendsList } from '../../hooks/use-friends-list';
 
 import styles from './friends-page.module.css';
 
 export default function FriendsPage() {
   const navigate = useNavigate();
-  const [isFriendsOpen] = useState(true);
+  const { currentUser, friends } = useFriendsList();
 
   const handleFriendsClick = () => {
     navigate('/home');
   };
 
-  const handleAddFriend = () => {};
+  const handleMyClick = () => {
+    navigate('/mypage');
+  };
+
+  const handleAddFriend = () => {
+    navigate('/search');
+  };
 
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
-        <div className={`${styles.mapSection} ${styles.mapSectionCompact}`}>
+        <div className={styles.mapSection}>
           <header className={styles.header}>
             <StatusBadge
               temperature="18°"
@@ -32,15 +37,16 @@ export default function FriendsPage() {
               <button
                 type="button"
                 className={styles.myButton}
-                onClick={() => navigate('/mypage')}
+                onClick={handleMyClick}
               >
                 MY
               </button>
               <FriendButton onClick={handleFriendsClick} />
             </div>
           </header>
-          <RunningMap compact={isFriendsOpen} />
+          <RunningMap />
         </div>
+
         <FriendsListPanel
           currentUser={currentUser}
           friends={friends}

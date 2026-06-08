@@ -7,32 +7,44 @@
   overflow: hidden;
 }
 
-.grid {
+.mapCanvas {
   position: absolute;
   inset: 0;
-  background-color: #ebebeb;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.9) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.9) 2px, transparent 2px),
-    linear-gradient(rgba(255, 255, 255, 0.55) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.55) 1px, transparent 1px);
-  background-size:
-    120px 120px,
-    120px 120px,
-    40px 40px,
-    40px 40px;
 }
 
-.label {
+.guide {
   position: absolute;
-  z-index: 0;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  color: rgba(0, 0, 0, 0.18);
-  text-transform: uppercase;
-  pointer-events: none;
-  user-select: none;
+  left: 50%;
+  bottom: 24px;
+  z-index: 2;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 80%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.guideText {
+  margin: 0;
+  font-size: 13px;
+  color: #374151;
+}
+
+.guideButton {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #243b55;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .marker {

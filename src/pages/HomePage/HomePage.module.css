@@ -55,6 +55,29 @@
   gap: 10px;
 }
 
+.myButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #243b55;
+  box-shadow: 0 4px 16px rgba(36, 59, 85, 0.35);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #fff;
+  cursor: pointer;
+}
+
+.myButton:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
+}
+
 .footer {
   flex-shrink: 0;
   padding: 16px 20px max(20px, env(safe-area-inset-bottom));
@@ -75,6 +98,27 @@
 
 .footer > * {
   pointer-events: auto;
+}
+
+.runFooter {
+  flex-shrink: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 20px 20px max(20px, env(safe-area-inset-bottom));
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.runError {
+  margin: 0;
+  font-size: 13px;
+  color: #dc2626;
+  text-align: center;
 }
 
 @media (min-width: 481px) {

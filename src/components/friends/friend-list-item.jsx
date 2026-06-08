@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { getAvatarBorderClassName, getDotClassName } from '../../utils/run-status';
 
 import styles from './friend-list-item.module.css';
@@ -10,20 +12,29 @@ export default function FriendListItem({
   avatarSrc,
   isCurrentUser = false,
 }) {
+  const [imageError, setImageError] = useState(false);
   const avatarWrapClassName = `${styles.avatarWrap} ${getAvatarBorderClassName(status)}`;
   const dotClassName = `${styles.dot} ${getDotClassName(status)}`;
   const itemClassName = isCurrentUser
     ? `${styles.item} ${styles.itemMe}`
     : styles.item;
+  const showImage = avatarSrc && !imageError;
 
   return (
     <li className={itemClassName}>
       <div className={avatarWrapClassName}>
-        <img
-          className={styles.avatar}
-          src={avatarSrc}
-          alt={name}
-        />
+        {showImage ? (
+          <img
+            className={styles.avatar}
+            src={avatarSrc}
+            alt={name}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <span className={styles.avatarFallback}>
+            {name?.charAt(0) || '?'}
+          </span>
+        )}
       </div>
       <div className={styles.body}>
         <div className={styles.nameRow}>

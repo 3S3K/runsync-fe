@@ -1,53 +1,70 @@
-import { currentUser, friends } from '../../data/friends';
-import { isVisibleOnMap, toMapMarker } from '../../utils/run-status';
+import { useMemo } from 'react';
 
-import MapMarker from './map-marker';
+import { useGeolocation } from '../../hooks/use-geolocation';
+import { DEFAULT_CENTER } from '../../utils/geolocation';
+import KakaoMap from '../map/kakao-map';
+
 import styles from './RunningMap.module.css';
 
-const MAP_LABELS = [
-  { id: 'union', text: 'UNION', top: '28%', left: '18%' },
-  { id: 'street', text: 'STREET', top: '42%', left: '52%' },
-  { id: 'friend', text: 'FRIEND', top: '58%', left: '72%' },
-];
+/**
+ * 홈/러닝 지도. position 을 받으면 그 위치를 따라가고(러닝 중),
+ * 없으면 자체 현재 위치 조회 + 권한 안내를 사용한다(idle).
+ * @param {{ lat: number, lng: number } | null} [position] 외부에서 주입하는 추적 위치
+ * @param {boolean} [isTracking] 러닝 추적 중 여부 (true면 권한 안내 숨김)
+ * @param {Array<{ id: number, lat: number, lng: number, title?: string }>} [friendMarkers] 친구 실시간 위치 마커
+ */
+export default function RunningMap({
+  position: trackingPosition = null,
+  isTracking = false,
+  friendMarkers = [],
+}) {
+  const { position: geoPosition, status, error, requestLocation } = useGeolocation();
 
-export default function RunningMap({ compact = false }) {
-  const peopleOnMap = compact
-    ? [currentUser]
-    : [currentUser, ...friends].filter((person) => isVisibleOnMap(person.status));
+  const position = trackingPosition ?? geoPosition;
+  const center = position ?? DEFAULT_CENTER;
 
-  const markers = peopleOnMap.map(toMapMarker);
+  const lat = position?.lat;
+  const lng = position?.lng;
+  const markers = useMemo(() => {
+    const list = [...friendMarkers];
+    if (lat != null && lng != null) {
+      list.unshift({ id: 'me', lat, lng, title: '내 위치' });
+    }
+
+    return list;
+  }, [lat, lng, friendMarkers]);
+
+  const showGuide =
+    !isTracking &&
+    (status === 'denied' || status === 'error' || status === 'unsupported');
 
   return (
     <div
       className={styles.map}
       aria-label="지도 영역"
-      role="img"
     >
-      <div
-        className={styles.grid}
-        aria-hidden="true"
+      <KakaoMap
+        center={center}
+        markers={markers}
+        className={styles.mapCanvas}
       />
-      {MAP_LABELS.map((label) => (
-        <span
-          key={label.id}
-          className={styles.label}
-          style={{ top: label.top, left: label.left }}
-          aria-hidden="true"
+      {showGuide ? (
+        <div
+          className={styles.guide}
+          role="status"
         >
-          {label.text}
-        </span>
-      ))}
-      {markers.map((marker) => (
-        <MapMarker
-          key={marker.id}
-          status={marker.status}
-          top={marker.top}
-          left={marker.left}
-          initial={marker.initial}
-          imageSrc={marker.imageSrc}
-          imageAlt={marker.imageAlt}
-        />
-      ))}
+          <p className={styles.guideText}>{error}</p>
+          {status !== 'unsupported' ? (
+            <button
+              type="button"
+              className={styles.guideButton}
+              onClick={requestLocation}
+            >
+              다시 시도
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
