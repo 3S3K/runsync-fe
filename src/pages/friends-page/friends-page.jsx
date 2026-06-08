@@ -66,14 +66,6 @@ export default function FriendsPage() {
           <RunningMap />
         </div>
 
-        <button
-          type="button"
-          className={styles.requestsButton}
-          onClick={() => navigate('/friends/requests')}
-        >
-          받은 친구 요청
-        </button>
-
         {status === 'loading' ? (
           <div className={styles.stateMessage}>친구 목록을 불러오는 중...</div>
         ) : null}
@@ -88,6 +80,7 @@ export default function FriendsPage() {
             friends={friendItems}
             onAddFriend={() => navigate('/search')}
             onRemoveFriend={handleRemoveFriend}
+            onViewRequests={() => navigate('/friends/requests')}
           />
         ) : null}
       </div>

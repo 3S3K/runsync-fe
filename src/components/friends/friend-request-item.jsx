@@ -1,20 +1,7 @@
+import { formatYmd } from '../../utils/format-date';
+
 import defaultAvatar from '../../assets/runner-man.png';
 import styles from './friend-request-item.module.css';
-
-function formatDate(iso) {
-  if (!iso) {
-    return '';
-  }
-
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) {
-    return '';
-  }
-
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${date.getFullYear()}.${month}.${day}`;
-}
 
 /**
  * 받은 친구 요청 1건 + 수락/거절 버튼.
@@ -33,7 +20,7 @@ export default function FriendRequestItem({
   onAccept,
   onReject,
 }) {
-  const requestedAt = formatDate(createdAt);
+  const requestedAt = formatYmd(createdAt);
 
   return (
     <li className={styles.item}>

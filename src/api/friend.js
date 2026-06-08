@@ -53,6 +53,21 @@ export async function getReceivedRequests() {
 }
 
 /**
+ * 보낸 친구 요청 목록 조회. (로그인 필요)
+ * @returns {Promise<Array<{
+ *   requestId: number,
+ *   receiverId: number,
+ *   receiverNickname: string,
+ *   status: string,
+ *   createdAt: string,
+ * }>>}
+ */
+export async function getSentRequests() {
+  const body = await apiFetch('/api/friends/requests/sent');
+  return body?.data ?? [];
+}
+
+/**
  * 친구 요청 수락.
  * @param {number} requestId
  * @returns {Promise<void>}

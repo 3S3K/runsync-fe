@@ -24,6 +24,25 @@
   letter-spacing: -0.4px;
 }
 
+.headerActions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.requestsButton {
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  color: #243b55;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
 .addButton {
   flex-shrink: 0;
   padding: 10px 16px;
