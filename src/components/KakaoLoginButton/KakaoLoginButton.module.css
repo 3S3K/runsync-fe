@@ -1,14 +1,17 @@
 .button {
+  position: static;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 54px;
-  padding: 0 22px;
+  width: 90%;
+  max-width: 390px;
+  height: 64px;
+  margin: 0;
+  padding: 0 28px;
   border: none;
-  border-radius: 999px;
+  border-radius: 26px;
   background: #fee500;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
@@ -25,29 +28,46 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.talkIcon {
+.iconWrap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  min-width: 44px;
-  height: 26px;
-  padding: 0 7px;
-  border-radius: 999px;
-  background: #000000;
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  color: #fee500;
+  width: 28px;
+  height: 28px;
+  color: #1a1a1a;
+}
+
+.kakaoIcon {
+  display: block;
+  width: 28px;
+  height: 28px;
 }
 
 .label {
-  font-size: 15.5px;
+  font-size: 22px;
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.9);
-  letter-spacing: -0.35px;
+  color: #1a1a1a;
+  letter-spacing: -0.45px;
   line-height: 1;
+}
+
+@media (max-width: 390px) {
+  .button {
+    width: 88%;
+    height: 60px;
+  }
+
+  .label {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 431px) {
+  .button {
+    max-width: 380px;
+  }
 }

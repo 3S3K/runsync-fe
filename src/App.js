@@ -27,16 +27,23 @@ function App() {
         return;
       }
 
-      const { accessToken } = await refreshAccessToken();
-      if (cancelled) {
-        return;
-      }
+      try {
+        const { accessToken } = await refreshAccessToken();
+        if (cancelled) {
+          return;
+        }
 
-      if (accessToken) {
-        setAccessToken(accessToken);
-        setIsAuthed(true);
+        if (accessToken) {
+          setAccessToken(accessToken);
+          setIsAuthed(true);
+        }
+      } catch {
+        // API unavailable — stay unauthenticated
+      } finally {
+        if (!cancelled) {
+          setIsBootstrapping(false);
+        }
       }
-      setIsBootstrapping(false);
     };
 
     void bootstrap();

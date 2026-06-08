@@ -1,7 +1,6 @@
 import styles from './LoginPage.module.css';
 import KakaoLoginButton from '../../components/KakaoLoginButton/KakaoLoginButton';
-import LoginRunnerIcon from '../../components/login/LoginRunnerIcon';
-import gogumaCourseMap from '../../assets/login-goguma-course-soft.png';
+import onboardingHeroMap from '../../assets/login-onboarding-hero-map.png';
 import { createOauthState } from '../../utils/oauthState';
 
 export default function LoginPage() {
@@ -30,57 +29,36 @@ export default function LoginPage() {
 
   return (
     <main className={styles.root}>
-      <div className={styles.decorLayer} aria-hidden="true">
-        <span className={styles.dotGrid} />
-        <span className={styles.mintArc} />
-        <span className={`${styles.plusMark} ${styles.plusOne}`}>+</span>
-        <span className={`${styles.plusMark} ${styles.plusTwo}`}>+</span>
-        <span className={`${styles.plusMark} ${styles.plusThree}`}>+</span>
-        <span className={`${styles.cloud} ${styles.cloudOne}`} />
-        <span className={`${styles.cloud} ${styles.cloudTwo}`} />
-      </div>
+      <section className={styles.content} aria-label="RunSync 로그인">
+        <div className={styles.heroSection}>
+          <img
+            className={styles.heroImage}
+            src={onboardingHeroMap}
+            alt="8km 고구마 코스 지도 일러스트"
+          />
+          <div className={styles.heroFade} aria-hidden="true" />
+        </div>
 
-      <section className={styles.content} aria-label="런싱크 로그인">
-        <header className={styles.logoSection}>
-          <div className={styles.logoArea}>
-            <LoginRunnerIcon className={styles.logoRunnerIcon} />
+        <div className={styles.lowerPanel}>
+          <div className={styles.brandSection}>
             <h1 className={styles.brand}>RunSync</h1>
+            <p className={styles.slogan}>함께 달리고, 함께 완성하는 러닝</p>
+            <div className={styles.pageIndicator} aria-hidden="true">
+              <span className={`${styles.pageDot} ${styles.pageDotActive}`} />
+              <span className={styles.pageDot} />
+              <span className={styles.pageDot} />
+            </div>
           </div>
 
-          <div className={styles.divider} aria-hidden="true">
-            <span className={styles.dividerLine} />
-            <span className={styles.dividerDot} />
-            <span className={styles.dividerLine} />
-          </div>
-        </header>
-
-        <div className={styles.copySection}>
-          <p className={styles.tagline}>
-            친구와 함께
-            {' '}
-            <span className={styles.taglineAccent}>러닝</span>
-            을 완성하다
-          </p>
-          <p className={styles.intro}>
-            실시간 위치 공유와 GPS 아트로
-            <br />
-            더 재미있는 러닝을 시작해보세요.
-          </p>
+          <footer className={styles.actionSection}>
+            <KakaoLoginButton onClick={handleKakaoLogin} />
+            <p className={styles.terms}>
+              로그인하면 서비스 이용약관 및
+              <br />
+              개인정보 처리방침에 동의하게 됩니다.
+            </p>
+          </footer>
         </div>
-
-        <div className={styles.mapSection}>
-          <div className={styles.mapBlend}>
-            <img
-              className={styles.mapIllustration}
-              src={gogumaCourseMap}
-              alt="8km 고구마 코스 GPS 아트 지도"
-            />
-          </div>
-        </div>
-
-        <footer className={styles.footer}>
-          <KakaoLoginButton onClick={handleKakaoLogin} />
-        </footer>
       </section>
     </main>
   );
