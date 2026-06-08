@@ -1,0 +1,73 @@
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 4px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  list-style: none;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f0f0f0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nickname {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.acceptButton,
+.rejectButton {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.acceptButton {
+  border: none;
+  background: #ff5a1f;
+  color: #fff;
+}
+
+.rejectButton {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  color: #6b7280;
+}
+
+.acceptButton:disabled,
+.rejectButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

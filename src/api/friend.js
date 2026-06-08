@@ -36,3 +36,36 @@ export async function sendFriendRequest(receiverId) {
   });
   return body?.data;
 }
+
+/**
+ * 받은 친구 요청 목록 조회. (로그인 필요)
+ * @returns {Promise<Array<{
+ *   requestId: number,
+ *   senderId: number,
+ *   senderNickname: string,
+ *   status: string,
+ *   createdAt: string,
+ * }>>}
+ */
+export async function getReceivedRequests() {
+  const body = await apiFetch('/api/friends/requests/received');
+  return body?.data ?? [];
+}
+
+/**
+ * 친구 요청 수락.
+ * @param {number} requestId
+ * @returns {Promise<void>}
+ */
+export async function acceptFriendRequest(requestId) {
+  await apiFetch(`/api/friends/requests/${requestId}/accept`, { method: 'PATCH' });
+}
+
+/**
+ * 친구 요청 거절.
+ * @param {number} requestId
+ * @returns {Promise<void>}
+ */
+export async function rejectFriendRequest(requestId) {
+  await apiFetch(`/api/friends/requests/${requestId}/reject`, { method: 'PATCH' });
+}
