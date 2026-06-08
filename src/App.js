@@ -7,7 +7,7 @@ import FriendRequestsPage from "./pages/friend-requests-page/friend-requests-pag
 import HomePage from "./pages/HomePage/HomePage";
 import Mypage from "./pages/mypage/mypage";
 import RunningRecordPage from "./pages/running-record/running-record-page";
-import { getAccessToken, setAccessToken } from "./utils/tokens";
+import { AUTH_CLEARED_EVENT, getAccessToken, setAccessToken } from "./utils/tokens";
 import { refreshAccessToken } from "./api/auth";
 import SearchPage from './pages/search-page/search-page';
 
@@ -51,6 +51,17 @@ function App() {
 
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleAuthCleared = () => {
+      setIsAuthed(false);
+    };
+
+    window.addEventListener(AUTH_CLEARED_EVENT, handleAuthCleared);
+    return () => {
+      window.removeEventListener(AUTH_CLEARED_EVENT, handleAuthCleared);
     };
   }, []);
 

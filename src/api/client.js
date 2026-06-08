@@ -66,6 +66,7 @@ apiClient.interceptors.response.use(
       return new Promise((resolve, reject) => {
         refreshQueue.push({ resolve, reject });
       }).then((token) => {
+        originalRequest._retry = true;
         originalRequest.headers.Authorization = buildAuthorizationHeader(token);
         return apiClient(originalRequest);
       });

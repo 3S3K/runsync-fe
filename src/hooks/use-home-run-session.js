@@ -212,19 +212,19 @@ export function useHomeRunSession() {
       endTime: new Date(),
       totalDistance,
     });
-    console.log('finishRunSession body', finishBody);
 
     try {
       await finishRunSession(sessionId, finishBody);
     } catch (error) {
       console.error('finishRunSession failed', error.response?.data || error);
+      setIsRunning(false);
+      return;
     }
 
     const recordBody = buildRunRecordDetailPayload({
       averagePace: averagePace ?? undefined,
       calories: totalDistance > 0 ? Math.round(totalDistance * 60) : undefined,
     });
-    console.log('saveRunRecord body', recordBody);
 
     try {
       await saveRunRecordDetail(sessionId, recordBody);

@@ -1,6 +1,8 @@
 import { normalizeAccessTokenForStorage } from './access-token-header';
+import { clearActiveRunSession } from './run-session-store';
 
 const AUTH_SESSION_KEY = 'authSessionActive';
+export const AUTH_CLEARED_EVENT = 'runsync:auth-cleared';
 
 let inMemoryAccessToken = '';
 
@@ -41,4 +43,6 @@ export function clearAccessToken() {
 export function clearAuthSession() {
   clearAccessToken();
   sessionStorage.removeItem(AUTH_SESSION_KEY);
+  clearActiveRunSession();
+  window.dispatchEvent(new CustomEvent(AUTH_CLEARED_EVENT));
 }

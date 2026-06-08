@@ -8,6 +8,7 @@ import { getAccessToken } from './tokens';
 const CACHE_TTL_MS = 30_000;
 
 let inflightPromise = null;
+let inflightToken = '';
 let cachedSuccessPromise = null;
 let cachedToken = '';
 let cachedAt = 0;
@@ -18,6 +19,7 @@ function getCacheKey() {
 
 function clearMypageUserApisCacheState() {
   inflightPromise = null;
+  inflightToken = '';
   cachedSuccessPromise = null;
   cachedToken = '';
   cachedAt = 0;
@@ -58,10 +60,11 @@ export function fetchMypageUserApisOnce() {
     return cachedSuccessPromise;
   }
 
-  if (inflightPromise) {
+  if (inflightPromise && inflightToken === token) {
     return inflightPromise;
   }
 
+  inflightToken = token;
   inflightPromise = fetchMypageUserApis()
     .then((payload) => {
       if (hasApiFailure(payload)) {

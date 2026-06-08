@@ -210,8 +210,7 @@ export default function Mypage() {
           >
             프로필 정보를 불러오는 중...
           </div>
-        ) : null}
-
+        ) : (
         <div className={styles.content}>
           <section className={styles.hero}>
             <div className={styles.heroBackdrop} aria-hidden="true">
@@ -392,6 +391,7 @@ export default function Mypage() {
             )}
           </section>
         </div>
+        )}
       </div>
     </main>
   );

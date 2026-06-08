@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import {
+  getEmptyMypageData,
   getMockMypageData,
   mapMypageData,
 } from '../utils/mypage-data';
@@ -14,27 +15,17 @@ function hasAccessTokenInStorage() {
   return Boolean(getAccessToken());
 }
 
-function logUserApiSuccess(response) {
-  console.log('User API success', response?.data ?? response);
-}
-
 function processApiResults(myInfoResult, summaryResult, recordsResult) {
   if (myInfoResult.status === 'rejected') {
     console.error('[useMypageData] GET /api/users/me failed', myInfoResult.reason);
-  } else {
-    logUserApiSuccess(myInfoResult.value);
   }
 
   if (summaryResult.status === 'rejected') {
     console.error('[useMypageData] GET /api/users/me/summary failed', summaryResult.reason);
-  } else {
-    logUserApiSuccess(summaryResult.value);
   }
 
   if (recordsResult.status === 'rejected') {
     console.error('[useMypageData] GET /api/users/me/records failed', recordsResult.reason);
-  } else {
-    logUserApiSuccess(recordsResult.value);
   }
 
   const summaryResponse = summaryResult.status === 'fulfilled'
@@ -47,18 +38,29 @@ function processApiResults(myInfoResult, summaryResult, recordsResult) {
     ? myInfoResult.value
     : null;
 
+  const myInfoLoadedFromApi = myInfoResult.status === 'fulfilled';
+  const summaryLoadedFromApi = summaryResult.status === 'fulfilled';
+  const recordsLoadedFromApi = recordsResult.status === 'fulfilled';
+  const allApisSucceeded = myInfoLoadedFromApi
+    && summaryLoadedFromApi
+    && recordsLoadedFromApi;
+
   return {
     summaryResponse,
     recordsResponse,
     myInfoResponse,
+    myInfoLoadedFromApi,
+    summaryLoadedFromApi,
+    recordsLoadedFromApi,
+    allApisSucceeded,
     hasAnyApiSuccess: Boolean(summaryResponse || recordsResponse || myInfoResponse),
   };
 }
 
 export function useMypageData() {
-  const [data, setData] = useState(getMockMypageData());
+  const [data, setData] = useState(getEmptyMypageData());
   const [isLoading, setIsLoading] = useState(true);
-  const [isUsingMockData, setIsUsingMockData] = useState(true);
+  const [isUsingMockData, setIsUsingMockData] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -102,17 +104,36 @@ export function useMypageData() {
           summaryResponse,
           recordsResponse,
           myInfoResponse,
+          myInfoLoadedFromApi,
+          summaryLoadedFromApi,
+          recordsLoadedFromApi,
+          allApisSucceeded,
           hasAnyApiSuccess,
         } = processApiResults(myInfoResult, summaryResult, recordsResult);
 
-        if (hasAnyApiSuccess) {
-          const recordsLoadedFromApi = recordsResult.status === 'fulfilled';
-
+        if (allApisSucceeded) {
+          setData(mapMypageData(
+            summaryResponse,
+            recordsResponse,
+            myInfoResponse,
+            {
+              myInfoLoadedFromApi,
+              summaryLoadedFromApi,
+              recordsLoadedFromApi,
+            },
+          ));
+          setIsUsingMockData(false);
+        } else if (hasAnyApiSuccess) {
           setData(mapMypageData(
             summaryResponse ?? { data: {} },
             recordsResponse ?? { data: { records: [] } },
             myInfoResponse ?? { data: {} },
-            { recordsLoadedFromApi },
+            {
+              myInfoLoadedFromApi,
+              summaryLoadedFromApi,
+              recordsLoadedFromApi,
+              useMockFallback: false,
+            },
           ));
           setIsUsingMockData(false);
         } else {
