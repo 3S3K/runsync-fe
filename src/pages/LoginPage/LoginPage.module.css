@@ -16,7 +16,7 @@
   align-items: center;
   width: 100%;
   max-width: 400px;
-  min-height: 100dvh;
+  min-height: calc(100dvh - 40px);
   margin: 0 auto;
   overflow: hidden;
   border-radius: 28px;
@@ -91,7 +91,7 @@
 
 .brand {
   margin: 0 auto;
-  font-size: clamp(56px, 14.5vw, 64px);
+  font-size: 62px;
   font-weight: 900;
   line-height: 1;
   letter-spacing: -2.2px;
@@ -175,10 +175,6 @@
     padding: 8px 20px 32px;
   }
 
-  .brand {
-    font-size: 58px;
-  }
-
   .slogan {
     font-size: 18px;
     margin-top: 16px;
@@ -194,18 +190,10 @@
 }
 
 @media (min-width: 391px) and (max-width: 430px) {
-  .content {
-    max-width: 400px;
-  }
-
   .heroSection {
     flex: 0 0 48%;
     min-height: 380px;
     max-height: 440px;
-  }
-
-  .brand {
-    font-size: 62px;
   }
 
   .slogan {
@@ -229,10 +217,6 @@
     flex: 0 0 412px;
     min-height: 412px;
     max-height: 412px;
-  }
-
-  .brand {
-    font-size: 64px;
   }
 
   .slogan {
