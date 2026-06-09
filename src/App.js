@@ -9,6 +9,7 @@ import Mypage from "./pages/mypage/mypage";
 import RunningRecordPage from "./pages/running-record/running-record-page";
 import ArtRunsPage from "./pages/art-runs-page/art-runs-page";
 import ArtRunDetailPage from "./pages/art-run-detail-page/art-run-detail-page";
+import ArtRunCreatePage from "./pages/art-run-create-page/art-run-create-page";
 import { AUTH_CLEARED_EVENT, getAccessToken, setAccessToken } from "./utils/tokens";
 import { refreshAccessToken } from "./api/auth";
 import SearchPage from './pages/search-page/search-page';
@@ -105,6 +106,10 @@ function App() {
         <Route
           path="/art-runs"
           element={isAuthed ? <ArtRunsPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/art-runs/new"
+          element={isAuthed ? <ArtRunCreatePage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/art-runs/:id"

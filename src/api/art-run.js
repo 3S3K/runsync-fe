@@ -36,6 +36,25 @@ export async function getArtRuns({ status = 'RECRUITING', cursor, size } = {}) {
 }
 
 /**
+ * 협동 러닝 세션 생성.
+ * @param {{
+ *   title: string,
+ *   capacity: number,
+ *   meetingTime: string,
+ *   meetingPlace: { name: string, latitude: number, longitude: number },
+ *   coordinates: Array<{ latitude: number, longitude: number }>,
+ * }} payload
+ * @returns {Promise<{ sessionId: number }>}
+ */
+export async function createArtRun(payload) {
+  const body = await apiFetch('/api/art-runs', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  return body?.data;
+}
+
+/**
  * 협동 러닝 세션 상세 조회.
  * @param {number} sessionId
  * @returns {Promise<{
