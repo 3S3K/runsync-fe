@@ -6,7 +6,7 @@ import defaultAvatar from '../../assets/runner-man.png';
 import styles from './kakao-map.module.css';
 
 const MARKER_RING_COLOR = {
-  me: '#42a5f5',
+  me: '#45b85a',
   RUNNING: '#4caf50',
   OFFLINE: '#9e9e9e',
 };

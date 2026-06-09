@@ -2,7 +2,10 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 18px;
+  flex-shrink: 0;
+  max-width: calc(100% - 120px);
+  padding: 11px 16px;
+  box-sizing: border-box;
   border-radius: 999px;
   background: #0b2b45;
   box-shadow: 0 6px 18px rgba(11, 43, 69, 0.22);
