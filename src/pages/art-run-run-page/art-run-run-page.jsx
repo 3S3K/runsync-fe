@@ -15,6 +15,7 @@ export default function ArtRunRunPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { artRun, me, status } = useArtRun(id);
+  const [mapCenter, setMapCenter] = useState(null);
   const [recenterKey, setRecenterKey] = useState(0);
 
   const myUserId = me?.id ?? null;
@@ -60,19 +61,36 @@ export default function ArtRunRunPage() {
   );
   const mapPaths = useMemo(() => [designPath, ...paths], [designPath, paths]);
 
-  // 지도 중심: 내 위치 우선, 없으면 모임 장소
-  const center = useMemo(() => {
-    if (position) {
-      return position;
+  // 지도 중심은 최초 1회만 설정한다 (내 위치 우선, 없으면 모임 장소).
+  // 이후 GPS 가 갱신돼도 자동으로 중앙 이동하지 않아 자유롭게 지도를 조작할 수 있다.
+  useEffect(() => {
+    if (mapCenter) {
+      return;
     }
-    const place = artRun?.meetingPlace;
-    return place ? { lat: place.latitude, lng: place.longitude } : DEFAULT_CENTER;
-  }, [position, artRun]);
+    if (position) {
+      setMapCenter(position);
+    } else if (artRun?.meetingPlace) {
+      setMapCenter({
+        lat: artRun.meetingPlace.latitude,
+        lng: artRun.meetingPlace.longitude,
+      });
+    }
+  }, [position, artRun, mapCenter]);
+
+  const center = mapCenter || DEFAULT_CENTER;
 
   if (status === 'loading') {
     return (
       <main className={styles.page}>
         <p className={styles.stateMessage}>불러오는 중...</p>
+      </main>
+    );
+  }
+
+  if (status === 'error' || !artRun) {
+    return (
+      <main className={styles.page}>
+        <p className={styles.stateMessage}>정보를 불러오지 못했어요.</p>
       </main>
     );
   }
@@ -102,7 +120,12 @@ export default function ArtRunRunPage() {
       <button
         type="button"
         className={styles.locateButton}
-        onClick={() => setRecenterKey((key) => key + 1)}
+        onClick={() => {
+          if (position) {
+            setMapCenter({ ...position });
+            setRecenterKey((key) => key + 1);
+          }
+        }}
       >
         내 위치
       </button>

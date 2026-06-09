@@ -154,7 +154,8 @@ export function useArtRunRealtime({
   // 참가자 trail + 내 trail → KakaoMap paths
   const paths = useMemo(() => {
     const result = Object.entries(trails)
-      .filter(([, points]) => points.length >= 2)
+      // 내 userId 는 제외 (내 경로는 myTrail 로 그린다 — me 로딩 전 echo 혼입 방어)
+      .filter(([userId, points]) => Number(userId) !== myUserId && points.length >= 2)
       .map(([userId, points]) => ({
         id: `trail-${userId}`,
         points,
@@ -175,7 +176,8 @@ export function useArtRunRealtime({
   // 각 참가자 현재 위치(trail 마지막 점) + 내 위치 → 아바타 마커
   const markers = useMemo(() => {
     const result = Object.entries(trails)
-      .filter(([, points]) => points.length > 0)
+      // 내 userId 는 제외 (내 마커는 아래에서 따로 추가 — me 로딩 전 echo 혼입 방어)
+      .filter(([userId, points]) => Number(userId) !== myUserId && points.length > 0)
       .map(([userId, points]) => {
         const last = points[points.length - 1];
         const info = participantMap[userId] || {};

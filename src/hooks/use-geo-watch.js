@@ -14,6 +14,9 @@ export function useGeoWatch(active) {
 
   useEffect(() => {
     if (!active) {
+      // 추적이 꺼지면 오래된 위치/에러가 UI 에 남지 않도록 초기화
+      setPosition(null);
+      setError(null);
       return undefined;
     }
 
