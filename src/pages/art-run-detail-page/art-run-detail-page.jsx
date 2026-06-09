@@ -219,10 +219,20 @@ export default function ArtRunDetailPage() {
             </button>
           ) : null}
 
-          {isHost && runStatus === 'IN_PROGRESS' ? (
+          {runStatus === 'IN_PROGRESS' && (isParticipant || isHost) ? (
             <button
               type="button"
               className={styles.primaryButton}
+              onClick={() => navigate(`/art-runs/${id}/run`)}
+            >
+              러닝 참여
+            </button>
+          ) : null}
+
+          {isHost && runStatus === 'IN_PROGRESS' ? (
+            <button
+              type="button"
+              className={styles.secondaryButton}
               disabled={isProcessing}
               onClick={() => runAction(() => changeStatus('COMPLETED'), '종료에 실패했어요.')}
             >
