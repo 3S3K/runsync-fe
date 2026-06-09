@@ -164,7 +164,9 @@
 }
 
 .runError {
-  margin: 0 20px;
+  margin: 0;
+  padding: 0 20px;
+  box-sizing: border-box;
   font-size: 13px;
   color: #dc2626;
   text-align: center;
