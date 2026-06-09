@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import RunRecordForm from '../../components/home/run-record-form';
+import RunningStats from '../../components/home/running-stats';
+import StartButton from '../../components/home/StartButton';
+import StopButton from '../../components/home/stop-button';
 import KakaoMap from '../../components/map/kakao-map';
 import { useArtRun } from '../../hooks/use-art-run';
 import { useArtRunRealtime } from '../../hooks/use-art-run-realtime';
-import { useGeoWatch } from '../../hooks/use-geo-watch';
+import { useRunTracker } from '../../hooks/use-run-tracker';
 import { DEFAULT_CENTER } from '../../utils/geolocation';
 
 import styles from './art-run-run-page.module.css';
@@ -18,6 +22,12 @@ export default function ArtRunRunPage() {
   const [mapCenter, setMapCenter] = useState(null);
   const [recenterKey, setRecenterKey] = useState(0);
 
+  // 개인 러닝(타이머·실제 거리·세션·기록 저장) — 메인 페이지와 동일한 훅 재사용
+  const run = useRunTracker();
+  const isIdle = run.status === 'idle';
+  const isRunning = run.status === 'running';
+  const isFinished = run.status === 'finished';
+
   const myUserId = me?.id ?? null;
   const runStatus = artRun?.status;
   const participants = artRun?.participants;
@@ -27,23 +37,21 @@ export default function ArtRunRunPage() {
   );
   const isHost = Boolean(me && artRun?.host && me.id === artRun.host.userId);
   const canRun = runStatus === 'IN_PROGRESS' && (isParticipant || isHost);
-  const active = status === 'success' && canRun;
 
-  // 진행중이 아니거나 참가자/호스트가 아니면 상세로 돌려보낸다.
-  // me 로딩이 끝난 뒤에만 판정해야 참가자가 잘못 튕기지 않는다 (상세/me 비동기 분리).
+  // 진행중이 아니거나 참가자/호스트가 아니면 상세로 돌려보낸다 (me 로딩 후 판정).
   useEffect(() => {
     if (status === 'success' && me && !canRun) {
       navigate(`/art-runs/${id}`, { replace: true });
     }
   }, [status, me, canRun, id, navigate]);
 
-  const { position } = useGeoWatch(active);
+  // 아트 레이어: 개인 러닝이 진행 중일 때만 구독/발행 (내 위치는 run-tracker 가 추적)
   const { paths, markers, closed } = useArtRunRealtime({
-    active,
+    active: isRunning,
     sessionId: id,
     myUserId,
     participants,
-    position,
+    position: run.position,
   });
 
   // 도안(점선) + 참가자 trail
@@ -61,23 +69,54 @@ export default function ArtRunRunPage() {
   );
   const mapPaths = useMemo(() => [designPath, ...paths], [designPath, paths]);
 
-  // 지도 중심은 최초 1회만 설정한다 (내 위치 우선, 없으면 모임 장소).
-  // 이후 GPS 가 갱신돼도 자동으로 중앙 이동하지 않아 자유롭게 지도를 조작할 수 있다.
+  // 지도 중심은 최초 1회만 설정 (내 위치 우선, 없으면 모임 장소).
   useEffect(() => {
     if (mapCenter) {
       return;
     }
-    if (position) {
-      setMapCenter(position);
+    if (run.position) {
+      setMapCenter(run.position);
     } else if (artRun?.meetingPlace) {
       setMapCenter({
         lat: artRun.meetingPlace.latitude,
         lng: artRun.meetingPlace.longitude,
       });
     }
-  }, [position, artRun, mapCenter]);
+  }, [run.position, artRun, mapCenter]);
 
   const center = mapCenter || DEFAULT_CENTER;
+
+  const handleStart = async () => {
+    try {
+      await run.start();
+    } catch (error) {
+      console.error('러닝 시작 실패', error);
+    }
+  };
+
+  const handleStop = async () => {
+    try {
+      await run.stop();
+    } catch (error) {
+      console.error('러닝 종료 실패', error);
+    }
+  };
+
+  const handleSaveRecord = async (record) => {
+    try {
+      await run.saveRecord(record);
+      navigate(`/art-runs/${id}`);
+    } catch (error) {
+      console.error('기록 저장 실패', error);
+    }
+  };
+
+  const handleLocate = () => {
+    if (run.position) {
+      setMapCenter({ ...run.position });
+      setRecenterKey((key) => key + 1);
+    }
+  };
 
   if (status === 'loading') {
     return (
@@ -114,30 +153,41 @@ export default function ArtRunRunPage() {
         >
           ←
         </button>
-        <span className={styles.title}>{artRun?.title}</span>
+        <span className={styles.title}>{artRun.title}</span>
       </header>
 
       <button
         type="button"
         className={styles.locateButton}
-        onClick={() => {
-          if (position) {
-            setMapCenter({ ...position });
-            setRecenterKey((key) => key + 1);
-          }
-        }}
+        onClick={handleLocate}
       >
         내 위치
       </button>
 
       <footer className={styles.footer}>
-        {position ? (
-          <span className={styles.hint}>
-            참가자 {markers.length}명 · 내 경로가 실시간으로 그려지고 있어요
-          </span>
-        ) : (
-          <span className={styles.hint}>위치 정보를 가져오는 중이에요...</span>
-        )}
+        {run.error ? <p className={styles.error}>{run.error}</p> : null}
+
+        {isIdle ? <StartButton onClick={handleStart} /> : null}
+
+        {isRunning ? (
+          <>
+            <RunningStats
+              elapsedSeconds={run.elapsedSeconds}
+              distance={run.distance}
+            />
+            <StopButton onClick={handleStop} />
+          </>
+        ) : null}
+
+        {isFinished ? (
+          <>
+            <RunningStats
+              elapsedSeconds={run.elapsedSeconds}
+              distance={run.distance}
+            />
+            <RunRecordForm onSubmit={handleSaveRecord} />
+          </>
+        ) : null}
       </footer>
 
       {closed ? (
