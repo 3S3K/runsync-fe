@@ -3,12 +3,18 @@ import { apiFetch } from './http';
 /**
  * 러닝 세션 시작.
  * @param {string} startTime ISO date-time 문자열
+ * @param {number} [artRunSessionId] 협동 러닝에서 시작할 때만 전달 (결과 연동용). 일반 러닝은 생략.
  * @returns {Promise<{ sessionId: number, status: string }>}
  */
-export async function startRunSession(startTime) {
+export async function startRunSession(startTime, artRunSessionId) {
+  const payload = { startTime };
+  if (artRunSessionId != null && !Number.isNaN(artRunSessionId)) {
+    payload.artRunSessionId = artRunSessionId;
+  }
+
   const body = await apiFetch('/api/run-sessions', {
     method: 'POST',
-    body: JSON.stringify({ startTime }),
+    body: JSON.stringify(payload),
   });
   return body?.data;
 }
