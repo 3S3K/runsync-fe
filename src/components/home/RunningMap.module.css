@@ -45,6 +45,16 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.guideButton:active {
+  transform: scale(0.97);
+}
+
+.guideButton:focus-visible {
+  outline: 3px solid rgba(255, 122, 46, 0.35);
+  outline-offset: 2px;
 }
 
 .marker {

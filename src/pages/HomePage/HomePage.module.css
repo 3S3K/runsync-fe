@@ -71,6 +71,7 @@
   letter-spacing: 0.06em;
   color: #fff;
   cursor: pointer;
+  pointer-events: auto;
   transition: transform 0.15s ease;
 }
 
