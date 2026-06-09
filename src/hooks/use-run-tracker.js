@@ -151,8 +151,9 @@ export function useRunTracker() {
       });
       setError(null);
       setStatus('finished');
-    } catch {
+    } catch (error) {
       setError('러닝 종료에 실패했어요. 다시 시도해 주세요.');
+      throw error; // 호출부(try/catch)가 실패를 감지할 수 있도록 다시 던진다
     } finally {
       busyRef.current = false;
     }
@@ -179,8 +180,9 @@ export function useRunTracker() {
       }
 
       reset();
-    } catch {
+    } catch (error) {
       setError('기록 저장에 실패했어요. 다시 시도해 주세요.');
+      throw error; // 저장 실패 시 호출부가 navigate 하지 않도록 다시 던진다
     }
   }, [reset]);
 

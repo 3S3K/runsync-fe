@@ -45,13 +45,14 @@ export default function ArtRunRunPage() {
     }
   }, [status, me, canRun, id, navigate]);
 
-  // 아트 레이어: 개인 러닝이 진행 중일 때만 구독/발행 (내 위치는 run-tracker 가 추적)
+  // 아트 레이어: 화면에 있는 동안(canRun) 계속 구독해 다른 참가자 위치를 보여주고,
+  // 내 위치 발행은 실제로 달릴 때(isRunning)만 한다 (대기/종료 중에도 남들 trail 표시).
   const { paths, markers, closed } = useArtRunRealtime({
-    active: isRunning,
+    active: canRun,
     sessionId: id,
     myUserId,
     participants,
-    position: run.position,
+    position: isRunning ? run.position : null,
   });
 
   // 도안(점선) + 참가자 trail
