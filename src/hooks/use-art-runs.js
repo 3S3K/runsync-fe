@@ -54,6 +54,14 @@ export function useArtRuns(initialFilter = 'RECRUITING') {
     load(statusFilter);
   }, [load, statusFilter]);
 
+  // 언마운트 시 진행 중 로드 무효화
+  useEffect(
+    () => () => {
+      loadSeqRef.current += 1;
+    },
+    [],
+  );
+
   const loadMore = useCallback(async () => {
     if (!hasNext || loadingMoreRef.current) {
       return;

@@ -24,13 +24,18 @@ export function formatYmd(iso) {
  * @returns {string}
  */
 export function formatYmdHm(iso) {
-  const ymd = formatYmd(iso);
-  if (!ymd) {
+  if (!iso) {
     return '';
   }
 
   const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${ymd} ${hours}:${minutes}`;
+  return `${date.getFullYear()}.${month}.${day} ${hours}:${minutes}`;
 }

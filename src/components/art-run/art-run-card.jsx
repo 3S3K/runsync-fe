@@ -38,20 +38,20 @@ export default function ArtRunCard({ session, onClick }) {
         className={styles.button}
         onClick={onClick}
       >
-        <div className={styles.top}>
+        <span className={styles.top}>
           <span className={styles.title}>{title}</span>
           <span className={statusClassName}>{STATUS_LABEL[status] || status}</span>
-        </div>
-        <div className={styles.meta}>
+        </span>
+        <span className={styles.meta}>
           <span className={styles.host}>{hostNickname}</span>
           <span className={styles.count}>
             {currentCount}/{capacity}명
           </span>
-        </div>
-        <div className={styles.sub}>
+        </span>
+        <span className={styles.sub}>
           <span>{formatYmdHm(meetingTime)}</span>
           <span className={styles.place}>{meetingPlaceName}</span>
-        </div>
+        </span>
       </button>
     </li>
   );
