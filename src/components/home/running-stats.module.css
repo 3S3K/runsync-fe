@@ -1,25 +1,141 @@
 .stats {
   display: flex;
-  width: 100%;
+  flex-direction: column;
 }
 
-.item {
+.row {
   display: flex;
-  flex: 1;
-  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(11, 43, 69, 0.08);
+}
+
+.row:first-child {
+  padding-top: 0;
+}
+
+.row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.iconWrap {
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff0e6;
+}
+
+.locationIcon,
+.timeIcon,
+.distanceIcon {
+  position: relative;
+  display: block;
+}
+
+.locationIcon {
+  width: 12px;
+  height: 12px;
+  border: 2.5px solid #ff7a2e;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+}
+
+.locationIcon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ff7a2e;
+  transform: translate(-50%, -50%);
+}
+
+.timeIcon {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #ff7a2e;
+  border-radius: 50%;
+}
+
+.timeIcon::before,
+.timeIcon::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  background: #ff7a2e;
+  transform-origin: bottom center;
+}
+
+.timeIcon::before {
+  top: 3px;
+  width: 2px;
+  height: 4px;
+  transform: translateX(-50%);
+}
+
+.timeIcon::after {
+  top: 7px;
+  width: 2px;
+  height: 5px;
+  transform: translateX(-50%) rotate(90deg);
+}
+
+.distanceIcon {
+  width: 14px;
+  height: 10px;
+}
+
+.distanceIcon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border: 2px solid #ff7a2e;
+  border-radius: 50%;
+}
+
+.distanceIcon::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 6px;
+  height: 6px;
+  border: 2px solid #ff7a2e;
+  border-radius: 50%;
+  box-shadow: -8px -4px 0 -1px #ff7a2e;
+}
+
+.meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
 }
 
 .label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: #8a9299;
 }
 
 .value {
-  font-size: 40px;
-  font-weight: 800;
-  color: #1f2937;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #0b2b45;
   font-variant-numeric: tabular-nums;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
