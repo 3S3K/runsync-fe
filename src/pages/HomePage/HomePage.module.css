@@ -2,7 +2,7 @@
   min-height: 100dvh;
   display: flex;
   justify-content: center;
-  background: #e0e0e0;
+  background: #e6e2da;
 }
 
 .shell {
@@ -10,9 +10,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 480px;
+  max-width: 400px;
   min-height: 100dvh;
-  background: #ebebeb;
+  background: #f9f8f3;
   overflow: hidden;
 }
 
@@ -40,7 +40,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: max(16px, env(safe-area-inset-top)) 16px 0;
+  padding: max(18px, env(safe-area-inset-top)) 18px 0;
   pointer-events: none;
 }
 
@@ -52,29 +52,35 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 
 .myButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: #243b55;
-  box-shadow: 0 4px 16px rgba(36, 59, 85, 0.35);
-  font-size: 12px;
+  background: #0b2b45;
+  box-shadow: 0 6px 18px rgba(11, 43, 69, 0.22);
+  font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   color: #fff;
   cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.15s ease;
+}
+
+.myButton:active {
+  transform: scale(0.97);
 }
 
 .myButton:focus-visible {
-  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline: 3px solid rgba(255, 122, 46, 0.35);
   outline-offset: 2px;
 }
 
@@ -103,19 +109,18 @@
 
 .footer {
   flex-shrink: 0;
-  padding: 16px 20px max(20px, env(safe-area-inset-bottom));
-  background: linear-gradient(
-    180deg,
-    rgba(235, 235, 235, 0) 0%,
-    rgba(235, 235, 235, 0.85) 24%,
-    #ebebeb 100%
-  );
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 2;
-  padding: 16px 20px max(20px, env(safe-area-inset-bottom));
+  padding: 20px 24px max(28px, env(safe-area-inset-bottom));
+  background: linear-gradient(
+    180deg,
+    rgba(249, 248, 243, 0) 0%,
+    rgba(249, 248, 243, 0.72) 28%,
+    #f9f8f3 100%
+  );
   pointer-events: none;
 }
 
@@ -144,8 +149,10 @@
   text-align: center;
 }
 
-@media (min-width: 481px) {
+@media (min-width: 401px) {
   .shell {
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+    box-shadow:
+      0 0 0 1px rgba(11, 43, 69, 0.04),
+      0 24px 64px rgba(11, 43, 69, 0.12);
   }
 }

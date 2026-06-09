@@ -1,14 +1,26 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 10px 16px;
+  gap: 8px;
+  padding: 11px 18px;
   border-radius: 999px;
-  background: #243b55;
-  box-shadow: 0 4px 16px rgba(36, 59, 85, 0.35);
+  background: #0b2b45;
+  box-shadow: 0 6px 18px rgba(11, 43, 69, 0.22);
+}
+
+.badge::before {
+  content: '';
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background:
+    radial-gradient(circle at 35% 35%, #ffd54f 0 45%, transparent 46%),
+    radial-gradient(circle at 62% 58%, #90caf9 0 38%, transparent 39%);
+  border-radius: 50%;
 }
 
 .text {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.2px;
