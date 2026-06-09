@@ -57,12 +57,14 @@ export default function KakaoMap({
   center,
   level = 4,
   markers = [],
+  paths = [],
   className = '',
 }) {
   const sdkStatus = useKakaoLoader();
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const overlaysRef = useRef(new Map());
+  const polylinesRef = useRef(new Map());
 
   // SDK 준비되면 지도 1회 생성
   useEffect(() => {
@@ -143,11 +145,53 @@ export default function KakaoMap({
     });
   }, [sdkStatus, markers]);
 
-  // 언마운트 시 오버레이 전부 정리
+  // paths(폴리라인) 변경 시 id 기준 갱신
+  useEffect(() => {
+    if (sdkStatus !== 'ready' || !mapRef.current) {
+      return;
+    }
+
+    const { kakao } = window;
+    const polylines = polylinesRef.current;
+    const seen = new Set();
+
+    paths.forEach((path) => {
+      seen.add(path.id);
+      const latLngs = (path.points || []).map(
+        (point) => new kakao.maps.LatLng(point.lat, point.lng),
+      );
+      const existing = polylines.get(path.id);
+
+      if (existing) {
+        existing.setPath(latLngs);
+      } else {
+        const polyline = new kakao.maps.Polyline({
+          path: latLngs,
+          strokeWeight: 4,
+          strokeColor: path.color || '#ff5a1f',
+          strokeOpacity: 0.9,
+          strokeStyle: path.dashed ? 'shortdash' : 'solid',
+        });
+        polyline.setMap(mapRef.current);
+        polylines.set(path.id, polyline);
+      }
+    });
+
+    polylines.forEach((polyline, id) => {
+      if (!seen.has(id)) {
+        polyline.setMap(null);
+        polylines.delete(id);
+      }
+    });
+  }, [sdkStatus, paths]);
+
+  // 언마운트 시 오버레이/폴리라인 전부 정리
   useEffect(
     () => () => {
       overlaysRef.current.forEach((value) => value.overlay.setMap(null));
       overlaysRef.current.clear();
+      polylinesRef.current.forEach((polyline) => polyline.setMap(null));
+      polylinesRef.current.clear();
     },
     [],
   );

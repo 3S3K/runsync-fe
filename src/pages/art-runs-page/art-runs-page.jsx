@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 import ArtRunCard from '../../components/art-run/art-run-card';
 import { useArtRuns } from '../../hooks/use-art-runs';
 
@@ -10,7 +12,8 @@ const FILTERS = [
 ];
 
 export default function ArtRunsPage() {
-  // TODO(#36/#37): 상세/생성 라우트 생기면 navigate로 교체
+  const navigate = useNavigate();
+  // TODO(#37): 생성 라우트 생기면 navigate로 교체
   const handleNotReady = () => {
     window.alert('준비 중인 기능이에요.');
   };
@@ -81,7 +84,7 @@ export default function ArtRunsPage() {
                 <ArtRunCard
                   key={session.sessionId}
                   session={session}
-                  onClick={handleNotReady}
+                  onClick={() => navigate(`/art-runs/${session.sessionId}`)}
                 />
               ))}
             </ul>
