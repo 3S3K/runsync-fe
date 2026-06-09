@@ -11,6 +11,11 @@ function formatElapsed(totalSeconds) {
   return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`;
 }
 
+function formatDistance(distance) {
+  const value = Number(distance);
+  return Number.isFinite(value) ? value.toFixed(2) : '0.00';
+}
+
 /**
  * 러닝 중/종료 후 경과 시간과 누적 거리를 표시하는 컴포넌트.
  * @param {number} elapsedSeconds 경과 시간(초)
@@ -55,7 +60,7 @@ export default function RunningStats({ elapsedSeconds, distance, location }) {
         </span>
         <div className={styles.meta}>
           <span className={styles.label}>거리</span>
-          <span className={styles.value}>{`${distance.toFixed(2)} KM`}</span>
+          <span className={styles.value}>{`${formatDistance(distance)} KM`}</span>
         </div>
       </div>
     </div>

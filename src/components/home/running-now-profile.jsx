@@ -14,11 +14,10 @@ export default function RunningNowProfile({
     event.currentTarget.src = defaultAvatar;
   };
 
-  const hasIdentity = Boolean(name || handle);
+  const displayName = name || handle || '러너';
   const profileClassName = [
     styles.profile,
     muted ? styles.profileMuted : '',
-    !hasIdentity ? styles.profileCompact : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -29,16 +28,16 @@ export default function RunningNowProfile({
         <img
           className={styles.avatar}
           src={avatarSrc || defaultAvatar}
-          alt={name || '러너'}
+          alt={displayName}
           onError={handleImageError}
         />
       </div>
-      {hasIdentity ? (
-        <div className={styles.identity}>
-          {name ? <span className={styles.name}>{name}</span> : null}
-          {handle ? <span className={styles.handle}>{handle}</span> : null}
-        </div>
-      ) : null}
+      <div className={styles.identity}>
+        <span className={styles.name}>{displayName}</span>
+        {name && handle ? (
+          <span className={styles.handle}>{handle}</span>
+        ) : null}
+      </div>
       <span className={styles.statusRow}>
         <span
           className={styles.dot}

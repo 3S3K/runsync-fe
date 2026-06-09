@@ -70,25 +70,27 @@ export default function HomePage() {
               temperature="18°"
               location="Seoul"
             />
-            <div className={styles.headerRight}>
-              <button
-                type="button"
-                className={styles.myButton}
-                onClick={handleMyClick}
-              >
-                MY
-              </button>
-              {isIdle ? (
+            {!isRunning ? (
+              <div className={styles.headerRight}>
                 <button
                   type="button"
-                  className={styles.artRunButton}
-                  onClick={() => navigate('/art-runs')}
+                  className={styles.myButton}
+                  onClick={handleMyClick}
                 >
-                  협동
+                  MY
                 </button>
-              ) : null}
-              <FriendButton onClick={handleFriendsClick} />
-            </div>
+                {isIdle ? (
+                  <button
+                    type="button"
+                    className={styles.artRunButton}
+                    onClick={() => navigate('/art-runs')}
+                  >
+                    협동
+                  </button>
+                ) : null}
+                <FriendButton onClick={handleFriendsClick} />
+              </div>
+            ) : null}
           </header>
 
           <RunningMap
