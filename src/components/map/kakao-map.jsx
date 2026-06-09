@@ -46,6 +46,20 @@ function createMarkerElement(marker) {
   return wrapper;
 }
 
+// 도안 waypoint 등 단순 점 마커 DOM
+function createDotElement() {
+  const dot = document.createElement('div');
+  dot.style.cssText = [
+    'width:12px',
+    'height:12px',
+    'border-radius:50%',
+    'background:#ff5a1f',
+    'border:2px solid #fff',
+    'box-shadow:0 1px 3px rgba(0,0,0,0.3)',
+  ].join(';');
+  return dot;
+}
+
 /**
  * props 로 받은 좌표에 카카오 지도를 그리는 범용 컴포넌트.
  * @param {{ lat: number, lng: number }} center 지도 중심 좌표
@@ -58,6 +72,8 @@ export default function KakaoMap({
   level = 4,
   markers = [],
   paths = [],
+  dotMarkers = [],
+  onMapClick,
   className = '',
 }) {
   const sdkStatus = useKakaoLoader();
@@ -65,6 +81,9 @@ export default function KakaoMap({
   const mapRef = useRef(null);
   const overlaysRef = useRef(new Map());
   const polylinesRef = useRef(new Map());
+  const dotOverlaysRef = useRef(new Map());
+  const onMapClickRef = useRef(onMapClick);
+  onMapClickRef.current = onMapClick;
 
   // SDK 준비되면 지도 1회 생성
   useEffect(() => {
@@ -73,9 +92,15 @@ export default function KakaoMap({
     }
 
     const { kakao } = window;
-    mapRef.current = new kakao.maps.Map(containerRef.current, {
+    const map = new kakao.maps.Map(containerRef.current, {
       center: new kakao.maps.LatLng(center.lat, center.lng),
       level,
+    });
+    mapRef.current = map;
+
+    kakao.maps.event.addListener(map, 'click', (mouseEvent) => {
+      const latlng = mouseEvent.latLng;
+      onMapClickRef.current?.({ lat: latlng.getLat(), lng: latlng.getLng() });
     });
   }, [sdkStatus, center.lat, center.lng, level]);
 
@@ -185,13 +210,52 @@ export default function KakaoMap({
     });
   }, [sdkStatus, paths]);
 
-  // 언마운트 시 오버레이/폴리라인 전부 정리
+  // dotMarkers(단순 점) 변경 시 id 기준 갱신
+  useEffect(() => {
+    if (sdkStatus !== 'ready' || !mapRef.current) {
+      return;
+    }
+
+    const { kakao } = window;
+    const dots = dotOverlaysRef.current;
+    const seen = new Set();
+
+    dotMarkers.forEach((dot) => {
+      seen.add(dot.id);
+      const position = new kakao.maps.LatLng(dot.lat, dot.lng);
+      const existing = dots.get(dot.id);
+
+      if (existing) {
+        existing.setPosition(position);
+      } else {
+        const overlay = new kakao.maps.CustomOverlay({
+          position,
+          content: createDotElement(),
+          xAnchor: 0.5,
+          yAnchor: 0.5,
+        });
+        overlay.setMap(mapRef.current);
+        dots.set(dot.id, overlay);
+      }
+    });
+
+    dots.forEach((overlay, id) => {
+      if (!seen.has(id)) {
+        overlay.setMap(null);
+        dots.delete(id);
+      }
+    });
+  }, [sdkStatus, dotMarkers]);
+
+  // 언마운트 시 오버레이/폴리라인/점 전부 정리
   useEffect(
     () => () => {
       overlaysRef.current.forEach((value) => value.overlay.setMap(null));
       overlaysRef.current.clear();
       polylinesRef.current.forEach((polyline) => polyline.setMap(null));
       polylinesRef.current.clear();
+      dotOverlaysRef.current.forEach((overlay) => overlay.setMap(null));
+      dotOverlaysRef.current.clear();
     },
     [],
   );

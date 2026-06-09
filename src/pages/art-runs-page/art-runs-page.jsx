@@ -13,11 +13,6 @@ const FILTERS = [
 
 export default function ArtRunsPage() {
   const navigate = useNavigate();
-  // TODO(#37): 생성 라우트 생기면 navigate로 교체
-  const handleNotReady = () => {
-    window.alert('준비 중인 기능이에요.');
-  };
-
   const {
     sessions,
     statusFilter,
@@ -37,7 +32,7 @@ export default function ArtRunsPage() {
           <button
             type="button"
             className={styles.createButton}
-            onClick={handleNotReady}
+            onClick={() => navigate('/art-runs/new')}
           >
             + 만들기
           </button>
