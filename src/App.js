@@ -7,6 +7,7 @@ import FriendRequestsPage from "./pages/friend-requests-page/friend-requests-pag
 import HomePage from "./pages/HomePage/HomePage";
 import Mypage from "./pages/mypage/mypage";
 import RunningRecordPage from "./pages/running-record/running-record-page";
+import ArtRunsPage from "./pages/art-runs-page/art-runs-page";
 import { AUTH_CLEARED_EVENT, getAccessToken, setAccessToken } from "./utils/tokens";
 import { refreshAccessToken } from "./api/auth";
 import SearchPage from './pages/search-page/search-page';
@@ -99,6 +100,10 @@ function App() {
         <Route
           path="/running-record/:id"
           element={isAuthed ? <RunningRecordPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/art-runs"
+          element={isAuthed ? <ArtRunsPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/search"
