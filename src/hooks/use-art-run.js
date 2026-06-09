@@ -37,9 +37,8 @@ export function useArtRun(sessionId) {
       setStatus('loading');
     }
     try {
-      const [detail, meData] = await Promise.all([getArtRun(sessionId), getMe()]);
+      const detail = await getArtRun(sessionId);
       setArtRun(detail);
-      setMe(meData);
       setError(null);
       setStatus('success');
     } catch {
@@ -51,6 +50,21 @@ export function useArtRun(sessionId) {
   useEffect(() => {
     load();
   }, [load]);
+
+  // 내 정보는 마운트 시 1회만 조회 (역할 판정용 — 액션 재조회와 분리, 실패해도 상세는 정상)
+  useEffect(() => {
+    let cancelled = false;
+    getMe()
+      .then((data) => {
+        if (!cancelled) {
+          setMe(data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // 액션 실행 → 콘텐츠 유지한 채 재조회 (로딩 화면 깜빡임 방지), 처리 중 가드
   const runWithReload = useCallback(async (action) => {
