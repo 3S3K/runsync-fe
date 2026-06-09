@@ -64,12 +64,14 @@ function createDotElement() {
  * props 로 받은 좌표에 카카오 지도를 그리는 범용 컴포넌트.
  * @param {{ lat: number, lng: number }} center 지도 중심 좌표
  * @param {number} [level] 확대 레벨 (작을수록 확대)
+ * @param {number} [recenterKey] 값이 바뀔 때마다 center 로 강제 재중심 (좌표가 같아도)
  * @param {Array<{ id: string|number, lat: number, lng: number, title?: string }>} [markers] 마커 목록
  * @param {string} [className] 부모에서 크기/위치 제어용 클래스
  */
 export default function KakaoMap({
   center,
   level = 4,
+  recenterKey = 0,
   markers = [],
   paths = [],
   dotMarkers = [],
@@ -84,6 +86,8 @@ export default function KakaoMap({
   const dotOverlaysRef = useRef(new Map());
   const onMapClickRef = useRef(onMapClick);
   onMapClickRef.current = onMapClick;
+  const centerRef = useRef(center);
+  centerRef.current = center;
 
   // SDK 준비되면 지도 1회 생성
   useEffect(() => {
@@ -122,6 +126,17 @@ export default function KakaoMap({
 
     mapRef.current.setLevel(level);
   }, [level]);
+
+  // recenterKey 가 바뀌면(예: "내 위치" 재클릭) 좌표가 직전과 같아도 강제로 재중심
+  useEffect(() => {
+    if (!mapRef.current || recenterKey === 0) {
+      return;
+    }
+
+    const { kakao } = window;
+    const { lat, lng } = centerRef.current;
+    mapRef.current.setCenter(new kakao.maps.LatLng(lat, lng));
+  }, [recenterKey]);
 
   // markers 변경 시 id 기준으로 갱신 (전체 재생성 방지 → 깜빡임/성능 개선)
   useEffect(() => {

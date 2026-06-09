@@ -17,6 +17,8 @@ export default function ArtRunCreatePage() {
   const [waypoints, setWaypoints] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
+  // "내 위치" 클릭마다 증가시켜 좌표가 같아도 지도를 강제로 재중심시키는 신호
+  const [recenterKey, setRecenterKey] = useState(0);
   const { position, requestLocation } = useGeolocation();
 
   // 현재 위치를 얻으면 지도 중심 이동 (진입 시 + "내 위치" 버튼)
@@ -44,6 +46,7 @@ export default function ArtRunCreatePage() {
     title.trim() &&
       Number.parseInt(capacity, 10) >= 2 &&
       meetingTime &&
+      new Date(meetingTime) > new Date() &&
       meetingPlaceName.trim() &&
       waypoints.length >= 2 &&
       !isSubmitting,
@@ -108,6 +111,7 @@ export default function ArtRunCreatePage() {
             <input
               className={styles.input}
               value={title}
+              maxLength={100}
               placeholder="예: 한강 하트 그리기"
               onChange={(event) => setTitle(event.target.value)}
             />
@@ -119,6 +123,7 @@ export default function ArtRunCreatePage() {
               className={styles.input}
               type="number"
               min="2"
+              max="100"
               step="1"
               value={capacity}
               onChange={(event) => setCapacity(event.target.value)}
@@ -140,6 +145,7 @@ export default function ArtRunCreatePage() {
             <input
               className={styles.input}
               value={meetingPlaceName}
+              maxLength={100}
               placeholder="예: 여의도 한강공원"
               onChange={(event) => setMeetingPlaceName(event.target.value)}
             />
@@ -153,6 +159,7 @@ export default function ArtRunCreatePage() {
             <div className={styles.mapWrap}>
               <KakaoMap
                 center={center}
+                recenterKey={recenterKey}
                 paths={routePaths}
                 dotMarkers={dotMarkers}
                 onMapClick={addWaypoint}
@@ -161,7 +168,10 @@ export default function ArtRunCreatePage() {
               <button
                 type="button"
                 className={styles.locateButton}
-                onClick={requestLocation}
+                onClick={() => {
+                  requestLocation();
+                  setRecenterKey((key) => key + 1);
+                }}
               >
                 내 위치
               </button>
