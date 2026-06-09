@@ -81,14 +81,14 @@ export function useRunTracker() {
     setPosition(next);
   }, []);
 
-  const start = useCallback(async () => {
+  const start = useCallback(async (artRunSessionId) => {
     if (busyRef.current || sessionIdRef.current) {
       return;
     }
     busyRef.current = true;
 
     try {
-      const session = await startRunSession(new Date().toISOString());
+      const session = await startRunSession(new Date().toISOString(), artRunSessionId);
       if (!session?.sessionId) {
         throw new Error('러닝 세션 생성에 실패했어요.');
       }

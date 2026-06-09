@@ -89,9 +89,11 @@ export default function ArtRunRunPage() {
 
   const handleStart = async () => {
     try {
-      await run.start();
+      // 이 협동 러닝 id 를 넘겨 개인 러닝 기록이 협동 러닝 결과에 연결되도록 한다
+      await run.start(Number(id));
     } catch (error) {
       console.error('러닝 시작 실패', error);
+      window.alert('러닝을 시작할 수 없어요. 협동 러닝 상태를 확인해 주세요.');
     }
   };
 

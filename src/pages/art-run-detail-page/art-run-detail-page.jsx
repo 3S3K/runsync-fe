@@ -175,6 +175,16 @@ export default function ArtRunDetailPage() {
         </section>
 
         <footer className={styles.footer}>
+          {runStatus === 'COMPLETED' && (isParticipant || isHost) ? (
+            <button
+              type="button"
+              className={styles.primaryButton}
+              onClick={() => navigate(`/art-runs/${id}/result`)}
+            >
+              결과 보기
+            </button>
+          ) : null}
+
           {canJoin ? (
             <button
               type="button"

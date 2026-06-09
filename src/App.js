@@ -11,6 +11,7 @@ import ArtRunsPage from "./pages/art-runs-page/art-runs-page";
 import ArtRunDetailPage from "./pages/art-run-detail-page/art-run-detail-page";
 import ArtRunCreatePage from "./pages/art-run-create-page/art-run-create-page";
 import ArtRunRunPage from "./pages/art-run-run-page/art-run-run-page";
+import ArtRunResultPage from "./pages/art-run-result-page/art-run-result-page";
 import { AUTH_CLEARED_EVENT, getAccessToken, setAccessToken } from "./utils/tokens";
 import { refreshAccessToken } from "./api/auth";
 import SearchPage from './pages/search-page/search-page';
@@ -119,6 +120,10 @@ function App() {
         <Route
           path="/art-runs/:id/run"
           element={isAuthed ? <ArtRunRunPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/art-runs/:id/result"
+          element={isAuthed ? <ArtRunResultPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/search"

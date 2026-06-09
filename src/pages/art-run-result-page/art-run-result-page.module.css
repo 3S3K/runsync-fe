@@ -1,0 +1,146 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background: #e0e0e0;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  padding: max(16px, env(safe-area-inset-top)) 20px 20px;
+  background: #fff;
+}
+
+.stateMessage {
+  margin: auto;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.backButton {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f4f6;
+  font-size: 18px;
+  color: #243b55;
+  cursor: pointer;
+}
+
+.title {
+  flex: 1;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ff5a1f;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.mapWrap {
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ebebeb;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.listSection {
+  margin-top: 20px;
+}
+
+.sectionTitle {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.colorDot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.distance {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111;
+}
+
+.duration {
+  font-size: 13px;
+  color: #6b7280;
+}

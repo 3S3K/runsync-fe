@@ -76,6 +76,29 @@ export async function getArtRun(sessionId) {
 }
 
 /**
+ * 협동 러닝 결과 조회. (세션이 COMPLETED 일 때만, 참가자/호스트만)
+ * @param {number} sessionId
+ * @returns {Promise<{
+ *   sessionId: number,
+ *   title: string,
+ *   status: string,
+ *   designCoordinates: Array<{ latitude: number, longitude: number }>,
+ *   participants: Array<{
+ *     userId: number,
+ *     nickname: string,
+ *     profileImage: string,
+ *     distance: number,
+ *     durationSeconds: number,
+ *     paths: Array<{ sequence: number, latitude: number, longitude: number }>,
+ *   }>,
+ * }>}
+ */
+export async function getArtRunResult(sessionId) {
+  const body = await apiFetch(`/api/art-runs/${sessionId}/result`);
+  return body?.data;
+}
+
+/**
  * 협동 러닝 참가. (모집중 세션만)
  * @param {number} sessionId
  * @returns {Promise<void>}
