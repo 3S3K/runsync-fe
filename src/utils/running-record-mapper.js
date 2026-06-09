@@ -34,5 +34,10 @@ export function mapApiRecordToRunningRecord(apiRecord) {
     endTime: formatKoreanEndTime(apiRecord.startTime, apiRecord.durationSeconds),
     runningType: DEFAULT_DETAIL_FIELDS.runningType,
     memo: DEFAULT_DETAIL_FIELDS.memo,
+    // GPS 경로: sequence 순으로 정렬해 지도 폴리라인용 { lat, lng } 배열로 변환
+    paths: (apiRecord.paths || [])
+      .slice()
+      .sort((a, b) => a.sequence - b.sequence)
+      .map((point) => ({ lat: point.latitude, lng: point.longitude })),
   };
 }

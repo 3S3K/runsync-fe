@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { getParticipantColor } from '../utils/art-run-colors';
+import { smoothPath } from '../utils/smooth-path';
 import { useStomp } from './use-stomp';
 
 const PUBLISH_DESTINATION = '/app/location';
@@ -158,14 +159,14 @@ export function useArtRunRealtime({
       .filter(([userId, points]) => Number(userId) !== myUserId && points.length >= 2)
       .map(([userId, points]) => ({
         id: `trail-${userId}`,
-        points,
+        points: smoothPath(points),
         color: getParticipantColor(userId),
       }));
 
     if (myTrail.length >= 2 && myUserId != null) {
       result.push({
         id: 'trail-me',
-        points: myTrail,
+        points: smoothPath(myTrail),
         color: getParticipantColor(myUserId),
       });
     }

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   MdAccessTime,
@@ -11,11 +12,14 @@ import {
   MdTerrain,
 } from 'react-icons/md';
 
+import KakaoMap from '../../components/map/kakao-map';
 import { useRunningRecord } from '../../hooks/use-running-record';
 import {
   getRunningRecordDetails,
   getRunningRecordStats,
 } from '../../data/runningRecord';
+import { DEFAULT_CENTER } from '../../utils/geolocation';
+import { smoothPath } from '../../utils/smooth-path';
 
 import styles from './running-record-page.module.css';
 
@@ -39,6 +43,19 @@ export default function RunningRecordPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { record, isLoading } = useRunningRecord(id);
+
+  // 경로 폴리라인과 지도 중심(경로 중간점) — early return 위에서 hook 순서 고정
+  const routePaths = useMemo(
+    () => [{ id: 'route', points: smoothPath(record?.paths ?? []), color: '#ff5a1f' }],
+    [record],
+  );
+  const mapCenter = useMemo(() => {
+    const points = record?.paths ?? [];
+    if (points.length === 0) {
+      return DEFAULT_CENTER;
+    }
+    return points[Math.floor(points.length / 2)];
+  }, [record]);
 
   const handleBack = () => {
     navigate(-1);
@@ -140,17 +157,16 @@ export default function RunningRecordPage() {
           </section>
 
           <section className={styles.mapCard} aria-label="러닝 경로 지도">
-            <div
-              className={styles.mapMock}
-              role="img"
-              aria-label={record.mapLocationLabel}
-            >
-              <div className={styles.trackOval} aria-hidden="true" />
-              <div className={styles.fieldRect} aria-hidden="true" />
-              <div className={styles.routeLine} aria-hidden="true" />
-              <div className={styles.mainMarker} aria-hidden="true" />
-              <span className={styles.mapLabel}>{record.mapLocationLabel}</span>
-            </div>
+            {record.paths && record.paths.length > 0 ? (
+              <KakaoMap
+                center={mapCenter}
+                level={5}
+                paths={routePaths}
+                className={styles.map}
+              />
+            ) : (
+              <div className={styles.mapEmpty}>경로 정보가 없어요.</div>
+            )}
           </section>
 
           <section className={styles.detailCard} aria-label="상세 정보">
