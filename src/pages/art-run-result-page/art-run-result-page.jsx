@@ -70,7 +70,7 @@ export default function ArtRunResultPage() {
 
   // 거리순 정렬 (많이 뛴 사람부터)
   const rankedParticipants = useMemo(
-    () => [...(result?.participants || [])].sort((a, b) => b.distance - a.distance),
+    () => [...(result?.participants || [])].sort((a, b) => (b.distance ?? 0) - (a.distance ?? 0)),
     [result],
   );
 

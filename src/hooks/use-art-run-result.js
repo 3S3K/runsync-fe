@@ -12,6 +12,11 @@ export function useArtRunResult(sessionId) {
   const [status, setStatus] = useState('loading');
 
   useEffect(() => {
+    if (!sessionId) {
+      setStatus('error');
+      return undefined;
+    }
+
     let cancelled = false;
     setStatus('loading');
 

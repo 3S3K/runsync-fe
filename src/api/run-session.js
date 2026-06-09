@@ -8,7 +8,7 @@ import { apiFetch } from './http';
  */
 export async function startRunSession(startTime, artRunSessionId) {
   const payload = { startTime };
-  if (artRunSessionId != null) {
+  if (artRunSessionId != null && !Number.isNaN(artRunSessionId)) {
     payload.artRunSessionId = artRunSessionId;
   }
 
