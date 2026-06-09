@@ -1,13 +1,18 @@
 .button {
+  display: block;
   width: 100%;
+  max-width: 100%;
   height: 56px;
+  margin: 0;
+  padding: 0 18px;
   border: none;
   border-radius: 999px;
   background: #ff7a2e;
-  box-shadow: 0 8px 24px rgba(255, 122, 46, 0.34);
+  box-shadow: 0 8px 20px rgba(255, 122, 46, 0.3);
+  box-sizing: border-box;
   font-size: 18px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: #fff;
   cursor: pointer;
   pointer-events: auto;

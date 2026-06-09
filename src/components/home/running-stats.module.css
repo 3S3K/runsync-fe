@@ -1,14 +1,23 @@
 .stats {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding: 0 1px;
 }
 
 .row {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 16px 0;
-  border-bottom: 1px solid rgba(11, 43, 69, 0.08);
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(11, 43, 69, 0.055);
+  box-sizing: border-box;
 }
 
 .row:first-child {
@@ -17,7 +26,7 @@
 
 .row:last-child {
   border-bottom: none;
-  padding-bottom: 0;
+  padding-bottom: 2px;
 }
 
 .iconWrap {
@@ -25,10 +34,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: #fff0e6;
+  overflow: hidden;
 }
 
 .locationIcon,
@@ -36,6 +46,7 @@
 .distanceIcon {
   position: relative;
   display: block;
+  flex-shrink: 0;
 }
 
 .locationIcon {
@@ -90,7 +101,7 @@
 
 .distanceIcon {
   width: 14px;
-  height: 10px;
+  height: 11px;
 }
 
 .distanceIcon::before {
@@ -113,7 +124,7 @@
   height: 6px;
   border: 2px solid #ff7a2e;
   border-radius: 50%;
-  box-shadow: -8px -4px 0 -1px #ff7a2e;
+  box-shadow: -7px -3px 0 -1px #ff7a2e;
 }
 
 .meta {
@@ -128,14 +139,16 @@
   font-size: 12px;
   font-weight: 600;
   color: #8a9299;
+  letter-spacing: -0.1px;
+  line-height: 1.15;
 }
 
 .value {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
   color: #0b2b45;
   font-variant-numeric: tabular-nums;
-  word-break: keep-all;
+  word-break: break-all;
   overflow-wrap: anywhere;
 }

@@ -7,14 +7,24 @@ export default function RunningNowProfile({
   handle,
   avatarSrc,
   statusLabel = '현재 러닝 중',
+  muted = false,
 }) {
   const handleImageError = (event) => {
     event.currentTarget.onerror = null;
     event.currentTarget.src = defaultAvatar;
   };
 
+  const hasIdentity = Boolean(name || handle);
+  const profileClassName = [
+    styles.profile,
+    muted ? styles.profileMuted : '',
+    !hasIdentity ? styles.profileCompact : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className={styles.profile}>
+    <div className={profileClassName}>
       <div className={styles.avatarWrap}>
         <img
           className={styles.avatar}
@@ -23,25 +33,19 @@ export default function RunningNowProfile({
           onError={handleImageError}
         />
       </div>
-      <div className={styles.info}>
-        <div className={styles.nameRow}>
-          {name || handle ? (
-            <div className={styles.nameGroup}>
-              {name ? <span className={styles.name}>{name}</span> : null}
-              {handle ? <span className={styles.handle}>{handle}</span> : null}
-            </div>
-          ) : (
-            <span className={styles.namePlaceholder} aria-hidden="true" />
-          )}
-          <span className={styles.statusRow}>
-            <span
-              className={styles.dot}
-              aria-hidden="true"
-            />
-            <span className={styles.statusLabel}>{statusLabel}</span>
-          </span>
+      {hasIdentity ? (
+        <div className={styles.identity}>
+          {name ? <span className={styles.name}>{name}</span> : null}
+          {handle ? <span className={styles.handle}>{handle}</span> : null}
         </div>
-      </div>
+      ) : null}
+      <span className={styles.statusRow}>
+        <span
+          className={styles.dot}
+          aria-hidden="true"
+        />
+        <span className={styles.statusLabel}>{statusLabel}</span>
+      </span>
     </div>
   );
 }

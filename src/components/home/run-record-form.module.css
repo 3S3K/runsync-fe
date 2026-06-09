@@ -1,9 +1,14 @@
 .form {
   display: flex;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   flex-direction: column;
   gap: 16px;
-  padding-top: 4px;
+  padding-top: 8px;
+  margin-top: 4px;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .fields {
@@ -17,6 +22,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  width: 100%;
+  min-width: 0;
 }
 
 .label {
@@ -26,8 +33,11 @@
 }
 
 .input {
-  width: 140px;
+  flex-shrink: 0;
+  width: min(140px, 42vw);
+  max-width: 100%;
   padding: 8px 12px;
+  box-sizing: border-box;
   border: 1px solid rgba(11, 43, 69, 0.1);
   border-radius: 10px;
   background: #fff;
@@ -55,7 +65,9 @@
 
 .submitButton {
   width: 100%;
+  max-width: 100%;
   padding: 16px;
+  box-sizing: border-box;
   border: none;
   border-radius: 999px;
   background: #ff7a2e;

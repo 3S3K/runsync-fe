@@ -70,15 +70,15 @@ export default function HomePage() {
               temperature="18°"
               location="Seoul"
             />
-            {isIdle ? (
-              <div className={styles.headerRight}>
-                <button
-                  type="button"
-                  className={styles.myButton}
-                  onClick={handleMyClick}
-                >
-                  MY
-                </button>
+            <div className={styles.headerRight}>
+              <button
+                type="button"
+                className={styles.myButton}
+                onClick={handleMyClick}
+              >
+                MY
+              </button>
+              {isIdle ? (
                 <button
                   type="button"
                   className={styles.artRunButton}
@@ -86,9 +86,9 @@ export default function HomePage() {
                 >
                   협동
                 </button>
-                <FriendButton onClick={handleFriendsClick} />
-              </div>
-            ) : null}
+              ) : null}
+              <FriendButton onClick={handleFriendsClick} />
+            </div>
           </header>
 
           <RunningMap
@@ -116,7 +116,10 @@ export default function HomePage() {
           <div className={styles.runFooter}>
             {run.error ? <p className={styles.runError}>{run.error}</p> : null}
             <RunningNowPanel>
-              <RunningNowProfile statusLabel="러닝 종료" />
+              <RunningNowProfile
+                statusLabel="러닝 종료"
+                muted
+              />
               <RunningStats
                 elapsedSeconds={run.elapsedSeconds}
                 distance={run.distance}

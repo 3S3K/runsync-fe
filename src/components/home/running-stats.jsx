@@ -55,7 +55,7 @@ export default function RunningStats({ elapsedSeconds, distance, location }) {
         </span>
         <div className={styles.meta}>
           <span className={styles.label}>거리</span>
-          <span className={styles.value}>{distance.toFixed(2)}</span>
+          <span className={styles.value}>{`${distance.toFixed(2)} KM`}</span>
         </div>
       </div>
     </div>
