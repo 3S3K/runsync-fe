@@ -77,6 +77,13 @@ export default function HomePage() {
                 >
                   MY
                 </button>
+                <button
+                  type="button"
+                  className={styles.artRunButton}
+                  onClick={() => navigate('/art-runs')}
+                >
+                  협동
+                </button>
                 <FriendButton onClick={handleFriendsClick} />
               </div>
             ) : null}
