@@ -225,7 +225,7 @@ export default function Mypage() {
           >
             <div className={styles.statsGrid}>
               <div className={styles.statItem}>
-                <span className={styles.statLabel}>총 거리</span>
+                <span className={styles.statLabel}>월간 거리</span>
                 <span className={styles.statValue}>
                   <span className={styles.statNumber}>
                     {formatDistanceValue(stats.totalDistanceKm)}
@@ -240,7 +240,7 @@ export default function Mypage() {
                 </span>
               </div>
               <div className={styles.statItem}>
-                <span className={styles.statLabel}>총 횟수</span>
+                <span className={styles.statLabel}>월간 횟수</span>
                 <span className={styles.statValue}>
                   <span className={styles.statNumber}>{stats.totalRuns}</span>
                   <span className={styles.statUnit}> 회</span>
