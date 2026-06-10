@@ -97,6 +97,57 @@
   text-align: center;
 }
 
+.hint {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  text-align: center;
+}
+
+.notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.noticeText {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.noticeRow {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.noticeButton,
+.noticeButtonPrimary {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.noticeButton {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+}
+
+.noticeButtonPrimary {
+  background: #ff5a1f;
+  color: #fff;
+}
+
 .overlay {
   position: absolute;
   inset: 0;

@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { endRunSession } from '../../api/run-session';
 import FriendButton from '../../components/home/FriendButton';
 import RunningMap from '../../components/home/RunningMap';
 import RunRecordForm from '../../components/home/run-record-form';
@@ -9,6 +11,7 @@ import RunningStats from '../../components/home/running-stats';
 import StartButton from '../../components/home/StartButton';
 import StatusBadge from '../../components/home/StatusBadge';
 import StopButton from '../../components/home/stop-button';
+import { useActiveRunSession } from '../../hooks/use-active-run-session';
 import { useRunRealtime } from '../../hooks/use-run-realtime';
 import { useRunTracker } from '../../hooks/use-run-tracker';
 
@@ -28,6 +31,33 @@ export default function HomePage() {
     position: run.position,
   });
   const runError = run.error || realtime.error;
+
+  // 앱 진입 시 진행 중(ACTIVE) 세션 감지 → 이어뛰기 배너
+  const { active, setActive } = useActiveRunSession();
+  const [resumeHandled, setResumeHandled] = useState(false);
+  const showResumeBanner = Boolean(active) && isIdle && !resumeHandled;
+
+  const handleResumeActive = () => {
+    if (active.artRunSessionId) {
+      navigate(`/art-runs/${active.artRunSessionId}/run`);
+    } else {
+      run.resume(active);
+    }
+  };
+
+  const handleEndActive = async () => {
+    try {
+      await endRunSession(active.sessionId, {
+        endTime: new Date().toISOString(),
+        totalDistance: 0,
+      });
+      setActive(null);
+      setResumeHandled(true);
+    } catch (error) {
+      console.error('진행 중 러닝 종료 실패', error);
+      window.alert('진행 중인 러닝을 종료하지 못했어요. 다시 시도해 주세요.');
+    }
+  };
 
   const handleMyClick = () => {
     navigate('/mypage');
@@ -133,7 +163,29 @@ export default function HomePage() {
 
         {isIdle ? (
           <footer className={styles.footer}>
-            <StartButton onClick={handleStart} />
+            {showResumeBanner ? (
+              <div className={styles.resumeBanner}>
+                <p className={styles.resumeText}>진행 중인 러닝이 있어요. 이어서 뛸까요?</p>
+                <div className={styles.resumeRow}>
+                  <button
+                    type="button"
+                    className={styles.resumeButton}
+                    onClick={handleEndActive}
+                  >
+                    종료
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.resumeButtonPrimary}
+                    onClick={handleResumeActive}
+                  >
+                    이어서 뛰기
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <StartButton onClick={handleStart} />
+            )}
           </footer>
         ) : null}
       </div>

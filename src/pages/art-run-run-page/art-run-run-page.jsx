@@ -6,6 +6,8 @@ import RunningStats from '../../components/home/running-stats';
 import StartButton from '../../components/home/StartButton';
 import StopButton from '../../components/home/stop-button';
 import KakaoMap from '../../components/map/kakao-map';
+import { endRunSession } from '../../api/run-session';
+import { useActiveRunSession } from '../../hooks/use-active-run-session';
 import { useArtRun } from '../../hooks/use-art-run';
 import { useArtRunRealtime } from '../../hooks/use-art-run-realtime';
 import { useRunTracker } from '../../hooks/use-run-tracker';
@@ -27,6 +29,14 @@ export default function ArtRunRunPage() {
   const isIdle = run.status === 'idle';
   const isRunning = run.status === 'running';
   const isFinished = run.status === 'finished';
+
+  // 진행 중(ACTIVE)인 러닝 세션 감지 (앱 종료/크래시로 남은 세션)
+  const { active, status: activeStatus, setActive } = useActiveRunSession();
+  const thisId = Number(id);
+  const activeForThis = Boolean(
+    active && active.artRunSessionId != null && Number(active.artRunSessionId) === thisId,
+  );
+  const activeOther = Boolean(active && !activeForThis);
 
   const myUserId = me?.id ?? null;
   const runStatus = artRun?.status;
@@ -97,6 +107,35 @@ export default function ArtRunRunPage() {
     }
   };
 
+  // 이 협동 러닝에서 진행 중이던 세션을 이어받는다
+  const handleResume = () => {
+    run.resume(active);
+  };
+
+  // 다른 러닝(다른 협동/일반)이 진행 중일 때 → 그 러닝 화면으로 이동
+  const handleGoToActive = () => {
+    if (active?.artRunSessionId) {
+      navigate(`/art-runs/${active.artRunSessionId}/run`);
+    } else {
+      navigate('/home');
+    }
+  };
+
+  // 다른 러닝을 종료하고 이 협동 러닝을 새로 시작한다
+  const handleEndActiveAndStart = async () => {
+    try {
+      await endRunSession(active.sessionId, {
+        endTime: new Date().toISOString(),
+        totalDistance: 0,
+      });
+      setActive(null);
+      await run.start(thisId);
+    } catch (error) {
+      console.error('기존 러닝 종료/시작 실패', error);
+      window.alert('러닝을 시작할 수 없어요. 잠시 후 다시 시도해 주세요.');
+    }
+  };
+
   const handleStop = async () => {
     try {
       await run.stop();
@@ -137,6 +176,40 @@ export default function ArtRunRunPage() {
     );
   }
 
+  // idle 상태에서 보여줄 액션: 이어서 뛰기 / 다른 러닝 안내 / 새로 시작
+  let idleActions = null;
+  if (isIdle) {
+    if (activeStatus === 'loading') {
+      idleActions = <p className={styles.hint}>진행 중인 러닝 확인 중...</p>;
+    } else if (activeForThis) {
+      idleActions = <StartButton onClick={handleResume} label="이어서 뛰기" />;
+    } else if (activeOther) {
+      idleActions = (
+        <div className={styles.notice}>
+          <p className={styles.noticeText}>진행 중인 다른 러닝이 있어요.</p>
+          <div className={styles.noticeRow}>
+            <button
+              type="button"
+              className={styles.noticeButton}
+              onClick={handleGoToActive}
+            >
+              이어뛰기
+            </button>
+            <button
+              type="button"
+              className={styles.noticeButtonPrimary}
+              onClick={handleEndActiveAndStart}
+            >
+              종료하고 시작
+            </button>
+          </div>
+        </div>
+      );
+    } else {
+      idleActions = <StartButton onClick={handleStart} />;
+    }
+  }
+
   return (
     <main className={styles.page}>
       <KakaoMap
@@ -170,7 +243,7 @@ export default function ArtRunRunPage() {
       <footer className={styles.footer}>
         {run.error ? <p className={styles.error}>{run.error}</p> : null}
 
-        {isIdle ? <StartButton onClick={handleStart} /> : null}
+        {idleActions}
 
         {isRunning ? (
           <>
