@@ -31,7 +31,7 @@ export default function ArtRunRunPage() {
   const isFinished = run.status === 'finished';
 
   // 진행 중(ACTIVE)인 러닝 세션 감지 (앱 종료/크래시로 남은 세션)
-  const { active, status: activeStatus } = useActiveRunSession();
+  const { active, status: activeStatus, setActive } = useActiveRunSession();
   const thisId = Number(id);
   const activeForThis = Boolean(
     active && active.artRunSessionId != null && Number(active.artRunSessionId) === thisId,
@@ -128,6 +128,7 @@ export default function ArtRunRunPage() {
         endTime: new Date().toISOString(),
         totalDistance: 0,
       });
+      setActive(null);
       await run.start(thisId);
     } catch (error) {
       console.error('기존 러닝 종료/시작 실패', error);

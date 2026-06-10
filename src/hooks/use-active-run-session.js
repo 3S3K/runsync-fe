@@ -7,6 +7,7 @@ import { getActiveRunSession } from '../api/run-session';
  * @returns {{
  *   active: { sessionId: number, startTime: string, artRunSessionId: number | null } | null,
  *   status: 'loading' | 'success' | 'error',
+ *   setActive: (value: object | null) => void,
  * }}
  */
 export function useActiveRunSession() {
@@ -37,5 +38,5 @@ export function useActiveRunSession() {
     };
   }, []);
 
-  return { active, status };
+  return { active, status, setActive };
 }

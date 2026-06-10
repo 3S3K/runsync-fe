@@ -33,7 +33,7 @@ export default function HomePage() {
   const runError = run.error || realtime.error;
 
   // 앱 진입 시 진행 중(ACTIVE) 세션 감지 → 이어뛰기 배너
-  const { active } = useActiveRunSession();
+  const { active, setActive } = useActiveRunSession();
   const [resumeHandled, setResumeHandled] = useState(false);
   const showResumeBanner = Boolean(active) && isIdle && !resumeHandled;
 
@@ -51,10 +51,12 @@ export default function HomePage() {
         endTime: new Date().toISOString(),
         totalDistance: 0,
       });
+      setActive(null);
+      setResumeHandled(true);
     } catch (error) {
       console.error('진행 중 러닝 종료 실패', error);
+      window.alert('진행 중인 러닝을 종료하지 못했어요. 다시 시도해 주세요.');
     }
-    setResumeHandled(true);
   };
 
   const handleMyClick = () => {
