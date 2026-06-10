@@ -435,21 +435,21 @@
   margin-bottom: 8px;
 }
 
-.viewMoreButton {
-  flex-shrink: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--orange);
-  cursor: pointer;
-}
-
 .activityList {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.activityLoading {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.activitySentinel {
+  height: 1px;
 }
 
 .activityEmpty {

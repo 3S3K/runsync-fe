@@ -130,7 +130,7 @@ function computeAveragePaceLabel(records) {
   return paceLabel === '-' ? null : paceLabel;
 }
 
-function mapMypageActivities(
+export function mapMypageActivities(
   records,
   fallbackActivities,
   recordsLoadedFromApi,
