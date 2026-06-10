@@ -68,27 +68,6 @@ function getActivityPaceLabel(activity) {
   return formatPaceFromDistanceAndDuration(activity.distanceKm, durationSeconds);
 }
 
-function getAveragePaceLabel(activities, fallbackLabel) {
-  const totalDistance = activities.reduce(
-    (sum, activity) => sum + Number(activity.distanceKm ?? 0),
-    0,
-  );
-  const totalSeconds = activities.reduce((sum, activity) => {
-    const durationSeconds = activity.durationSeconds
-      ?? parseDurationHmsToSeconds(activity.duration);
-    return sum + durationSeconds;
-  }, 0);
-
-  if (totalDistance > 0 && totalSeconds > 0) {
-    const paceLabel = formatPaceFromDistanceAndDuration(totalDistance, totalSeconds);
-    if (paceLabel !== '-') {
-      return paceLabel;
-    }
-  }
-
-  return fallbackLabel || `6'20"`;
-}
-
 function formatDistanceValue(value) {
   const numericValue = Number(value);
   if (Number.isNaN(numericValue)) {
@@ -123,8 +102,7 @@ export default function Mypage() {
   const goalProgress = monthlyGoalKm > 0
     ? Math.min(100, Math.round((currentDistanceKm / monthlyGoalKm) * 100))
     : 0;
-  const averagePaceLabel = stats.averagePaceLabel
-    || getAveragePaceLabel(activities, `6'20"`);
+  const averagePaceLabel = stats.averagePaceLabel;
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -173,7 +151,9 @@ export default function Mypage() {
   const handleSettingsAction = (menuId) => {
     setIsSettingsOpen(false);
 
-    if (menuId === 'logout') {
+    if (menuId === 'edit-profile') {
+      navigate('/mypage/edit');
+    } else if (menuId === 'logout') {
       clearAuthSession();
       navigate('/');
     }
