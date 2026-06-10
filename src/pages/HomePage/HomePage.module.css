@@ -105,17 +105,24 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: #ff5a1f;
-  box-shadow: 0 4px 16px rgba(255, 90, 31, 0.35);
+  background: #ff7a2e;
+  box-shadow: 0 4px 14px rgba(255, 122, 46, 0.32);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.04em;
   color: #fff;
   cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.artRunButton:active {
+  transform: scale(0.97);
+  background: #f06f24;
 }
 
 .artRunButton:focus-visible {
-  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline: 3px solid rgba(255, 122, 46, 0.45);
   outline-offset: 2px;
 }
 
