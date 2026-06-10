@@ -22,7 +22,8 @@ const MIN_MOVE_KM = 0.005; // GPS 흔들림(정지 상태 노이즈) 무시용 �
  *   distance: number,        // 누적 거리(km)
  *   elapsedSeconds: number,  // 경과 시간(초)
  *   error: string | null,    // 위치 추적 에러 안내
- *   start: () => Promise<void>,
+ *   start: (artRunSessionId?: number) => Promise<void>,
+ *   resume: (session: { sessionId: number, startTime: string, distance?: number }) => void,
  *   stop: () => Promise<void>,
  *   saveRecord: (record: object) => Promise<void>,
  * }}
@@ -81,6 +82,42 @@ export function useRunTracker() {
     setPosition(next);
   }, []);
 
+  // 위치 추적/타이머/주기 저장 시작 (sessionIdRef·거리·경과는 호출 전에 세팅돼 있어야 함).
+  // start(새 세션)와 resume(기존 세션 이어받기)가 공유한다.
+  const beginTracking = useCallback(() => {
+    setError(null);
+    setStatus('running');
+
+    if (navigator.geolocation) {
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        handlePosition,
+        (geoError) => setError(getGeolocationErrorMessage(geoError)),
+        GEO_OPTIONS,
+      );
+    } else {
+      setError('이 브라우저는 위치 기능을 지원하지 않아요.');
+    }
+
+    timerIdRef.current = setInterval(() => {
+      elapsedRef.current += 1;
+      setElapsedSeconds(elapsedRef.current);
+    }, TIMER_INTERVAL_MS);
+
+    saveIdRef.current = setInterval(() => {
+      const lastPosition = lastPositionRef.current;
+      if (!sessionIdRef.current || !lastPosition) {
+        return;
+      }
+
+      updateRunLocation(sessionIdRef.current, {
+        lastLatitude: lastPosition.lat,
+        lastLongitude: lastPosition.lng,
+        currentDistance: distanceRef.current,
+        currentDurationTime: elapsedRef.current,
+      }).catch(() => {});
+    }, LOCATION_SAVE_INTERVAL_MS);
+  }, [handlePosition]);
+
   const start = useCallback(async (artRunSessionId) => {
     if (busyRef.current || sessionIdRef.current) {
       return;
@@ -101,41 +138,41 @@ export function useRunTracker() {
       lastPositionRef.current = null;
       setDistance(0);
       setElapsedSeconds(0);
-      setError(null);
-      setStatus('running');
 
-      if (navigator.geolocation) {
-        watchIdRef.current = navigator.geolocation.watchPosition(
-          handlePosition,
-          (geoError) => setError(getGeolocationErrorMessage(geoError)),
-          GEO_OPTIONS,
-        );
-      } else {
-        setError('이 브라우저는 위치 기능을 지원하지 않아요.');
-      }
-
-      timerIdRef.current = setInterval(() => {
-        elapsedRef.current += 1;
-        setElapsedSeconds(elapsedRef.current);
-      }, TIMER_INTERVAL_MS);
-
-      saveIdRef.current = setInterval(() => {
-        const lastPosition = lastPositionRef.current;
-        if (!sessionIdRef.current || !lastPosition) {
-          return;
-        }
-
-        updateRunLocation(sessionIdRef.current, {
-          lastLatitude: lastPosition.lat,
-          lastLongitude: lastPosition.lng,
-          currentDistance: distanceRef.current,
-          currentDurationTime: elapsedRef.current,
-        }).catch(() => {});
-      }, LOCATION_SAVE_INTERVAL_MS);
+      beginTracking();
     } finally {
       busyRef.current = false;
     }
-  }, [handlePosition]);
+  }, [beginTracking]);
+
+  // 앱 종료/크래시로 남은 세션을 이어받는다 (GET /api/run-sessions/active 결과를 넘김).
+  // 시간은 startTime 부터 복원, 거리는 session.distance(없으면 0)부터 재누적.
+  const resume = useCallback((session) => {
+    if (busyRef.current || sessionIdRef.current || !session?.sessionId) {
+      return;
+    }
+    busyRef.current = true;
+
+    try {
+      sessionIdRef.current = session.sessionId;
+      setSessionId(session.sessionId);
+
+      const startedAt = session.startTime ? Date.parse(session.startTime) : NaN;
+      const elapsed = Number.isNaN(startedAt)
+        ? 0
+        : Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+
+      elapsedRef.current = elapsed;
+      distanceRef.current = session.distance ?? 0;
+      lastPositionRef.current = null;
+      setElapsedSeconds(elapsed);
+      setDistance(distanceRef.current);
+
+      beginTracking();
+    } finally {
+      busyRef.current = false;
+    }
+  }, [beginTracking]);
 
   const stop = useCallback(async () => {
     if (busyRef.current || !sessionIdRef.current) {
@@ -197,6 +234,7 @@ export function useRunTracker() {
     elapsedSeconds,
     error,
     start,
+    resume,
     stop,
     saveRecord,
   };

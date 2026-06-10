@@ -20,6 +20,16 @@ export async function startRunSession(startTime, artRunSessionId) {
 }
 
 /**
+ * 진행 중(ACTIVE)인 러닝 세션 조회. (앱 종료/크래시로 남은 세션 감지용)
+ * @returns {Promise<{ sessionId: number, status: string, startTime: string, artRunSessionId: number | null } | null>}
+ *   진행 중 세션이 없으면 null.
+ */
+export async function getActiveRunSession() {
+  const body = await apiFetch('/api/run-sessions/active');
+  return body?.data ?? null;
+}
+
+/**
  * 러닝 중 위치/진행 상황 저장 (진행 스냅샷).
  * @param {number} sessionId
  * @param {{ lastLatitude: number, lastLongitude: number, currentDistance: number, currentDurationTime: number }} location
