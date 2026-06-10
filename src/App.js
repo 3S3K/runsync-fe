@@ -6,6 +6,7 @@ import FriendsPage from "./pages/friends-page/friends-page";
 import FriendRequestsPage from "./pages/friend-requests-page/friend-requests-page";
 import HomePage from "./pages/HomePage/HomePage";
 import Mypage from "./pages/mypage/mypage";
+import ProfileEditPage from "./pages/profile-edit/profile-edit-page";
 import RunningRecordPage from "./pages/running-record/running-record-page";
 import ArtRunsPage from "./pages/art-runs-page/art-runs-page";
 import ArtRunDetailPage from "./pages/art-run-detail-page/art-run-detail-page";
@@ -100,6 +101,10 @@ function App() {
         <Route
           path="/mypage"
           element={isAuthed ? <Mypage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/mypage/edit"
+          element={isAuthed ? <ProfileEditPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/running-record/:id"

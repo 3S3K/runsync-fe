@@ -1,6 +1,7 @@
 import { currentUser } from '../data/friends';
 import { profileStats, recentActivities } from '../data/profile';
 import {
+  formatAveragePace,
   formatDurationHms,
   formatKoreanDateTime,
   formatPaceFromDistanceAndDuration,
@@ -99,8 +100,8 @@ export function mapMypageData(
       monthlyGoalKm: summaryLoadedFromApi
         ? (monthlyStats.monthlyGoalKm ?? fallback.stats.monthlyGoalKm)
         : fallback.stats.monthlyGoalKm,
-      averagePaceLabel: recordsLoadedFromApi
-        ? (computeAveragePaceLabel(records) ?? '-')
+      averagePaceLabel: summaryLoadedFromApi
+        ? formatAveragePace(monthlyStats.averagePace)
         : fallback.stats.averagePaceLabel,
     },
     activities: mapMypageActivities(
@@ -110,24 +111,6 @@ export function mapMypageData(
       useMockFallback,
     ),
   };
-}
-
-function computeAveragePaceLabel(records) {
-  if (!Array.isArray(records) || records.length === 0) {
-    return null;
-  }
-
-  const totalDistance = records.reduce(
-    (sum, record) => sum + Number(record.distance ?? 0),
-    0,
-  );
-  const totalSeconds = records.reduce(
-    (sum, record) => sum + Number(record.durationSeconds ?? 0),
-    0,
-  );
-
-  const paceLabel = formatPaceFromDistanceAndDuration(totalDistance, totalSeconds);
-  return paceLabel === '-' ? null : paceLabel;
 }
 
 export function mapMypageActivities(

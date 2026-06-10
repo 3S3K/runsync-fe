@@ -1,0 +1,139 @@
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background: #e0e0e0;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: max(16px, env(safe-area-inset-top)) 20px 20px;
+  background: #fff;
+}
+
+.stateMessage {
+  margin: auto;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.backButton {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f4f6;
+  font-size: 18px;
+  color: #243b55;
+  cursor: pointer;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111;
+}
+
+.notice {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fff1ec;
+  font-size: 13px;
+  font-weight: 600;
+  color: #d2491f;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+.input {
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #ff5a1f;
+}
+
+.genderRow {
+  display: flex;
+  gap: 8px;
+}
+
+.genderButton {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+}
+
+.genderButtonActive {
+  border-color: #ff5a1f;
+  background: #fff1ec;
+  color: #d2491f;
+}
+
+.submitButton {
+  margin-top: 8px;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: #ff5a1f;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+.submitButton:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: default;
+}
+
+@media (min-width: 481px) {
+  .shell {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+  }
+}
