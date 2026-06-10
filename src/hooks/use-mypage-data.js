@@ -10,7 +10,11 @@ import {
 import {
   fetchMypageUserApisOnce,
 } from '../utils/fetch-mypage-user-apis';
-import { clearCachedUserRecords } from '../utils/user-records-store';
+import {
+  clearCachedUserRecords,
+  getCachedUserRecords,
+  setCachedUserRecords,
+} from '../utils/user-records-store';
 import { getAccessToken } from '../utils/tokens';
 
 function hasAccessTokenInStorage() {
@@ -187,7 +191,13 @@ export function useMypageData() {
     try {
       const page = await getMyRecords({ cursor: nextCursor });
       const payload = page?.data ?? {};
-      const newActivities = mapMypageActivities(payload.records ?? [], [], true, false);
+      const newRecords = payload.records ?? [];
+      const newActivities = mapMypageActivities(newRecords, [], true, false);
+
+      // 상세 페이지 즉시 표시용 전역 캐시에도 이어 붙인다
+      if (newRecords.length > 0) {
+        setCachedUserRecords([...getCachedUserRecords(), ...newRecords]);
+      }
 
       setData((prev) => ({
         ...prev,

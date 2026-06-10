@@ -115,6 +115,7 @@ export default function Mypage() {
     loadMoreActivities,
   } = useMypageData();
   const sentinelRef = useRef(null);
+  const loadMoreRef = useRef(loadMoreActivities);
 
   const dotClass = getDotClassName(user.status);
   const monthlyGoalKm = Number(stats.monthlyGoalKm) || MONTHLY_GOAL_KM;
@@ -138,7 +139,13 @@ export default function Mypage() {
     };
   }, []);
 
-  // 활동 리스트 끝(sentinel)이 보이면 다음 페이지 로드 (무한 스크롤)
+  // loadMoreActivities 최신 참조를 ref로 유지 (observer 재생성 없이 항상 최신 호출)
+  useEffect(() => {
+    loadMoreRef.current = loadMoreActivities;
+  }, [loadMoreActivities]);
+
+  // 활동 리스트 끝(sentinel)이 보이면 다음 페이지 로드 (무한 스크롤).
+  // 의존성은 hasMore 만 — loadMore 참조 변화로 observer 가 재생성/즉시 재발동되는 무한 루프 방지.
   useEffect(() => {
     const node = sentinelRef.current;
     if (!node || !hasMore) {
@@ -147,13 +154,13 @@ export default function Mypage() {
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0]?.isIntersecting) {
-        loadMoreActivities();
+        loadMoreRef.current();
       }
     });
     observer.observe(node);
 
     return () => observer.disconnect();
-  }, [hasMore, loadMoreActivities]);
+  }, [hasMore]);
 
   const handleBack = () => {
     navigate(-1);
