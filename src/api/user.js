@@ -18,6 +18,20 @@ export async function getMe() {
 }
 
 /**
+ * 내 정보 수정. (닉네임 + 성별 + 생년월일이 모두 채워지면 백엔드가 USER 로 자동 승격)
+ * @param {{ nickname?: string, gender?: 'MALE' | 'FEMALE', birthDate?: string, profileImage?: string }} payload
+ *   birthDate: 'YYYY-MM-DD'
+ * @returns {Promise<{ id: number, nickname: string, profileImage: string }>}
+ */
+export async function updateMyInfo(payload) {
+  const body = await apiFetch('/api/users/me', {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+  return body?.data;
+}
+
+/**
  * 닉네임으로 사용자 검색. (부분 일치, 커서 페이지네이션)
  * @param {string} nickname 검색어
  * @param {{ cursor?: number, size?: number }} [options]

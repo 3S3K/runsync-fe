@@ -135,7 +135,9 @@ export default function Mypage() {
   const handleSettingsAction = (menuId) => {
     setIsSettingsOpen(false);
 
-    if (menuId === 'logout') {
+    if (menuId === 'edit-profile') {
+      navigate('/mypage/edit');
+    } else if (menuId === 'logout') {
       clearAuthSession();
       navigate('/');
     }
