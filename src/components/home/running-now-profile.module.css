@@ -9,10 +9,6 @@
   padding: 0 1px;
 }
 
-.profileCompact {
-  grid-template-columns: 44px 1fr;
-}
-
 .avatarWrap {
   grid-column: 1;
   grid-row: 1;
@@ -76,12 +72,6 @@
   justify-self: end;
 }
 
-.profileCompact .statusRow {
-  grid-column: 2;
-  max-width: none;
-  justify-self: end;
-}
-
 .dot {
   flex-shrink: 0;
   width: 6px;
@@ -111,24 +101,24 @@
 }
 
 @media (max-width: 360px) {
-  .profile:not(.profileCompact) {
+  .profile {
     grid-template-columns: 40px minmax(0, 1fr);
     grid-template-rows: auto auto;
     gap: 8px 10px;
   }
 
-  .profile:not(.profileCompact) .avatarWrap {
+  .profile .avatarWrap {
     grid-row: 1 / span 2;
     width: 40px;
     height: 40px;
   }
 
-  .profile:not(.profileCompact) .identity {
+  .profile .identity {
     grid-column: 2;
     grid-row: 1;
   }
 
-  .profile:not(.profileCompact) .statusRow {
+  .profile .statusRow {
     grid-column: 2;
     grid-row: 2;
     max-width: none;
