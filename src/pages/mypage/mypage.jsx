@@ -11,6 +11,10 @@ import {
 
 import { useMypageData } from '../../hooks/use-mypage-data';
 import { DEFAULT_PROFILE_AVATAR_SRC } from '../../utils/mypage-data';
+import {
+  formatPaceFromDistanceAndDuration,
+  parseDurationHmsToSeconds,
+} from '../../utils/record-formatters';
 import { getDotClassName } from '../../utils/run-status';
 import { clearAuthSession } from '../../utils/tokens';
 
@@ -61,6 +65,35 @@ function formatDistanceValue(value) {
     : numericValue.toFixed(2);
 }
 
+function getAveragePaceLabel(activities, fallbackLabel) {
+  const totalDistance = activities.reduce(
+    (sum, activity) => sum + Number(activity.distanceKm ?? 0),
+    0,
+  );
+  const totalSeconds = activities.reduce((sum, activity) => {
+    const durationSeconds = activity.durationSeconds
+      ?? parseDurationHmsToSeconds(activity.duration);
+    return sum + durationSeconds;
+  }, 0);
+
+  if (totalDistance > 0 && totalSeconds > 0) {
+    const paceLabel = formatPaceFromDistanceAndDuration(totalDistance, totalSeconds);
+    if (paceLabel !== '-') {
+      return paceLabel;
+    }
+  }
+
+  return fallbackLabel || '-';
+}
+
+function getAveragePaceDisplay(stats, activities) {
+  if (stats.averagePaceLabel && stats.averagePaceLabel !== '-') {
+    return stats.averagePaceLabel;
+  }
+
+  return getAveragePaceLabel(activities, stats.averagePaceLabel);
+}
+
 export default function Mypage() {
   const navigate = useNavigate();
   const settingsRef = useRef(null);
@@ -71,15 +104,12 @@ export default function Mypage() {
     activities,
     isLoading,
     isUsingMockData,
-    hasMore,
-    isLoadingMore,
-    loadMoreActivities,
   } = useMypageData();
-  const sentinelRef = useRef(null);
-  const loadMoreRef = useRef(loadMoreActivities);
 
   const dotClass = getDotClassName(user.status);
   const visibleActivities = activities.slice(0, MAX_VISIBLE_ACTIVITIES);
+  const averagePaceLabel = getAveragePaceDisplay(stats, activities);
+  const latestRecordId = activities.find((activity) => activity.recordId)?.recordId;
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -93,26 +123,6 @@ export default function Mypage() {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
-
-  useEffect(() => {
-    loadMoreRef.current = loadMoreActivities;
-  }, [loadMoreActivities]);
-
-  useEffect(() => {
-    const node = sentinelRef.current;
-    if (!node || !hasMore) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0]?.isIntersecting) {
-        loadMoreRef.current();
-      }
-    });
-    observer.observe(node);
-
-    return () => observer.disconnect();
-  }, [hasMore]);
 
   const handleBack = () => {
     navigate(-1);
@@ -128,6 +138,12 @@ export default function Mypage() {
     if (menuId === 'logout') {
       clearAuthSession();
       navigate('/');
+    }
+  };
+
+  const handleSeeMoreClick = () => {
+    if (latestRecordId) {
+      navigate(`/running-record/${latestRecordId}`);
     }
   };
 
@@ -218,8 +234,10 @@ export default function Mypage() {
                 </span>
               </div>
               <div className={styles.statItem}>
-                <span className={styles.statLabel}>총 시간</span>
-                <span className={styles.statValue}>{stats.totalTime}</span>
+                <span className={styles.statLabel}>평균 페이스</span>
+                <span className={styles.statValue}>
+                  <span className={styles.statNumber}>{averagePaceLabel}</span>
+                </span>
               </div>
               <div className={styles.statItem}>
                 <span className={styles.statLabel}>총 횟수</span>
@@ -237,7 +255,15 @@ export default function Mypage() {
           >
             <div className={styles.activityHeader}>
               <h3 className={styles.sectionTitle}>최근 활동</h3>
-              <span className={styles.seeMore}>더보기 &gt;</span>
+              <button
+                type="button"
+                className={styles.seeMore}
+                onClick={handleSeeMoreClick}
+                disabled={!latestRecordId}
+                aria-label="최근 러닝 기록 더보기"
+              >
+                더보기 &gt;
+              </button>
             </div>
 
             {!isUsingMockData && activities.length === 0 ? (
@@ -310,16 +336,6 @@ export default function Mypage() {
                 </ul>
               </div>
             )}
-            {isLoadingMore ? (
-              <p className={styles.activityLoading}>불러오는 중...</p>
-            ) : null}
-            {hasMore ? (
-              <div
-                ref={sentinelRef}
-                className={styles.activitySentinel}
-                aria-hidden="true"
-              />
-            ) : null}
           </section>
         </div>
         )}

@@ -292,10 +292,26 @@
 }
 
 .seeMore {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
   font-size: 13px;
   font-weight: 600;
   color: var(--sub-text);
   letter-spacing: -0.1px;
+  cursor: pointer;
+}
+
+.seeMore:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.seeMore:focus-visible {
+  outline: 3px solid rgba(255, 122, 46, 0.35);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .activityCard {
@@ -309,17 +325,6 @@
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-.activityLoading {
-  margin: 12px 0 0;
-  font-size: 13px;
-  color: var(--sub-text);
-  text-align: center;
-}
-
-.activitySentinel {
-  height: 1px;
 }
 
 .activityEmpty {
