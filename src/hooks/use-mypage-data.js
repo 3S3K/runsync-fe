@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { getMyRecords } from '../api/userApi';
 import {
   getEmptyMypageData,
   getMockMypageData,
+  mapMypageActivities,
   mapMypageData,
 } from '../utils/mypage-data';
 import {
@@ -61,6 +63,10 @@ export function useMypageData() {
   const [data, setData] = useState(getEmptyMypageData());
   const [isLoading, setIsLoading] = useState(true);
   const [isUsingMockData, setIsUsingMockData] = useState(false);
+  // 활동(러닝 기록) 무한 스크롤용 커서 상태
+  const [nextCursor, setNextCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -145,6 +151,13 @@ export function useMypageData() {
         } else {
           applyEmptyFallback();
         }
+
+        // 첫 페이지의 커서로 무한 스크롤 시작점 설정 (커서가 있을 때만 더 로드)
+        if (recordsLoadedFromApi) {
+          const cursor = recordsResponse?.data?.nextCursor ?? null;
+          setNextCursor(cursor);
+          setHasMore(Boolean(recordsResponse?.data?.hasNext) && cursor != null);
+        }
       } catch (error) {
         console.error('[useMypageData] loadMypageData failed', error);
         if (isMounted) {
@@ -164,11 +177,40 @@ export function useMypageData() {
     };
   }, []);
 
+  // 다음 페이지 활동을 받아 기존 목록에 이어 붙인다 (무한 스크롤)
+  const loadMoreActivities = useCallback(async () => {
+    if (isLoadingMore || !hasMore || nextCursor == null) {
+      return;
+    }
+
+    setIsLoadingMore(true);
+    try {
+      const page = await getMyRecords({ cursor: nextCursor });
+      const payload = page?.data ?? {};
+      const newActivities = mapMypageActivities(payload.records ?? [], [], true, false);
+
+      setData((prev) => ({
+        ...prev,
+        activities: [...prev.activities, ...newActivities],
+      }));
+      const cursor = payload.nextCursor ?? null;
+      setNextCursor(cursor);
+      setHasMore(Boolean(payload.hasNext) && cursor != null);
+    } catch (error) {
+      console.error('[useMypageData] loadMoreActivities failed', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [isLoadingMore, hasMore, nextCursor]);
+
   return {
     user: data.user,
     stats: data.stats,
     activities: data.activities,
     isLoading,
     isUsingMockData,
+    hasMore,
+    isLoadingMore,
+    loadMoreActivities,
   };
 }

@@ -24,7 +24,6 @@ import { clearAuthSession } from '../../utils/tokens';
 import styles from './mypage.module.css';
 
 const MONTHLY_GOAL_KM = 50;
-const PREVIEW_ACTIVITY_COUNT = 3;
 
 const SETTINGS_MENU_ITEMS = [
   { id: 'edit-profile', label: '프로필 편집', icon: MdEdit },
@@ -111,17 +110,20 @@ export default function Mypage() {
     activities,
     isLoading,
     isUsingMockData,
+    hasMore,
+    isLoadingMore,
+    loadMoreActivities,
   } = useMypageData();
+  const sentinelRef = useRef(null);
 
   const dotClass = getDotClassName(user.status);
-  const previewActivities = activities.slice(0, PREVIEW_ACTIVITY_COUNT);
   const monthlyGoalKm = Number(stats.monthlyGoalKm) || MONTHLY_GOAL_KM;
   const currentDistanceKm = Number(stats.totalDistanceKm) || 0;
   const goalProgress = monthlyGoalKm > 0
     ? Math.min(100, Math.round((currentDistanceKm / monthlyGoalKm) * 100))
     : 0;
   const averagePaceLabel = stats.averagePaceLabel
-    || getAveragePaceLabel(previewActivities, `6'20"`);
+    || getAveragePaceLabel(activities, `6'20"`);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -135,6 +137,23 @@ export default function Mypage() {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
+
+  // 활동 리스트 끝(sentinel)이 보이면 다음 페이지 로드 (무한 스크롤)
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !hasMore) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting) {
+        loadMoreActivities();
+      }
+    });
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [hasMore, loadMoreActivities]);
 
   const handleBack = () => {
     navigate(-1);
@@ -152,8 +171,6 @@ export default function Mypage() {
       navigate('/');
     }
   };
-
-  const handleViewMoreActivities = () => {};
 
   const renderActivityMeta = (activity) => {
     const paceLabel = getActivityPaceLabel(activity);
@@ -317,13 +334,6 @@ export default function Mypage() {
           >
             <div className={styles.activityHeader}>
               <h3 className={styles.cardTitle}>최근 활동</h3>
-              <button
-                type="button"
-                className={styles.viewMoreButton}
-                onClick={handleViewMoreActivities}
-              >
-                전체보기 &gt;
-              </button>
             </div>
             {!isUsingMockData && activities.length === 0 ? (
               <div className={styles.activityEmpty}>
@@ -339,7 +349,7 @@ export default function Mypage() {
               </div>
             ) : (
               <ul className={styles.activityList}>
-                {previewActivities.map((activity) => {
+                {activities.map((activity) => {
                   const content = (
                     <>
                       <span className={styles.activityIcon}>
@@ -389,6 +399,16 @@ export default function Mypage() {
                 })}
               </ul>
             )}
+            {isLoadingMore ? (
+              <p className={styles.activityLoading}>불러오는 중...</p>
+            ) : null}
+            {hasMore ? (
+              <div
+                ref={sentinelRef}
+                className={styles.activitySentinel}
+                aria-hidden="true"
+              />
+            ) : null}
           </section>
         </div>
         )}

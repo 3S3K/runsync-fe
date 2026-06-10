@@ -10,7 +10,15 @@ export async function getMySummary() {
   return unwrapApiData(response);
 }
 
-export async function getMyRecords() {
-  const response = await apiClient.get('/api/users/me/records');
+export async function getMyRecords({ cursor, size } = {}) {
+  const params = {};
+  if (cursor != null) {
+    params.cursor = cursor;
+  }
+  if (size != null) {
+    params.size = size;
+  }
+
+  const response = await apiClient.get('/api/users/me/records', { params });
   return unwrapApiData(response);
 }
