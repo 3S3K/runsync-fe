@@ -31,11 +31,15 @@ export default function ProfileEditPage() {
         if (cancelled) {
           return;
         }
-        setNickname(me?.nickname || '');
-        setGender(me?.gender || '');
-        setBirthDate((me?.birthDate || '').slice(0, 10));
-        setProfileImage(me?.profileImage || '');
-        setIsTmpUser(me?.role === 'TMP_USER');
+        if (!me) {
+          setStatus('error');
+          return;
+        }
+        setNickname(me.nickname || '');
+        setGender(me.gender || '');
+        setBirthDate((me.birthDate || '').slice(0, 10));
+        setProfileImage(me.profileImage || '');
+        setIsTmpUser(me.role === 'TMP_USER');
         setStatus('success');
       } catch {
         if (!cancelled) {
@@ -54,6 +58,10 @@ export default function ProfileEditPage() {
   const canSubmit = Boolean(
     nickname.trim() && gender && birthDate && !isSubmitting,
   );
+  // 미래 날짜 선택 방지 (오늘까지) — 로컬 기준 YYYY-MM-DD
+  const maxBirthDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -135,12 +143,23 @@ export default function ProfileEditPage() {
           </label>
 
           <div className={styles.field}>
-            <span className={styles.label}>성별</span>
-            <div className={styles.genderRow}>
+            <span
+              className={styles.label}
+              id="gender-label"
+            >
+              성별
+            </span>
+            <div
+              className={styles.genderRow}
+              role="radiogroup"
+              aria-labelledby="gender-label"
+            >
               {GENDERS.map((item) => (
                 <button
                   key={item.value}
                   type="button"
+                  role="radio"
+                  aria-checked={gender === item.value}
                   className={
                     gender === item.value
                       ? `${styles.genderButton} ${styles.genderButtonActive}`
@@ -160,6 +179,7 @@ export default function ProfileEditPage() {
               className={styles.input}
               type="date"
               value={birthDate}
+              max={maxBirthDate}
               onChange={(event) => setBirthDate(event.target.value)}
             />
           </label>
