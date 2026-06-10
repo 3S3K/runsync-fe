@@ -11,11 +11,11 @@
 .row {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 11px;
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  padding: 13px 0;
+  padding: 9px 0;
   border-bottom: 1px solid rgba(11, 43, 69, 0.055);
   box-sizing: border-box;
 }
@@ -26,7 +26,7 @@
 
 .row:last-child {
   border-bottom: none;
-  padding-bottom: 2px;
+  padding-bottom: 0;
 }
 
 .iconWrap {
@@ -34,8 +34,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #fff0e6;
   overflow: hidden;
@@ -50,9 +50,9 @@
 }
 
 .locationIcon {
-  width: 12px;
-  height: 12px;
-  border: 2.5px solid #ff7a2e;
+  width: 11px;
+  height: 11px;
+  border: 2px solid #ff7a2e;
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
 }
@@ -62,16 +62,16 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
   background: #ff7a2e;
   transform: translate(-50%, -50%);
 }
 
 .timeIcon {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   border: 2px solid #ff7a2e;
   border-radius: 50%;
 }
@@ -88,18 +88,18 @@
 }
 
 .timeIcon::before {
-  height: 4px;
+  height: 3px;
   transform: translate(-50%, -100%);
 }
 
 .timeIcon::after {
-  height: 5px;
+  height: 4px;
   transform: translate(-50%, -100%) rotate(90deg);
 }
 
 .distanceIcon {
-  width: 14px;
-  height: 11px;
+  width: 13px;
+  height: 10px;
 }
 
 .distanceIcon::before {
@@ -107,8 +107,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border: 2px solid #ff7a2e;
   border-radius: 50%;
 }
@@ -118,11 +118,11 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border: 2px solid #ff7a2e;
   border-radius: 50%;
-  box-shadow: -7px -3px 0 -1px #ff7a2e;
+  box-shadow: -6px -3px 0 -1px #ff7a2e;
 }
 
 .meta {
@@ -130,21 +130,21 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #8a9299;
   letter-spacing: -0.1px;
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
 .value {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
-  line-height: 1.25;
+  line-height: 1.2;
   color: #0b2b45;
   font-variant-numeric: tabular-nums;
   word-break: break-all;
