@@ -22,7 +22,23 @@ function formatDistance(distance) {
  * @param {number} distance 누적 거리(km)
  * @param {string} [location] 현재 위치 텍스트 (선택)
  */
-export default function RunningStats({ elapsedSeconds, distance, location }) {
+export default function RunningStats({ elapsedSeconds, distance, location, compact = false }) {
+  if (compact) {
+    return (
+      <div className={styles.compact}>
+        <div className={styles.compactItem}>
+          <span className={styles.compactLabel}>시간</span>
+          <span className={styles.compactValue}>{formatElapsed(elapsedSeconds)}</span>
+        </div>
+        <span className={styles.compactDivider} aria-hidden="true" />
+        <div className={styles.compactItem}>
+          <span className={styles.compactLabel}>거리</span>
+          <span className={styles.compactValue}>{`${formatDistance(distance)} km`}</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.stats}>
       {location ? (

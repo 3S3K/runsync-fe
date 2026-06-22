@@ -41,7 +41,7 @@
   z-index: 3;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
   width: 100%;
   max-width: 100%;
@@ -74,25 +74,27 @@
   width: 48px;
   height: 48px;
   padding: 0;
-  border: none;
+  box-sizing: border-box;
+  border: 2px solid #ff5a1f;
   border-radius: 50%;
-  background: #0b2b45;
-  box-shadow: 0 6px 18px rgba(11, 43, 69, 0.22);
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(11, 43, 69, 0.12);
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: #fff;
+  color: #ff5a1f;
   cursor: pointer;
   pointer-events: auto;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .myButton:active {
   transform: scale(0.97);
+  background: #fff4ee;
 }
 
 .myButton:focus-visible {
-  outline: 3px solid rgba(255, 122, 46, 0.35);
+  outline: 3px solid rgba(255, 90, 31, 0.35);
   outline-offset: 2px;
 }
 
@@ -100,29 +102,44 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   padding: 0;
-  border: none;
+  box-sizing: border-box;
+  border: 2px solid #ff5a1f;
   border-radius: 50%;
-  background-color: #ff7a2e;
-  box-shadow: 0 4px 14px rgba(255, 122, 46, 0.32);
-  font-size: 12px;
+  background-color: #fff;
+  box-shadow: 0 6px 18px rgba(11, 43, 69, 0.12);
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.04em;
-  color: #fff;
+  color: #ff5a1f;
   cursor: pointer;
   transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
 .artRunButton:active {
   transform: scale(0.97);
-  background-color: #f06f24;
+  background-color: #fff4ee;
 }
 
 .artRunButton:focus-visible {
-  outline: 3px solid rgba(255, 122, 46, 0.45);
+  outline: 3px solid rgba(255, 90, 31, 0.35);
   outline-offset: 2px;
+}
+
+.runPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px max(14px, env(safe-area-inset-bottom));
+  background: #fdfcf8;
+  border-radius: 24px 24px 0 0;
+  box-shadow:
+    0 -3px 18px rgba(11, 43, 69, 0.06),
+    0 -1px 3px rgba(11, 43, 69, 0.04);
 }
 
 .footer {

@@ -8,6 +8,40 @@
   padding: 0 1px;
 }
 
+.compact {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  padding: 2px 4px;
+}
+
+.compactItem {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.compactLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a9299;
+}
+
+.compactValue {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #0b2b45;
+  font-variant-numeric: tabular-nums;
+}
+
+.compactDivider {
+  width: 1px;
+  height: 18px;
+  background: rgba(11, 43, 69, 0.12);
+}
+
 .row {
   display: flex;
   align-items: center;
@@ -52,7 +86,7 @@
 .locationIcon {
   width: 11px;
   height: 11px;
-  border: 2px solid #ff7a2e;
+  border: 2px solid #ff5a1f;
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
 }
@@ -65,14 +99,14 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #ff7a2e;
+  background: #ff5a1f;
   transform: translate(-50%, -50%);
 }
 
 .timeIcon {
   width: 13px;
   height: 13px;
-  border: 2px solid #ff7a2e;
+  border: 2px solid #ff5a1f;
   border-radius: 50%;
 }
 
@@ -83,7 +117,7 @@
   top: 50%;
   left: 50%;
   width: 2px;
-  background: #ff7a2e;
+  background: #ff5a1f;
   transform-origin: 50% 100%;
 }
 
@@ -109,7 +143,7 @@
   left: 0;
   width: 5px;
   height: 5px;
-  border: 2px solid #ff7a2e;
+  border: 2px solid #ff5a1f;
   border-radius: 50%;
 }
 
@@ -120,9 +154,9 @@
   bottom: 0;
   width: 5px;
   height: 5px;
-  border: 2px solid #ff7a2e;
+  border: 2px solid #ff5a1f;
   border-radius: 50%;
-  box-shadow: -6px -3px 0 -1px #ff7a2e;
+  box-shadow: -6px -3px 0 -1px #ff5a1f;
 }
 
 .meta {

@@ -5,11 +5,8 @@ import { endRunSession } from '../../api/run-session';
 import FriendButton from '../../components/home/FriendButton';
 import RunningMap from '../../components/home/RunningMap';
 import RunRecordForm from '../../components/home/run-record-form';
-import RunningNowPanel from '../../components/home/running-now-panel';
-import RunningNowProfile from '../../components/home/running-now-profile';
 import RunningStats from '../../components/home/running-stats';
 import StartButton from '../../components/home/StartButton';
-import StatusBadge from '../../components/home/StatusBadge';
 import StopButton from '../../components/home/stop-button';
 import { useActiveRunSession } from '../../hooks/use-active-run-session';
 import { useRunRealtime } from '../../hooks/use-run-realtime';
@@ -96,10 +93,6 @@ export default function HomePage() {
       <div className={styles.shell}>
         <div className={styles.mapSection}>
           <header className={styles.header}>
-            <StatusBadge
-              temperature="18°"
-              location="Seoul"
-            />
             {!isRunning ? (
               <div className={styles.headerRight}>
                 <button
@@ -133,31 +126,28 @@ export default function HomePage() {
         {isRunning ? (
           <div className={styles.runFooter}>
             {runError ? <p className={styles.runError}>{runError}</p> : null}
-            <RunningNowPanel>
-              <RunningNowProfile statusLabel="현재 러닝 중" />
+            <section className={styles.runPanel} aria-label="러닝 중">
               <RunningStats
                 elapsedSeconds={run.elapsedSeconds}
                 distance={run.distance}
+                compact
               />
               <StopButton onClick={handleStop} />
-            </RunningNowPanel>
+            </section>
           </div>
         ) : null}
 
         {isFinished ? (
           <div className={styles.runFooter}>
             {run.error ? <p className={styles.runError}>{run.error}</p> : null}
-            <RunningNowPanel>
-              <RunningNowProfile
-                statusLabel="러닝 종료"
-                muted
-              />
+            <section className={styles.runPanel} aria-label="러닝 완료">
               <RunningStats
                 elapsedSeconds={run.elapsedSeconds}
                 distance={run.distance}
+                compact
               />
               <RunRecordForm onSubmit={handleSaveRecord} />
-            </RunningNowPanel>
+            </section>
           </div>
         ) : null}
 
