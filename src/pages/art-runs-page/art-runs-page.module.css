@@ -49,6 +49,11 @@
   background: #e64a14;
 }
 
+.createButton:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
+}
+
 .tabs {
   display: flex;
   gap: 8px;

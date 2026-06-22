@@ -22,7 +22,7 @@ function formatDistance(distance) {
  * @param {number} distance 누적 거리(km)
  * @param {string} [location] 현재 위치 텍스트 (선택)
  */
-export default function RunningStats({ elapsedSeconds, distance, location, compact = false }) {
+export default function RunningStats({ elapsedSeconds = 0, distance = 0, location, compact = false }) {
   if (compact) {
     return (
       <div className={styles.compact}>

@@ -66,6 +66,17 @@
   letter-spacing: 0.06em;
   color: #ff5a1f;
   cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.myButton:active {
+  transform: scale(0.97);
+  background: #fff4ee;
+}
+
+.myButton:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
 }
 
 .stateMessage {
