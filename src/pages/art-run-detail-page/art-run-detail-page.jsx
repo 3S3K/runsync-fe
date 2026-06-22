@@ -3,8 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import KakaoMap from '../../components/map/kakao-map';
 import { useArtRun } from '../../hooks/use-art-run';
+import { useArtRunResult } from '../../hooks/use-art-run-result';
+import { getParticipantColor } from '../../utils/art-run-colors';
 import { formatYmdHm } from '../../utils/format-date';
 import { DEFAULT_CENTER } from '../../utils/geolocation';
+import { smoothPath } from '../../utils/smooth-path';
 
 import defaultAvatar from '../../assets/runner-man.png';
 import styles from './art-run-detail-page.module.css';
@@ -14,6 +17,17 @@ const STATUS_LABEL = {
   IN_PROGRESS: '진행중',
   COMPLETED: '완료',
 };
+
+function formatDuration(totalSeconds) {
+  const seconds = Math.max(0, Math.floor(totalSeconds || 0));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  const mm = String(minutes).padStart(2, '0');
+  const ss = String(secs).padStart(2, '0');
+
+  return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`;
+}
 
 export default function ArtRunDetailPage() {
   const { id } = useParams();
@@ -30,15 +44,33 @@ export default function ArtRunDetailPage() {
     remove,
   } = useArtRun(id);
 
-  const center = useMemo(() => {
-    const place = artRun?.meetingPlace;
-    return place ? { lat: place.latitude, lng: place.longitude } : DEFAULT_CENTER;
-  }, [artRun]);
+  const isHost = Boolean(me && artRun?.host && me.id === artRun.host.userId);
+  const isParticipant = Boolean(me && artRun?.participants?.some((p) => p.userId === me.id));
 
-  const routePaths = useMemo(
-    () => [
+  // 완료된 러닝을 참가자/호스트가 볼 때만 결과(참가자 경로·기록)를 같이 불러와 상세에서 바로 보여준다
+  const showResult = artRun?.status === 'COMPLETED' && (isHost || isParticipant);
+  const { result } = useArtRunResult(showResult ? id : null);
+  const hasResult = showResult && Boolean(result);
+
+  // 완료: 참가자별 실제 뛴 경로(색상·스무딩)만. 미완료: 도안(점선).
+  const mapPaths = useMemo(() => {
+    if (hasResult) {
+      return (result.participants || [])
+        .filter((participant) => participant.paths && participant.paths.length >= 2)
+        .map((participant) => ({
+          id: `participant-${participant.userId}`,
+          points: smoothPath(
+            [...participant.paths]
+              .sort((a, b) => a.sequence - b.sequence)
+              .map((point) => ({ lat: point.latitude, lng: point.longitude })),
+          ),
+          color: getParticipantColor(participant.userId),
+        }));
+    }
+
+    return [
       {
-        id: 'route',
+        id: 'design',
         points: (artRun?.coordinates || []).map((point) => ({
           lat: point.latitude,
           lng: point.longitude,
@@ -46,8 +78,25 @@ export default function ArtRunDetailPage() {
         color: '#243b55',
         dashed: true,
       },
-    ],
-    [artRun],
+    ];
+  }, [artRun, hasResult, result]);
+
+  const center = useMemo(() => {
+    const firstTrail = mapPaths.find((path) => path.id !== 'design' && path.points.length > 0);
+    if (firstTrail) {
+      const mid = firstTrail.points[Math.floor(firstTrail.points.length / 2)];
+      return { lat: mid.lat, lng: mid.lng };
+    }
+    const place = artRun?.meetingPlace;
+    return place ? { lat: place.latitude, lng: place.longitude } : DEFAULT_CENTER;
+  }, [artRun, mapPaths]);
+
+  // 거리순 정렬 (많이 뛴 사람부터)
+  const rankedParticipants = useMemo(
+    () => (hasResult
+      ? [...(result.participants || [])].sort((a, b) => (b.distance ?? 0) - (a.distance ?? 0))
+      : []),
+    [hasResult, result],
   );
 
   const runAction = async (action, failMessage) => {
@@ -106,10 +155,14 @@ export default function ArtRunDetailPage() {
     participants,
   } = artRun;
 
-  const isHost = Boolean(me && host && me.id === host.userId);
-  const isParticipant = Boolean(me && participants?.some((p) => p.userId === me.id));
   const isFull = currentCount >= capacity;
   const canJoin = runStatus === 'RECRUITING' && !isHost && !isParticipant && !isFull;
+  const showFooter =
+    canJoin
+    || (isParticipant && !isHost)
+    || (isHost && runStatus === 'RECRUITING')
+    || (runStatus === 'IN_PROGRESS' && (isParticipant || isHost))
+    || (!isHost && !isParticipant && runStatus === 'RECRUITING' && isFull);
 
   return (
     <main className={styles.page}>
@@ -118,7 +171,7 @@ export default function ArtRunDetailPage() {
           <button
             type="button"
             className={styles.backButton}
-            onClick={() => navigate('/art-runs')}
+            onClick={() => navigate(-1)}
             aria-label="뒤로 가기"
           >
             ←
@@ -130,7 +183,7 @@ export default function ArtRunDetailPage() {
         <div className={styles.mapWrap}>
           <KakaoMap
             center={center}
-            paths={routePaths}
+            paths={mapPaths}
             className={styles.map}
           />
         </div>
@@ -156,35 +209,54 @@ export default function ArtRunDetailPage() {
 
         <section className={styles.participantsSection}>
           <h2 className={styles.sectionTitle}>참가자 {currentCount}명</h2>
-          <ul className={styles.participantList}>
-            {participants?.map((participant) => (
-              <li
-                key={participant.userId}
-                className={styles.participant}
-              >
-                <img
-                  className={styles.avatar}
-                  src={participant.profileImage || defaultAvatar}
-                  alt={participant.nickname}
-                  onError={handleImageError}
-                />
-                <span className={styles.participantName}>{participant.nickname}</span>
-              </li>
-            ))}
-          </ul>
+          {hasResult ? (
+            <ul className={styles.participantList}>
+              {rankedParticipants.map((participant) => (
+                <li
+                  key={participant.userId}
+                  className={styles.participant}
+                >
+                  <span
+                    className={styles.colorDot}
+                    style={{ background: getParticipantColor(participant.userId) }}
+                    aria-hidden="true"
+                  />
+                  <img
+                    className={styles.avatar}
+                    src={participant.profileImage || defaultAvatar}
+                    alt={participant.nickname}
+                    onError={handleImageError}
+                  />
+                  <span className={styles.participantName}>{participant.nickname}</span>
+                  <span className={styles.stats}>
+                    <span className={styles.distance}>{(participant.distance ?? 0).toFixed(2)}km</span>
+                    <span className={styles.duration}>{formatDuration(participant.durationSeconds)}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className={styles.participantList}>
+              {participants?.map((participant) => (
+                <li
+                  key={participant.userId}
+                  className={styles.participant}
+                >
+                  <img
+                    className={styles.avatar}
+                    src={participant.profileImage || defaultAvatar}
+                    alt={participant.nickname}
+                    onError={handleImageError}
+                  />
+                  <span className={styles.participantName}>{participant.nickname}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
+        {showFooter ? (
         <footer className={styles.footer}>
-          {runStatus === 'COMPLETED' && (isParticipant || isHost) ? (
-            <button
-              type="button"
-              className={styles.primaryButton}
-              onClick={() => navigate(`/art-runs/${id}/result`)}
-            >
-              결과 보기
-            </button>
-          ) : null}
-
           {canJoin ? (
             <button
               type="button"
@@ -254,6 +326,7 @@ export default function ArtRunDetailPage() {
             <p className={styles.fullNotice}>정원이 가득 찼어요.</p>
           ) : null}
         </footer>
+        ) : null}
       </div>
     </main>
   );
