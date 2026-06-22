@@ -35,11 +35,23 @@
   padding: 10px 16px;
   border: none;
   border-radius: 999px;
-  background: #243b55;
+  background: #ff5a1f;
+  box-shadow: 0 4px 14px rgba(255, 90, 31, 0.28);
   font-size: 13px;
   font-weight: 700;
   color: #fff;
   cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.createButton:active {
+  transform: scale(0.97);
+  background: #e64a14;
+}
+
+.createButton:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
 }
 
 .tabs {

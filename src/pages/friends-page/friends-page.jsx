@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import FriendsListPanel from '../../components/friends/friends-list-panel';
 import FriendButton from '../../components/home/FriendButton';
 import RunningMap from '../../components/home/RunningMap';
-import StatusBadge from '../../components/home/StatusBadge';
 import { useFriends } from '../../hooks/use-friends';
 import { getFriendStatusLabel, toFriendStatus } from '../../utils/friend-status';
 
@@ -48,10 +47,6 @@ export default function FriendsPage() {
       <div className={styles.shell}>
         <div className={`${styles.mapSection} ${styles.mapSectionCompact}`}>
           <header className={styles.header}>
-            <StatusBadge
-              temperature="18°"
-              location="Seoul"
-            />
             <div className={styles.headerRight}>
               <button
                 type="button"

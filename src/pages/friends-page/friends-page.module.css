@@ -32,7 +32,7 @@
   z-index: 2;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   padding: max(16px, env(safe-area-inset-top)) 16px 0;
   pointer-events: none;
@@ -53,17 +53,30 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   padding: 0;
-  border: none;
+  box-sizing: border-box;
+  border: 2px solid #ff5a1f;
   border-radius: 50%;
-  background: #243b55;
-  box-shadow: 0 4px 16px rgba(36, 59, 85, 0.35);
-  font-size: 12px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(11, 43, 69, 0.12);
+  font-size: 13px;
   font-weight: 800;
-  color: #fff;
+  letter-spacing: 0.06em;
+  color: #ff5a1f;
   cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.myButton:active {
+  transform: scale(0.97);
+  background: #fff4ee;
+}
+
+.myButton:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
 }
 
 .stateMessage {
