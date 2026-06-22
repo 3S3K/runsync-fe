@@ -7,5 +7,5 @@ import { apiClient, unwrapApiData } from './client';
  */
 export async function getRunRecord(recordId) {
   const response = await apiClient.get(`/api/run-records/${recordId}`);
-  return unwrapApiData(response);
+  return unwrapApiData(response)?.data ?? null;
 }

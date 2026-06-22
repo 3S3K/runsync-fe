@@ -94,7 +94,7 @@ export default function ArtRunCreatePage() {
           <button
             type="button"
             className={styles.backButton}
-            onClick={() => navigate('/art-runs')}
+            onClick={() => navigate(-1)}
             aria-label="뒤로 가기"
           >
             ←
