@@ -113,7 +113,7 @@ export default function ProfileEditPage() {
           <button
             type="button"
             className={styles.backButton}
-            onClick={() => navigate('/mypage')}
+            onClick={() => navigate(-1)}
             aria-label="뒤로 가기"
           >
             ←
