@@ -5,7 +5,7 @@ import KakaoMap from '../../components/map/kakao-map';
 import { useArtRun } from '../../hooks/use-art-run';
 import { useArtRunResult } from '../../hooks/use-art-run-result';
 import { getParticipantColor } from '../../utils/art-run-colors';
-import { formatYmdHm } from '../../utils/format-date';
+import { formatDuration, formatYmdHm } from '../../utils/format-date';
 import { DEFAULT_CENTER } from '../../utils/geolocation';
 import { smoothPath } from '../../utils/smooth-path';
 
@@ -17,17 +17,6 @@ const STATUS_LABEL = {
   IN_PROGRESS: '진행중',
   COMPLETED: '완료',
 };
-
-function formatDuration(totalSeconds) {
-  const seconds = Math.max(0, Math.floor(totalSeconds || 0));
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  const mm = String(minutes).padStart(2, '0');
-  const ss = String(secs).padStart(2, '0');
-
-  return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`;
-}
 
 export default function ArtRunDetailPage() {
   const { id } = useParams();
@@ -159,7 +148,7 @@ export default function ArtRunDetailPage() {
   const canJoin = runStatus === 'RECRUITING' && !isHost && !isParticipant && !isFull;
   const showFooter =
     canJoin
-    || (isParticipant && !isHost)
+    || (isParticipant && !isHost && runStatus === 'RECRUITING')
     || (isHost && runStatus === 'RECRUITING')
     || (runStatus === 'IN_PROGRESS' && (isParticipant || isHost))
     || (!isHost && !isParticipant && runStatus === 'RECRUITING' && isFull);
@@ -268,7 +257,7 @@ export default function ArtRunDetailPage() {
             </button>
           ) : null}
 
-          {isParticipant && !isHost ? (
+          {isParticipant && !isHost && runStatus === 'RECRUITING' ? (
             <button
               type="button"
               className={styles.secondaryButton}

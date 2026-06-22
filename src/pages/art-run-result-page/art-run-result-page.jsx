@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import KakaoMap from '../../components/map/kakao-map';
 import { useArtRunResult } from '../../hooks/use-art-run-result';
 import { getParticipantColor } from '../../utils/art-run-colors';
+import { formatDuration } from '../../utils/format-date';
 import { DEFAULT_CENTER } from '../../utils/geolocation';
 import { smoothPath } from '../../utils/smooth-path';
 
@@ -11,17 +12,6 @@ import defaultAvatar from '../../assets/runner-man.png';
 import styles from './art-run-result-page.module.css';
 
 const DESIGN_COLOR = '#9e9e9e';
-
-function formatDuration(totalSeconds) {
-  const seconds = Math.max(0, Math.floor(totalSeconds || 0));
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  const mm = String(minutes).padStart(2, '0');
-  const ss = String(secs).padStart(2, '0');
-
-  return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`;
-}
 
 export default function ArtRunResultPage() {
   const { id } = useParams();
