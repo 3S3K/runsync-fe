@@ -5,7 +5,7 @@ import { getActiveRunSession } from '../api/run-session';
 /**
  * 진행 중(ACTIVE)인 러닝 세션을 마운트 시 1회 조회하는 공용 훅.
  * @returns {{
- *   active: { sessionId: number, startTime: string, artRunSessionId: number | null } | null,
+ *   active: { sessionId: number, startTime: string, artRunSessionId: number | null, distance: number } | null,
  *   status: 'loading' | 'success' | 'error',
  *   setActive: (value: object | null) => void,
  * }}
