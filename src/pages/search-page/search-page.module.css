@@ -13,6 +13,24 @@
   gap: 24px;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.backButton {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f4f6;
+  font-size: 18px;
+  color: #243b55;
+  cursor: pointer;
+}
+
 .title {
   margin: 0;
   font-size: 28px;

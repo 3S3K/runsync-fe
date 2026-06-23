@@ -4,7 +4,25 @@
   flex: 1;
   min-height: 0;
   background: #fff;
-  border-radius: 0;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -3px 16px rgba(11, 43, 69, 0.06);
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 10px 0 4px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.grabber {
+  width: 40px;
+  height: 5px;
+  border-radius: 999px;
+  background: #d9d9d9;
 }
 
 .header {
@@ -13,7 +31,7 @@
   justify-content: space-between;
   gap: 12px;
   flex-shrink: 0;
-  padding: 20px 20px 12px;
+  padding: 4px 20px 12px;
 }
 
 .title {
@@ -33,14 +51,25 @@
 
 .requestsButton {
   padding: 10px 14px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 90, 31, 0.45);
   border-radius: 999px;
   background: #fff;
   font-size: 13px;
   font-weight: 700;
-  color: #243b55;
+  color: #ff5a1f;
   white-space: nowrap;
   cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.requestsButton:active {
+  transform: scale(0.97);
+  background: #fff4ee;
+}
+
+.requestsButton:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
 }
 
 .addButton {
@@ -48,12 +77,19 @@
   padding: 10px 16px;
   border: none;
   border-radius: 999px;
-  background: #243b55;
+  background: #ff5a1f;
+  box-shadow: 0 4px 14px rgba(255, 90, 31, 0.28);
   font-size: 13px;
   font-weight: 700;
   color: #fff;
   white-space: nowrap;
   cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.addButton:active {
+  transform: scale(0.97);
+  background: #e64a14;
 }
 
 .addButton:focus-visible {

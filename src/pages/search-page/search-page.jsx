@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { RecentSearchList } from '../../components/search/recent-search-list';
 import { SearchForm } from '../../components/search/search-form';
@@ -9,6 +10,7 @@ import { useUserSearch } from '../../hooks/use-user-search';
 import styles from './search-page.module.css';
 
 export default function SearchPage() {
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const {
     recentSearches,
@@ -62,7 +64,17 @@ export default function SearchPage() {
         className={styles.content}
         aria-label="검색"
       >
-        <h1 className={styles.title}>검색</h1>
+        <div className={styles.header}>
+          <button
+            type="button"
+            className={styles.backButton}
+            onClick={() => navigate(-1)}
+            aria-label="뒤로 가기"
+          >
+            ←
+          </button>
+          <h1 className={styles.title}>검색</h1>
+        </div>
 
         <SearchForm
           value={query}

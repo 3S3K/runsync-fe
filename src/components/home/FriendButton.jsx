@@ -13,7 +13,7 @@ export default function FriendButton({ onClick }) {
       >
         <span className={styles.icon} />
       </span>
-      <span className={styles.label}>친구 보기</span>
+      <span className={styles.label}>친구</span>
     </button>
   );
 }
