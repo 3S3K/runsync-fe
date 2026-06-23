@@ -47,6 +47,14 @@ export default function FriendsPage() {
       <div className={styles.shell}>
         <div className={`${styles.mapSection} ${styles.mapSectionCompact}`}>
           <header className={styles.header}>
+            <button
+              type="button"
+              className={styles.backButton}
+              onClick={() => navigate(-1)}
+              aria-label="뒤로 가기"
+            >
+              ←
+            </button>
             <div className={styles.headerRight}>
               <button
                 type="button"
@@ -76,6 +84,7 @@ export default function FriendsPage() {
             onAddFriend={() => navigate('/search')}
             onRemoveFriend={handleRemoveFriend}
             onViewRequests={() => navigate('/friends/requests')}
+            onClose={() => navigate('/home')}
           />
         ) : null}
       </div>

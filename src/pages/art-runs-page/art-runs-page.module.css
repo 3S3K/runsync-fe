@@ -23,7 +23,22 @@
   margin-bottom: 12px;
 }
 
+.backButton {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-size: 18px;
+  color: #243b55;
+  cursor: pointer;
+}
+
 .title {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   font-size: 22px;
   font-weight: 800;

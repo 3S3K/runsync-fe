@@ -28,6 +28,14 @@ export default function ArtRunsPage() {
     <main className={styles.page}>
       <div className={styles.shell}>
         <header className={styles.header}>
+          <button
+            type="button"
+            className={styles.backButton}
+            onClick={() => navigate(-1)}
+            aria-label="뒤로 가기"
+          >
+            ←
+          </button>
           <h1 className={styles.title}>협동 러닝</h1>
           <button
             type="button"

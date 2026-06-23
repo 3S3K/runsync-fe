@@ -32,7 +32,7 @@
   z-index: 2;
   display: flex;
   align-items: flex-start;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 12px;
   padding: max(16px, env(safe-area-inset-top)) 16px 0;
   pointer-events: none;
@@ -40,6 +40,21 @@
 
 .header > * {
   pointer-events: auto;
+}
+
+.backButton {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(11, 43, 69, 0.12);
+  font-size: 20px;
+  color: #243b55;
+  cursor: pointer;
 }
 
 .headerRight {
