@@ -13,20 +13,23 @@ import ArtRunDetailPage from "./pages/art-run-detail-page/art-run-detail-page";
 import ArtRunCreatePage from "./pages/art-run-create-page/art-run-create-page";
 import ArtRunRunPage from "./pages/art-run-run-page/art-run-run-page";
 import ArtRunResultPage from "./pages/art-run-result-page/art-run-result-page";
-import { AUTH_CLEARED_EVENT, getAccessToken, setAccessToken } from "./utils/tokens";
+import { AUTH_CLEARED_EVENT, clearAuthSession, getAccessToken, setAccessToken } from "./utils/tokens";
+import { isAccessTokenValid } from "./utils/access-token";
 import { refreshAccessToken } from "./api/auth";
 import SearchPage from './pages/search-page/search-page';
 
 
 function App() {
   const [isBootstrapping, setIsBootstrapping] = useState(true);
-  const [isAuthed, setIsAuthed] = useState(Boolean(getAccessToken()));
+  const [isAuthed, setIsAuthed] = useState(() => isAccessTokenValid(getAccessToken()));
 
   useEffect(() => {
     let cancelled = false;
 
     const bootstrap = async () => {
-      if (getAccessToken()) {
+      // 토큰 "존재"가 아니라 "유효성"으로 판단한다.
+      // 유효한 토큰이 있으면 바로 인증, 없거나 만료됐으면 reissue를 선제적으로 시도한다.
+      if (isAccessTokenValid(getAccessToken())) {
         if (!cancelled) {
           setIsAuthed(true);
           setIsBootstrapping(false);
@@ -43,9 +46,16 @@ function App() {
         if (accessToken) {
           setAccessToken(accessToken);
           setIsAuthed(true);
+        } else {
+          // 만료된 토큰을 갱신하지 못함 → 남은 토큰을 정리해 깔끔히 로그아웃 상태로
+          clearAuthSession();
+          setIsAuthed(false);
         }
       } catch {
-        // API unavailable — stay unauthenticated
+        if (!cancelled) {
+          clearAuthSession();
+          setIsAuthed(false);
+        }
       } finally {
         if (!cancelled) {
           setIsBootstrapping(false);
