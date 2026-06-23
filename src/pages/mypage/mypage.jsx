@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  MdChevronRight,
   MdDirectionsRun,
   MdEdit,
   MdLock,
   MdLogout,
-  MdMoreHoriz,
   MdNotifications,
-  MdRoute,
-  MdSpeed,
+  MdSettings,
 } from 'react-icons/md';
 
 import { useMypageData } from '../../hooks/use-mypage-data';
@@ -23,7 +20,7 @@ import { clearAuthSession } from '../../utils/tokens';
 
 import styles from './mypage.module.css';
 
-const MONTHLY_GOAL_KM = 50;
+const MAX_VISIBLE_ACTIVITIES = 4;
 
 const SETTINGS_MENU_ITEMS = [
   { id: 'edit-profile', label: '프로필 편집', icon: MdEdit },
@@ -57,17 +54,6 @@ function ProfileAvatar({ src, alt }) {
   );
 }
 
-function getActivityPaceLabel(activity) {
-  if (activity.paceLabel && activity.paceLabel !== '-') {
-    return activity.paceLabel;
-  }
-
-  const durationSeconds = activity.durationSeconds
-    ?? parseDurationHmsToSeconds(activity.duration);
-
-  return formatPaceFromDistanceAndDuration(activity.distanceKm, durationSeconds);
-}
-
 function formatDistanceValue(value) {
   const numericValue = Number(value);
   if (Number.isNaN(numericValue)) {
@@ -77,6 +63,35 @@ function formatDistanceValue(value) {
   return Number.isInteger(numericValue)
     ? String(numericValue)
     : numericValue.toFixed(2);
+}
+
+function getAveragePaceLabel(activities, fallbackLabel) {
+  const totalDistance = activities.reduce(
+    (sum, activity) => sum + Number(activity.distanceKm ?? 0),
+    0,
+  );
+  const totalSeconds = activities.reduce((sum, activity) => {
+    const durationSeconds = activity.durationSeconds
+      ?? parseDurationHmsToSeconds(activity.duration);
+    return sum + durationSeconds;
+  }, 0);
+
+  if (totalDistance > 0 && totalSeconds > 0) {
+    const paceLabel = formatPaceFromDistanceAndDuration(totalDistance, totalSeconds);
+    if (paceLabel !== '-') {
+      return paceLabel;
+    }
+  }
+
+  return fallbackLabel || '-';
+}
+
+function getAveragePaceDisplay(stats, activities) {
+  if (stats.averagePaceLabel && stats.averagePaceLabel !== '-') {
+    return stats.averagePaceLabel;
+  }
+
+  return getAveragePaceLabel(activities, stats.averagePaceLabel);
 }
 
 export default function Mypage() {
@@ -89,20 +104,12 @@ export default function Mypage() {
     activities,
     isLoading,
     isUsingMockData,
-    hasMore,
-    isLoadingMore,
-    loadMoreActivities,
   } = useMypageData();
-  const sentinelRef = useRef(null);
-  const loadMoreRef = useRef(loadMoreActivities);
 
   const dotClass = getDotClassName(user.status);
-  const monthlyGoalKm = Number(stats.monthlyGoalKm) || MONTHLY_GOAL_KM;
-  const currentDistanceKm = Number(stats.totalDistanceKm) || 0;
-  const goalProgress = monthlyGoalKm > 0
-    ? Math.min(100, Math.round((currentDistanceKm / monthlyGoalKm) * 100))
-    : 0;
-  const averagePaceLabel = stats.averagePaceLabel;
+  const visibleActivities = activities.slice(0, MAX_VISIBLE_ACTIVITIES);
+  const averagePaceLabel = getAveragePaceDisplay(stats, activities);
+  const latestRecordId = activities.find((activity) => activity.recordId)?.recordId;
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -116,29 +123,6 @@ export default function Mypage() {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
-
-  // loadMoreActivities 최신 참조를 ref로 유지 (observer 재생성 없이 항상 최신 호출)
-  useEffect(() => {
-    loadMoreRef.current = loadMoreActivities;
-  }, [loadMoreActivities]);
-
-  // 활동 리스트 끝(sentinel)이 보이면 다음 페이지 로드 (무한 스크롤).
-  // 의존성은 hasMore 만 — loadMore 참조 변화로 observer 가 재생성/즉시 재발동되는 무한 루프 방지.
-  useEffect(() => {
-    const node = sentinelRef.current;
-    if (!node || !hasMore) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0]?.isIntersecting) {
-        loadMoreRef.current();
-      }
-    });
-    observer.observe(node);
-
-    return () => observer.disconnect();
-  }, [hasMore]);
 
   const handleBack = () => {
     navigate(-1);
@@ -159,10 +143,10 @@ export default function Mypage() {
     }
   };
 
-  const renderActivityMeta = (activity) => {
-    const paceLabel = getActivityPaceLabel(activity);
-
-    return `${formatDistanceValue(activity.distanceKm)} km · ${activity.duration} · ${paceLabel}/km`;
+  const handleSeeMoreClick = () => {
+    if (latestRecordId) {
+      navigate(`/running-record/${latestRecordId}`);
+    }
   };
 
   return (
@@ -182,11 +166,11 @@ export default function Mypage() {
             <button
               type="button"
               className={styles.iconButton}
-              aria-label="더보기"
+              aria-label="설정"
               aria-expanded={isSettingsOpen}
               onClick={handleSettingsToggle}
             >
-              <MdMoreHoriz className={styles.moreIcon} aria-hidden="true" />
+              <MdSettings className={styles.settingsIcon} aria-hidden="true" />
             </button>
             {isSettingsOpen ? (
               <div className={styles.settingsMenu} role="menu">
@@ -216,99 +200,51 @@ export default function Mypage() {
           </div>
         ) : (
         <div className={styles.content}>
-          <section className={styles.hero}>
-            <div className={styles.heroBackdrop} aria-hidden="true">
-              <span className={styles.heroOrbPrimary} />
-              <span className={styles.heroOrbSecondary} />
-            </div>
-
-            <div className={styles.profileBlock}>
-              <div className={styles.avatarBlock}>
-                <div className={styles.avatarRing}>
-                  <ProfileAvatar
-                    src={user.avatarSrc}
-                    alt={user.name}
-                  />
-                </div>
-                <span
-                  className={`${styles.avatarDot} ${dotClass}`}
-                  aria-hidden="true"
+          <section className={styles.profileSection}>
+            <div className={styles.avatarBlock}>
+              <div className={styles.avatarRing}>
+                <ProfileAvatar
+                  src={user.avatarSrc}
+                  alt={user.name}
                 />
               </div>
-
-              <div className={styles.profileMeta}>
-                <h2 className={styles.name}>{user.name}</h2>
-                <p className={styles.handle}>{user.handle}</p>
-                <span className={styles.statusPill}>{user.statusLabel}</span>
-                <p className={styles.monthlyRunSummary}>
-                  이번 달
-                  {' '}
-                  <strong>{stats.totalRuns}</strong>
-                  회 러닝
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <section className={styles.goalCard} aria-label="이번 달 목표">
-            <div className={styles.goalHeader}>
-              <h3 className={styles.cardTitle}>이번 달 목표</h3>
-              <span className={styles.goalProgressText}>
-                {goalProgress}
-                % 달성
-              </span>
-            </div>
-            <p className={styles.goalDistance}>
-              <strong>{formatDistanceValue(currentDistanceKm)}</strong>
-              <span className={styles.goalDistanceDivider}>/</span>
-              <span>{monthlyGoalKm}</span>
-              <span className={styles.goalDistanceUnit}> km</span>
-            </p>
-            <div
-              className={styles.goalProgressTrack}
-              role="progressbar"
-              aria-valuenow={goalProgress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`이번 달 목표 ${goalProgress}% 달성`}
-            >
               <span
-                className={styles.goalProgressFill}
-                style={{ width: `${goalProgress}%` }}
+                className={`${styles.avatarDot} ${dotClass}`}
+                aria-hidden="true"
               />
+            </div>
+
+            <div className={styles.profileMeta}>
+              <h2 className={styles.name}>{user.name}</h2>
+              <p className={styles.handle}>{user.handle}</p>
+              <span className={styles.statusPill}>{user.statusLabel}</span>
             </div>
           </section>
 
           <section
             className={styles.statsCard}
-            aria-label="이번 달 러닝"
+            aria-label="러닝 통계"
           >
-            <h3 className={styles.cardTitle}>이번 달 러닝</h3>
             <div className={styles.statsGrid}>
               <div className={styles.statItem}>
-                <span className={styles.statIconWrap} aria-hidden="true">
-                  <MdRoute className={styles.statIcon} />
-                </span>
-                <span className={styles.statLabel}>총 거리</span>
+                <span className={styles.statLabel}>월간 거리</span>
                 <span className={styles.statValue}>
-                  {formatDistanceValue(stats.totalDistanceKm)}
+                  <span className={styles.statNumber}>
+                    {formatDistanceValue(stats.totalDistanceKm)}
+                  </span>
                   <span className={styles.statUnit}> km</span>
                 </span>
               </div>
               <div className={styles.statItem}>
-                <span className={styles.statIconWrap} aria-hidden="true">
-                  <MdSpeed className={styles.statIcon} />
-                </span>
                 <span className={styles.statLabel}>평균 페이스</span>
-                <span className={styles.statValue}>{averagePaceLabel}</span>
+                <span className={styles.statValue}>
+                  <span className={styles.statNumber}>{averagePaceLabel}</span>
+                </span>
               </div>
               <div className={styles.statItem}>
-                <span className={styles.statIconWrap} aria-hidden="true">
-                  <MdDirectionsRun className={styles.statIcon} />
-                </span>
-                <span className={styles.statLabel}>러닝 횟수</span>
+                <span className={styles.statLabel}>월간 횟수</span>
                 <span className={styles.statValue}>
-                  {stats.totalRuns}
+                  <span className={styles.statNumber}>{stats.totalRuns}</span>
                   <span className={styles.statUnit}> 회</span>
                 </span>
               </div>
@@ -320,82 +256,88 @@ export default function Mypage() {
             aria-label="최근 활동"
           >
             <div className={styles.activityHeader}>
-              <h3 className={styles.cardTitle}>최근 활동</h3>
+              <h3 className={styles.sectionTitle}>최근 활동</h3>
+              <button
+                type="button"
+                className={styles.seeMore}
+                onClick={handleSeeMoreClick}
+                disabled={!latestRecordId}
+                aria-label="최근 러닝 기록 더보기"
+              >
+                더보기 &gt;
+              </button>
             </div>
+
             {!isUsingMockData && activities.length === 0 ? (
-              <div className={styles.activityEmpty}>
-                <span className={styles.activityEmptyIcon} aria-hidden="true">
-                  <MdDirectionsRun className={styles.activityEmptyIconSvg} />
-                </span>
-                <p className={styles.activityEmptyTitle}>
-                  아직 러닝 기록이 없어요.
-                </p>
-                <p className={styles.activityEmptyText}>
-                  첫 러닝을 시작해보세요!
-                </p>
+              <div className={styles.activityCard}>
+                <div className={styles.activityEmpty}>
+                  <span className={styles.activityEmptyIcon} aria-hidden="true">
+                    <MdDirectionsRun className={styles.activityEmptyIconSvg} />
+                  </span>
+                  <p className={styles.activityEmptyTitle}>
+                    아직 러닝 기록이 없어요.
+                  </p>
+                  <p className={styles.activityEmptyText}>
+                    첫 러닝을 시작해보세요!
+                  </p>
+                </div>
               </div>
             ) : (
-              <ul className={styles.activityList}>
-                {activities.map((activity) => {
-                  const content = (
-                    <>
-                      <span className={styles.activityIcon}>
-                        <MdDirectionsRun
-                          className={styles.runningIcon}
-                          aria-hidden="true"
-                        />
-                      </span>
-                      <span className={styles.activityBody}>
-                        <span className={styles.activityDate}>{activity.dateLabel}</span>
-                        <span className={styles.activityMeta}>
-                          {renderActivityMeta(activity)}
+              <div className={styles.activityCard}>
+                <ul className={styles.activityList}>
+                  {visibleActivities.map((activity) => {
+                    const content = (
+                      <>
+                        <span className={styles.activityIcon}>
+                          <MdDirectionsRun
+                            className={styles.runningIcon}
+                            aria-hidden="true"
+                          />
                         </span>
-                      </span>
-                      <MdChevronRight
-                        className={styles.activityChevron}
-                        aria-hidden="true"
-                      />
-                    </>
-                  );
+                        <span className={styles.activityBody}>
+                          <span className={styles.activityDate}>{activity.dateLabel}</span>
+                          <span className={styles.activityDistance}>
+                            <span className={styles.activityDistanceValue}>
+                              {formatDistanceValue(activity.distanceKm)}
+                            </span>
+                            <span className={styles.activityDistanceUnit}> km</span>
+                          </span>
+                        </span>
+                        <span className={styles.activityDuration}>
+                          {activity.duration}
+                        </span>
+                      </>
+                    );
 
-                  if (activity.recordId) {
+                    if (activity.recordId) {
+                      return (
+                        <li
+                          key={activity.id}
+                          className={styles.activityItem}
+                        >
+                          <button
+                            type="button"
+                            className={styles.activityButton}
+                            onClick={() => navigate(`/running-record/${activity.recordId}`)}
+                          >
+                            {content}
+                          </button>
+                        </li>
+                      );
+                    }
+
                     return (
                       <li
                         key={activity.id}
-                        className={styles.activityItem}
+                        className={`${styles.activityItem} ${styles.activityItemStatic}`}
                       >
-                        <button
-                          type="button"
-                          className={styles.activityButton}
-                          onClick={() => navigate(`/running-record/${activity.recordId}`)}
-                        >
-                          {content}
-                        </button>
+                        {content}
                       </li>
                     );
-                  }
-
-                  return (
-                    <li
-                      key={activity.id}
-                      className={`${styles.activityItem} ${styles.activityItemStatic}`}
-                    >
-                      {content}
-                    </li>
-                  );
-                })}
-              </ul>
+                  })}
+                </ul>
+              </div>
             )}
-            {isLoadingMore ? (
-              <p className={styles.activityLoading}>불러오는 중...</p>
-            ) : null}
-            {hasMore ? (
-              <div
-                ref={sentinelRef}
-                className={styles.activitySentinel}
-                aria-hidden="true"
-              />
-            ) : null}
           </section>
         </div>
         )}
