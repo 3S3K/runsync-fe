@@ -80,8 +80,9 @@ export default function ProfileEditPage() {
       // 마이페이지가 최신 정보(닉네임/권한)를 다시 받도록 캐시 무효화
       invalidateMypageUserApisCache();
       navigate('/mypage');
-    } catch {
-      window.alert('저장에 실패했어요. 잠시 후 다시 시도해 주세요.');
+    } catch (error) {
+      // 닉네임 중복 등은 서버가 이유를 알려 준다
+      window.alert(error?.message || '저장에 실패했어요. 잠시 후 다시 시도해 주세요.');
       setIsSubmitting(false);
     }
   };

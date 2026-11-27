@@ -66,7 +66,7 @@ export default function FriendsPage() {
               <FriendButton onClick={() => navigate('/home')} />
             </div>
           </header>
-          <RunningMap />
+          <RunningMap hasTopLeftControl />
         </div>
 
         {status === 'loading' ? (

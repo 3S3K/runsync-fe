@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { MdArrowBackIosNew, MdAutoAwesome } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,8 +13,10 @@ import ElevationChart from '../../components/course/elevation-chart';
 import RunnerSummaryCard from '../../components/course/runner-summary-card';
 import SlopeLegend from '../../components/course/slope-legend';
 import KakaoMap from '../../components/map/kakao-map';
+import LocateButton from '../../components/map/locate-button';
 import { useCourseRecommend } from '../../hooks/use-course-recommend';
 import { useGeolocation } from '../../hooks/use-geolocation';
+import { useMyProfileImage } from '../../hooks/use-my-profile-image';
 import { useRunnerSummary } from '../../hooks/use-runner-summary';
 import { formatPace, getIntensityLabel } from '../../utils/course-format';
 import { getMapLevel } from '../../utils/course-mapper';
@@ -45,9 +47,10 @@ function getRecordText(summary) {
 
 export default function CourseRecommendPage() {
   const navigate = useNavigate();
-  const { position: geoPosition, status: geoStatus } = useGeolocation();
+  const { position: geoPosition, status: geoStatus, error: geoError, requestLocation } = useGeolocation();
   const { summary, status: summaryStatus } = useRunnerSummary();
-  const { courses, status, error, recommend } = useCourseRecommend();
+  const myProfileImage = useMyProfileImage();
+  const { courses, status, error, recommend, cancel } = useCourseRecommend();
 
   // condition(조건 입력) → progress(추천 생성 중) → result(추천 결과)
   const [step, setStep] = useState('condition');
@@ -59,6 +62,10 @@ export default function CourseRecommendPage() {
   const [requested, setRequested] = useState(null);
   const [selectedRank, setSelectedRank] = useState(1);
   const [activeProfileIndex, setActiveProfileIndex] = useState(null);
+  // 결과 지도에서 내 위치 버튼으로 받은 위치. 값이 있으면 코스 대신 그곳을 가운데에 둔다
+  const [locatedPosition, setLocatedPosition] = useState(null);
+  const [hasLocateFailed, setHasLocateFailed] = useState(false);
+  const [recenterKey, setRecenterKey] = useState(0);
 
   const currentStart = geoPosition ?? DAEJEON_UNIV;
   const start = startMode === 'map' ? pickedStart ?? currentStart : currentStart;
@@ -69,6 +76,36 @@ export default function CourseRecommendPage() {
   const cursorPosition = view === 'result' && activeProfileIndex != null
     ? selectedCourse?.profile[activeProfileIndex]?.position ?? null
     : null;
+
+  // 화면이 바뀌어도 응답이 도착한 시점에 보이는 화면을 기준으로 적용한다
+  const viewRef = useRef(view);
+  viewRef.current = view;
+
+  // 내 위치 버튼: 이 버튼이 요청한 위치만 쓴다 (페이지 진입 때의 자동 조회 결과와 섞이지 않는다).
+  // 출발지 지도에서는 그곳을 출발지로, 결과 지도에서는 지도 중심으로 쓴다
+  const handleLocate = async () => {
+    setHasLocateFailed(false);
+    const position = await requestLocation();
+    if (!position) {
+      // 권한 거부·시간 초과 등. 버튼이 왜 반응하지 않는지 알려 준다
+      setHasLocateFailed(true);
+      return;
+    }
+    if (viewRef.current === 'condition') {
+      setPickedStart(position);
+    } else {
+      setLocatedPosition(position);
+    }
+    setRecenterKey((key) => key + 1);
+  };
+
+  // 결과 지도에 내 현재 위치를 표시한다
+  const myMarkers = useMemo(
+    () => (geoPosition
+      ? [{ id: 'me', lat: geoPosition.lat, lng: geoPosition.lng, title: '내 위치', profileImage: myProfileImage }]
+      : []),
+    [geoPosition, myProfileImage],
+  );
 
   const dotMarkers = useMemo(() => {
     const markers = [{ id: 'start', lat: mapStart.lat, lng: mapStart.lng }];
@@ -87,6 +124,8 @@ export default function CourseRecommendPage() {
     });
     setSelectedRank(1);
     setActiveProfileIndex(null);
+    setLocatedPosition(null);
+    setHasLocateFailed(false);
     setStep('progress');
     recommend({
       startLat: start.lat,
@@ -96,13 +135,27 @@ export default function CourseRecommendPage() {
     });
   };
 
+  const handleStartModeChange = (mode) => {
+    setHasLocateFailed(false);
+    setStartMode(mode);
+  };
+
   const handleSelectRank = (rank) => {
     setSelectedRank(rank);
     setActiveProfileIndex(null);
+    // 다른 코스를 고르면 다시 코스 전체가 보이게 한다
+    setLocatedPosition(null);
   };
 
   const handleProgressComplete = useCallback(() => setStep('result'), []);
-  const handleBackToCondition = () => setStep('condition');
+  const handleBackToCondition = () => {
+    // 추천을 기다리는 중에 돌아가면 그 요청은 취소한 것으로 본다
+    if (status === 'loading') {
+      cancel();
+    }
+    setHasLocateFailed(false);
+    setStep('condition');
+  };
 
   if (view === 'condition') {
     return (
@@ -133,7 +186,11 @@ export default function CourseRecommendPage() {
               start={start}
               geoStatus={geoStatus}
               hasGeoPosition={Boolean(geoPosition)}
-              onModeChange={setStartMode}
+              recenterKey={recenterKey}
+              isLocating={geoStatus === 'loading'}
+              locateError={hasLocateFailed ? geoError || '위치를 가져오지 못했어요.' : null}
+              onLocate={handleLocate}
+              onModeChange={handleStartModeChange}
               onPick={setPickedStart}
               onPickDefault={() => setPickedStart(DAEJEON_UNIV)}
             />
@@ -174,15 +231,19 @@ export default function CourseRecommendPage() {
   }
 
   const isResult = view === 'result' && selectedCourse != null;
+  const courseCenter = isResult ? selectedCourse.center ?? mapStart : mapStart;
+  const mapCenter = isResult && locatedPosition ? locatedPosition : courseCenter;
 
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
         <div className={styles.mapStage}>
           <KakaoMap
-            center={isResult ? selectedCourse.center ?? mapStart : mapStart}
+            center={mapCenter}
+            recenterKey={recenterKey}
             level={isResult ? getMapLevel(selectedCourse.distanceKm) : START_MAP_LEVEL}
             paths={isResult ? selectedCourse.paths : []}
+            markers={isResult ? myMarkers : []}
             dotMarkers={dotMarkers}
             className={styles.map}
           />
@@ -197,6 +258,21 @@ export default function CourseRecommendPage() {
               aria-hidden="true"
             />
           </button>
+          {isResult ? (
+            <LocateButton
+              onClick={handleLocate}
+              isLocating={geoStatus === 'loading'}
+              className={styles.mapLocate}
+            />
+          ) : null}
+          {isResult && hasLocateFailed ? (
+            <p
+              className={styles.mapNotice}
+              role="alert"
+            >
+              {geoError || '위치를 가져오지 못했어요.'}
+            </p>
+          ) : null}
           {isResult && selectedCourse.hasSlopeSegments ? (
             <div className={styles.legend}>
               <SlopeLegend />

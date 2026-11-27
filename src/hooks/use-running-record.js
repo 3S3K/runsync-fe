@@ -40,8 +40,9 @@ export function useRunningRecord(recordId) {
         }
       } catch (error) {
         console.error('[useRunningRecord]', error);
+        // 예시 데이터를 실제 기록처럼 보여 주지 않는다. 캐시도 없으면 "찾을 수 없음" 화면이 나온다
         if (isMounted && !cachedRecord) {
-          setRecord(getRunningRecord(recordId));
+          setRecord(null);
         }
       } finally {
         if (isMounted) {
