@@ -2,7 +2,7 @@
   min-height: 100dvh;
   display: flex;
   justify-content: center;
-  background: #e0e0e0;
+  background: #e9e5dd;
 }
 
 .shell {
@@ -234,4 +234,65 @@
   .shell {
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
   }
+}
+
+/* ----- 효과 ----- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes sheetUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+/* 카드가 위에서부터 차례로 나타난다 */
+.content > *,
+.sheet > * {
+  animation: rise 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.content > *:nth-child(2),
+.sheet > *:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.content > *:nth-child(3),
+.sheet > *:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.content > *:nth-child(4),
+.sheet > *:nth-child(4) {
+  animation-delay: 0.15s;
+}
+
+.content > *:nth-child(n + 5),
+.sheet > *:nth-child(n + 5) {
+  animation-delay: 0.2s;
+}
+
+/* 지도 위로 시트가 올라온다 */
+.sheet {
+  animation: sheetUp 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.bottomBar {
+  animation: rise 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s both;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #ff6b2c 0%, #ff4d12 100%);
+}
+
+/* 지도 위 버튼은 누를 수 있는 크기(44px)를 확보한다 */
+.backButton {
+  width: 44px;
+  height: 44px;
 }

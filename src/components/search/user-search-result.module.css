@@ -13,7 +13,7 @@
   height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  background: #f0f0f0;
+  background: #efece5;
 }
 
 .nickname {
@@ -21,7 +21,7 @@
   min-width: 0;
   font-size: 15px;
   font-weight: 700;
-  color: #111;
+  color: #1f2a44;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

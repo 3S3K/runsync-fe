@@ -196,6 +196,7 @@ export default function ElevationChart({ profile, activeIndex, onActiveChange })
         <path
           className={styles.line}
           d={linePath}
+          pathLength="1"
         />
 
         <circle

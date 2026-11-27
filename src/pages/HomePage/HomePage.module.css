@@ -209,7 +209,7 @@
   margin: 0;
   font-size: 14px;
   font-weight: 700;
-  color: #1f2937;
+  color: #1f2a44;
   text-align: center;
 }
 
@@ -232,7 +232,7 @@
 .resumeButton {
   border: 1px solid #e5e7eb;
   background: #fff;
-  color: #374151;
+  color: #3b4560;
 }
 
 .resumeButtonPrimary {
@@ -276,4 +276,21 @@
       0 0 0 1px rgba(11, 43, 69, 0.04),
       0 24px 64px rgba(11, 43, 69, 0.12);
   }
+}
+
+/* 아래쪽 패널이 올라온다 */
+@keyframes panelUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+.runPanel,
+.resumeBanner {
+  animation: panelUp 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.courseButton {
+  animation: panelUp 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
 }

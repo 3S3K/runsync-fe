@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  background: #ffffff;
+  background: #f8f5ef;
 }
 
 .content {
@@ -25,7 +25,7 @@
   height: 36px;
   border: none;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: #f4f2ed;
   font-size: 18px;
   color: #243b55;
   cursor: pointer;
@@ -36,7 +36,7 @@
   font-size: 28px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  color: #1b1b1b;
+  color: #1f2a44;
 }
 
 .recentSection {
@@ -80,6 +80,6 @@
   background: #fff;
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: #3b4560;
   cursor: pointer;
 }
