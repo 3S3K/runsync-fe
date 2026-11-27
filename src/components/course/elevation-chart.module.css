@@ -1,6 +1,6 @@
 .aside {
   font-size: 11px;
-  color: #8a8f9c;
+  color: #6b7280;
 }
 
 .readout {
@@ -35,6 +35,12 @@
   /* 세로 스크롤은 그대로 두고 가로로 끄는 동작만 차트가 받는다 */
   touch-action: pan-y;
   user-select: none;
+}
+
+.chart:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
+  border-radius: 8px;
 }
 
 .gridLine {

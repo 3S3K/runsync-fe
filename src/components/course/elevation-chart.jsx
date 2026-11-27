@@ -1,4 +1,4 @@
-import { SLOPE_GRADES } from '../../utils/course-format';
+import { SLOPE_GRADES, getSlopeGrade } from '../../utils/course-format';
 
 import CourseSection from './course-section';
 import styles from './elevation-chart.module.css';
@@ -40,6 +40,12 @@ function getKmTicks(totalM) {
     ticks.push(km);
   }
   return ticks;
+}
+
+/** 두 표본 사이 구간의 경사 등급. 색 띠는 표본의 경사가 아니라 구간 자체의 경사로 칠한다 */
+function getSpanGrade(from, to) {
+  const run = to.distanceM - from.distanceM;
+  return getSlopeGrade(run > 0 ? ((to.elevationM - from.elevationM) / run) * 100 : 0);
 }
 
 function getSlopeText(point) {
@@ -118,6 +124,25 @@ export default function ElevationChart({ profile, activeIndex, onActiveChange })
     }
   };
 
+  const handleKeyDown = (event) => {
+    const lastIndex = profile.length - 1;
+    const currentIndex = activeIndex ?? 0;
+    const nextIndexByKey = {
+      ArrowLeft: Math.max(currentIndex - 1, 0),
+      ArrowRight: activeIndex == null ? 0 : Math.min(currentIndex + 1, lastIndex),
+      Home: 0,
+      End: lastIndex,
+    };
+    const nextIndex = nextIndexByKey[event.key];
+    if (nextIndex == null) {
+      return;
+    }
+    event.preventDefault();
+    if (nextIndex !== activeIndex) {
+      onActiveChange(nextIndex);
+    }
+  };
+
   return (
     <CourseSection
       title="고도 프로필"
@@ -131,10 +156,18 @@ export default function ElevationChart({ profile, activeIndex, onActiveChange })
       <svg
         className={styles.chart}
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-        role="img"
-        aria-label="출발점부터의 거리에 따른 고도 그래프"
+        role="slider"
+        tabIndex={0}
+        aria-label="고도 프로필에서 볼 지점. 좌우 화살표 키로 이동"
+        aria-valuemin={0}
+        aria-valuemax={Math.round(totalM)}
+        aria-valuenow={activePoint ? activePoint.distanceM : 0}
+        aria-valuetext={activePoint
+          ? `${(activePoint.distanceM / 1000).toFixed(2)}km 지점, 고도 ${Math.round(activePoint.elevationM)}m, ${getSlopeText(activePoint)}`
+          : '지점을 선택하지 않음'}
         onPointerDown={handlePointer}
         onPointerMove={handlePointer}
+        onKeyDown={handleKeyDown}
       >
         {ticks.map((tick) => (
           <g key={tick}>
@@ -187,7 +220,7 @@ export default function ElevationChart({ profile, activeIndex, onActiveChange })
             y={BAND_Y}
             width={Math.max(getX(profile[index + 1].distanceM) - getX(point.distanceM) + 0.3, 0)}
             height="5"
-            fill={SLOPE_GRADES[point.grade].color}
+            fill={SLOPE_GRADES[getSpanGrade(point, profile[index + 1])].color}
           />
         ))}
 

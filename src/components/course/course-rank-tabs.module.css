@@ -14,7 +14,7 @@
   border: 2px solid transparent;
   border-radius: 14px;
   background: #ece9e2;
-  color: #8a8f9c;
+  color: #4b5563;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
@@ -23,7 +23,8 @@
   border-color: #ff5a1f;
   background: #fff;
   box-shadow: 0 4px 12px rgba(255, 90, 31, 0.16);
-  color: #ff5a1f;
+  /* 흰 배경에서 4.5:1 이상이 되도록 테두리(#ff5a1f)보다 어두운 주황을 쓴다 */
+  color: #c2410c;
 }
 
 .tab:focus-visible {

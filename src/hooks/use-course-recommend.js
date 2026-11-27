@@ -31,6 +31,13 @@ export function useCourseRecommend() {
       if (requestId !== latestRequestIdRef.current) {
         return;
       }
+      // 서버는 코스가 없으면 404 를 주지만, 빈 목록이 오더라도 로딩 화면에 멈추지 않게 한다
+      if (result.length === 0) {
+        setCourses([]);
+        setError('조건에 맞는 코스를 찾지 못했어요. 거리나 출발 위치를 바꿔 보세요.');
+        setStatus('error');
+        return;
+      }
       setCourses(result.map(mapCourse));
       setStatus('success');
     } catch (requestError) {

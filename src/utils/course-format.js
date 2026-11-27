@@ -50,8 +50,10 @@ export function formatPace(secPerKm) {
   if (secPerKm == null) {
     return '–';
   }
-  const minutes = Math.floor(secPerKm / 60);
-  const seconds = String(Math.round(secPerKm % 60)).padStart(2, '0');
+  // 359.8 → 6'00" 이 되도록 전체 초를 먼저 반올림한다
+  const totalSeconds = Math.round(secPerKm);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
   return `${minutes}'${seconds}"`;
 }
 
