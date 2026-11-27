@@ -8,13 +8,11 @@ import {
 } from '../api/run-session';
 import { getDistanceKm } from '../utils/distance';
 import { GEO_OPTIONS, getGeolocationErrorMessage } from '../utils/geolocation';
-import { isReliableFix } from '../utils/gps-filter';
+import { getElapsedSec, isReliableFix } from '../utils/gps-filter';
 
 const TIMER_INTERVAL_MS = 1000;
 const LOCATION_SAVE_INTERVAL_MS = 5000;
 const MIN_MOVE_KM = 0.005; // GPS 흔들림(정지 상태 노이즈) 무시용 최소 이동(약 5m)
-const MIN_ELAPSED_SEC = 1; // 속도를 계산할 때 두 측정 사이의 최소 시간
-
 /**
  * 러닝 한 판의 상태/추적/세션 API를 묶는 훅.
  * @returns {{
@@ -43,7 +41,7 @@ export function useRunTracker() {
   const timerIdRef = useRef(null);
   const saveIdRef = useRef(null);
   const lastPositionRef = useRef(null);
-  // 속도 검사에 쓰는 가장 최근의 믿을 만한 측정 { position, time }
+  // 속도 검사에 쓰는 가장 최근의 믿을 만한 측정 { position, time: { measuredAt, receivedAt } }
   const lastFixRef = useRef(null);
   const distanceRef = useRef(0);
   const elapsedRef = useRef(0);
@@ -71,8 +69,8 @@ export function useRunTracker() {
       lng: geoPosition.coords.longitude,
     };
 
-    // 기기가 주는 측정 시각은 브라우저마다 기준이 달라, 위치를 받은 시각으로 통일한다
-    const fixTime = Date.now();
+    // 위치를 취득한 시각과 전달받은 시각. 속도는 취득 시각의 간격으로 계산한다 (getElapsedSec 참고)
+    const fixTime = { measuredAt: geoPosition.timestamp, receivedAt: Date.now() };
     // 속도 검사의 기준은 "가장 최근에 믿을 만했던 측정"이다. 경로에 넣은 마지막 점(lastPositionRef)과
     // 따로 둔다. 같이 쓰면 제자리에 오래 서 있는 동안 기준 시각이 멈춰, 그 뒤에 튄 위치가
     // 오랜 시간에 걸쳐 천천히 이동한 것처럼 계산되어 걸러지지 않는다
@@ -83,8 +81,7 @@ export function useRunTracker() {
       accuracy: geoPosition.coords.accuracy,
       last: lastFix?.position ?? null,
       next,
-      // 위치가 몰아서 들어와도 속도가 계산되도록 최소 1초로 본다
-      elapsedSec: lastFix ? Math.max((fixTime - lastFix.time) / 1000, MIN_ELAPSED_SEC) : 0,
+      elapsedSec: lastFix ? getElapsedSec(lastFix.time, fixTime) : 0,
     });
     if (!isReliable) {
       return;
