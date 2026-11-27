@@ -310,16 +310,19 @@ export default function CourseRecommendPage() {
               </div>
 
               <CourseOverview
+                key={`overview-${selectedCourse.rank}`}
                 course={selectedCourse}
                 intensityLabel={requested.intensityLabel}
                 paceText={summary?.averagePaceSecPerKm != null ? formatPace(summary.averagePaceSecPerKm) : null}
               />
               <ElevationChart
+                key={`profile-${selectedCourse.rank}`}
                 profile={selectedCourse.profile}
                 activeIndex={activeProfileIndex}
                 onActiveChange={setActiveProfileIndex}
               />
               <CourseReason
+                key={`reason-${selectedCourse.rank}`}
                 course={selectedCourse}
                 targetDistanceKm={requested.distanceKm}
               />

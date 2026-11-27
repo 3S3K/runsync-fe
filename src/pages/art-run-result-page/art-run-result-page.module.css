@@ -3,7 +3,7 @@
   min-height: 100dvh;
   display: flex;
   justify-content: center;
-  background: #e0e0e0;
+  background: #e9e5dd;
 }
 
 .shell {
@@ -36,7 +36,7 @@
   height: 36px;
   border: none;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: #f4f2ed;
   font-size: 18px;
   color: #243b55;
   cursor: pointer;
@@ -47,7 +47,7 @@
   margin: 0;
   font-size: 20px;
   font-weight: 800;
-  color: #111;
+  color: #1f2a44;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -83,7 +83,7 @@
   margin: 0 0 12px;
   font-size: 15px;
   font-weight: 700;
-  color: #111;
+  color: #1f2a44;
 }
 
 .list {
@@ -116,14 +116,14 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
-  background: #f3f4f6;
+  background: #f4f2ed;
 }
 
 .name {
   flex: 1;
   font-size: 14px;
   font-weight: 600;
-  color: #1f2937;
+  color: #1f2a44;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -139,7 +139,7 @@
 .distance {
   font-size: 15px;
   font-weight: 800;
-  color: #111;
+  color: #1f2a44;
 }
 
 .duration {

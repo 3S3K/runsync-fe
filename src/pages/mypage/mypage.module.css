@@ -1,7 +1,7 @@
 .page {
   min-height: 100vh;
   min-height: 100dvh;
-  background: #f7f8fa;
+  background: #f8f5ef;
 }
 
 .shell {
@@ -19,7 +19,7 @@
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0 auto;
-  background: #f7f8fa;
+  background: #f8f5ef;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -234,7 +234,7 @@
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid rgba(255, 255, 255, 0.95);
-  background: #f5f5f5;
+  background: #f4f2ed;
   box-shadow:
     0 8px 22px rgba(69, 184, 90, 0.14),
     0 0 0 6px rgba(255, 255, 255, 0.42);
@@ -574,7 +574,7 @@
   .page {
     display: flex;
     justify-content: center;
-    background: #e8e8e8;
+    background: #e9e5dd;
   }
 
   .shell {

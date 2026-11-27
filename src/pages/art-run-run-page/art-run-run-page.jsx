@@ -81,6 +81,8 @@ export default function ArtRunRunPage() {
       })),
       color: DESIGN_COLOR,
       dashed: true,
+      // 따라 그릴 도안은 가늘게, 실제로 달린 선은 굵게(기본값) 보여 구분한다
+      weight: 4,
     }),
     [artRun],
   );

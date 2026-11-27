@@ -1,21 +1,157 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #fff;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* 공통 디자인 기준. 화면별 CSS 는 이 값에 맞춘다 */
+:root {
+  --color-page: #e9e5dd;        /* 화면 바깥(넓은 화면에서 보이는 여백) */
+  --color-surface: #f8f5ef;     /* 화면 바탕 */
+  --color-card: #fff;
+  --color-fill: #f4f2ed;        /* 입력창·칩·수치 칸 */
+  --color-line: #efece5;
+  --color-text: #1f2a44;
+  --color-text-sub: #6b7280;
+  --color-text-mute: #8a8f9c;
+  --color-primary: #ff5a1f;
+  --color-primary-press: #e64a14;
+  --color-primary-tint: #fff1ea;
+  --color-navy: #243b55;
+  --radius-card: 20px;
+  --radius-control: 14px;
+  --shadow-card: 0 1px 2px rgba(31, 42, 68, 0.04), 0 6px 20px rgba(31, 42, 68, 0.05);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration-press: 0.12s;
+  --duration-enter: 0.36s;
 }
 
 html,
 body,
 #root {
   height: 100%;
-  background: #fff;
+  background: var(--color-page);
+}
+
+html {
+  /* 글자 크기를 기기가 임의로 키우지 않게 한다 (가로 회전 등) */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* 화면 끝에서 당겼을 때 바탕이 딸려 오지 않게 한다 */
+  overscroll-behavior-y: none;
+  /* 탭할 때 뜨는 회색 번쩍임 대신 아래의 눌림 효과를 쓴다 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+/* 숫자 폭을 고정해 시간·거리가 바뀔 때 글자가 흔들리지 않게 한다 */
+main {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----- 터치 ----- */
+
+button {
+  /* 두 번 탭 확대를 막아 누르는 즉시 반응하게 한다 */
+  touch-action: manipulation;
+  transition: scale var(--duration-press) ease, opacity var(--duration-press) ease;
+}
+
+/* 눌림 반응. transform 이 아니라 scale 속성을 써서, 위치 잡는 데 transform 을 쓰는 버튼도 어긋나지 않는다 */
+button:active:not(:disabled) {
+  scale: 0.97;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+/* 아이폰은 입력창 글자가 16px 보다 작으면 입력할 때 화면을 확대한다 */
+input:not([type='range']):not([type='checkbox']):not([type='radio']),
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+/* ----- 화면 효과 ----- */
+
+@keyframes rs-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rs-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* 화면 진입. 지도가 들어 있는 화면이 많아 위치는 움직이지 않고 투명도만 바꾼다 */
+main {
+  animation: rs-fade-in 0.28s ease-out both;
+}
+
+/* 목록 항목이 순서대로 나타난다 */
+main ul > li,
+main ol > li {
+  animation: rs-rise-in var(--duration-enter) var(--ease-out) both;
+}
+
+main ul > li:nth-child(2),
+main ol > li:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+main ul > li:nth-child(3),
+main ol > li:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+main ul > li:nth-child(4),
+main ol > li:nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+main ul > li:nth-child(5),
+main ol > li:nth-child(5) {
+  animation-delay: 0.16s;
+}
+
+main ul > li:nth-child(n + 6),
+main ol > li:nth-child(n + 6) {
+  animation-delay: 0.2s;
+}
+
+/* 움직임 줄이기를 켠 사용자에게는 효과를 생략한다 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 뒤로 가기 버튼의 터치 영역 */
+button[aria-label='뒤로 가기'] {
+  min-width: 44px;
+  min-height: 44px;
 }

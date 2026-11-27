@@ -3,6 +3,7 @@ import { getDistanceKm } from './distance';
 const MIN_POINT_DISTANCE_KM = 0.005; // 5m — 정지/흔들림 GPS 노이즈 제거 간격
 const SPIKE_DETOUR_KM = 0.02; // 20m — 직전→현재→다음 우회가 직전→다음보다 이만큼 길면 혼자 삐져나온 튐
 const CHAIKIN_ITERATIONS = 2;
+const AVERAGE_HALF_WINDOW = 2; // 앞뒤 2점씩, 최대 5점의 평균으로 좌우 흔들림을 줄인다
 
 // 0) 튀는 점(아웃라이어) 제거: 혼자 삐져나왔다 돌아오는 점을 버린다. 첫 점과 끝 점은 항상 보존한다.
 //    (단순히 멀리 이동한 점은 신호 끊김 후 복귀일 수 있어 지우지 않는다 — 연쇄 삭제 방지)
@@ -38,7 +39,27 @@ function dropNoise(points) {
   return result;
 }
 
-// 2) Chaikin 모서리 깎기: 각 구간을 25%/75% 지점 두 점으로 대체해 곡선을 부드럽게 한다.
+// 2) 이동 평균: 각 점을 앞뒤 점들과의 평균 위치로 옮겨, 진행 방향 좌우로 흔들리는 GPS 오차를 줄인다.
+//    양 끝으로 갈수록 창을 대칭으로 줄여 첫 점과 끝 점은 그대로 둔다 (출발·도착 위치가 당겨지지 않게).
+function movingAverage(points) {
+  if (points.length <= 2) {
+    return points;
+  }
+
+  return points.map((point, index) => {
+    const half = Math.min(AVERAGE_HALF_WINDOW, index, points.length - 1 - index);
+    if (half === 0) {
+      return point;
+    }
+    const neighbors = points.slice(index - half, index + half + 1);
+    return {
+      lat: neighbors.reduce((sum, p) => sum + p.lat, 0) / neighbors.length,
+      lng: neighbors.reduce((sum, p) => sum + p.lng, 0) / neighbors.length,
+    };
+  });
+}
+
+// 3) Chaikin 모서리 깎기: 각 구간을 25%/75% 지점 두 점으로 대체해 곡선을 부드럽게 한다.
 function chaikin(points) {
   if (points.length <= 2) {
     return points;
@@ -56,7 +77,7 @@ function chaikin(points) {
 }
 
 /**
- * GPS 경로를 표시용으로 부드럽게 다듬는다 (노이즈 제거 + Chaikin 스무딩).
+ * GPS 경로를 표시용으로 부드럽게 다듬는다 (튀는 점·근접 점 제거 → 이동 평균 → Chaikin 스무딩).
  * 원본 좌표/거리 계산에는 영향을 주지 않는다.
  * @param {Array<{ lat: number, lng: number }>} points
  * @returns {Array<{ lat: number, lng: number }>}
@@ -66,7 +87,7 @@ export function smoothPath(points) {
     return points || [];
   }
 
-  let result = dropNoise(dropSpikes(points));
+  let result = movingAverage(dropNoise(dropSpikes(points)));
   for (let i = 0; i < CHAIKIN_ITERATIONS; i += 1) {
     result = chaikin(result);
   }

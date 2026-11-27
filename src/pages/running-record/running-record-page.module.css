@@ -3,7 +3,7 @@
   height: 100dvh;
   display: flex;
   justify-content: center;
-  background: #e8e8e8;
+  background: #e9e5dd;
   overflow: hidden;
 }
 
@@ -19,7 +19,7 @@
   max-width: 430px;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #f7f8fa;
+  background: #f8f5ef;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -169,7 +169,7 @@
   align-items: center;
   justify-content: center;
   height: 200px;
-  background: #f3f4f6;
+  background: #f4f2ed;
   font-size: 13px;
   color: #6b7280;
 }
@@ -208,7 +208,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: #f4f2ed;
   color: var(--navy);
 }
 
