@@ -13,6 +13,7 @@ import ArtRunDetailPage from "./pages/art-run-detail-page/art-run-detail-page";
 import ArtRunCreatePage from "./pages/art-run-create-page/art-run-create-page";
 import ArtRunRunPage from "./pages/art-run-run-page/art-run-run-page";
 import ArtRunResultPage from "./pages/art-run-result-page/art-run-result-page";
+import CourseRecommendPage from "./pages/course-recommend-page/course-recommend-page";
 import { AUTH_CLEARED_EVENT, clearAuthSession, getAccessToken, setAccessToken } from "./utils/tokens";
 import { isAccessTokenValid } from "./utils/access-token";
 import { refreshAccessToken } from "./api/auth";
@@ -139,6 +140,10 @@ function App() {
         <Route
           path="/art-runs/:id/result"
           element={isAuthed ? <ArtRunResultPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/courses"
+          element={isAuthed ? <CourseRecommendPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/search"

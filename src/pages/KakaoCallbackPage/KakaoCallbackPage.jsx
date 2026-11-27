@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { exchangeKakaoCode } from '../../api/auth';
 import { consumeOauthState } from '../../utils/oauthState';
 import { setAccessToken } from '../../utils/tokens';
@@ -7,8 +7,9 @@ import styles from './KakaoCallbackPage.module.css';
 
 export default function KakaoCallbackPage() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [error, setError] = useState('');
+  // 인가 코드는 한 번만 쓸 수 있다. 개발 모드(StrictMode)에서 effect가 두 번 실행돼도 교환은 한 번만 한다
+  const hasRequestedRef = useRef(false);
 
   const code = useMemo(() => searchParams.get('code') || '', [searchParams]);
   const stateFromQuery = useMemo(() => searchParams.get('state') || '', [searchParams]);
@@ -19,6 +20,11 @@ export default function KakaoCallbackPage() {
         setError('인가 코드(code)가 없어요.');
         return;
       }
+
+      if (hasRequestedRef.current) {
+        return;
+      }
+      hasRequestedRef.current = true;
 
       const expectedState = consumeOauthState();
       if (expectedState && stateFromQuery && expectedState !== stateFromQuery) {
@@ -40,14 +46,15 @@ export default function KakaoCallbackPage() {
         }
 
         setAccessToken(accessToken);
-        navigate('/', { replace: true });
+        // App 은 시작할 때만 로그인 여부를 확인하므로, 새로 불러와서 인증 상태를 반영한다
+        window.location.replace('/');
       } catch (e) {
         setError(e?.message || '로그인 처리 중 오류가 발생했어요.');
       }
     };
 
     run();
-  }, [code, stateFromQuery, navigate]);
+  }, [code, stateFromQuery]);
 
   return (
     <main className={styles.root}>
