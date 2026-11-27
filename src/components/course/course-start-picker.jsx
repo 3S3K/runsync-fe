@@ -1,6 +1,7 @@
 import { MdMyLocation } from 'react-icons/md';
 
 import KakaoMap from '../map/kakao-map';
+import LocateButton from '../map/locate-button';
 
 import CourseSection from './course-section';
 import styles from './course-start-picker.module.css';
@@ -27,6 +28,8 @@ function getCurrentLocationText(geoStatus, hasGeoPosition) {
  * @param {{ lat: number, lng: number }} start 현재 정해진 출발 위치
  * @param {string} geoStatus 위치 조회 상태 (use-geolocation 의 status)
  * @param {boolean} [hasGeoPosition] 현재 위치를 받아왔는지
+ * @param {number} [recenterKey] 값이 바뀌면 지도를 출발 위치로 다시 옮긴다
+ * @param {() => void} onLocate 내 위치 버튼 또는 위치 다시 확인을 눌렀을 때
  * @param {(mode: string) => void} onModeChange
  * @param {(position: { lat: number, lng: number }) => void} onPick 지도에서 위치를 골랐을 때
  * @param {() => void} onPickDefault 기준 위치(대전대)로 출발을 눌렀을 때
@@ -36,6 +39,8 @@ export default function CourseStartPicker({
   start,
   geoStatus,
   hasGeoPosition = false,
+  recenterKey = 0,
+  onLocate,
   onModeChange,
   onPick,
   onPickDefault,
@@ -68,20 +73,34 @@ export default function CourseStartPicker({
               aria-hidden="true"
             />
           </span>
-          <div>
+          <div className={styles.currentBody}>
             <p className={styles.currentTitle}>현재 위치</p>
             <p className={styles.currentText}>{getCurrentLocationText(geoStatus, hasGeoPosition)}</p>
           </div>
+          {!hasGeoPosition && geoStatus !== 'idle' && geoStatus !== 'loading' && geoStatus !== 'unsupported' ? (
+            <button
+              type="button"
+              className={styles.textButton}
+              onClick={onLocate}
+            >
+              다시 확인
+            </button>
+          ) : null}
         </div>
       ) : (
         <>
           <div className={styles.mapBox}>
             <KakaoMap
               center={start}
+              recenterKey={recenterKey}
               level={PICKER_MAP_LEVEL}
               dotMarkers={[{ id: 'start', lat: start.lat, lng: start.lng }]}
               onMapClick={onPick}
               className={styles.map}
+            />
+            <LocateButton
+              onClick={onLocate}
+              className={styles.locate}
             />
           </div>
           <div className={styles.mapRow}>

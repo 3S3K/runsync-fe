@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import RunRecordForm from '../../components/home/run-record-form';
@@ -6,10 +6,12 @@ import RunningStats from '../../components/home/running-stats';
 import StartButton from '../../components/home/StartButton';
 import StopButton from '../../components/home/stop-button';
 import KakaoMap from '../../components/map/kakao-map';
+import LocateButton from '../../components/map/locate-button';
 import { endRunSession } from '../../api/run-session';
 import { useActiveRunSession } from '../../hooks/use-active-run-session';
 import { useArtRun } from '../../hooks/use-art-run';
 import { useArtRunRealtime } from '../../hooks/use-art-run-realtime';
+import { useGeolocation } from '../../hooks/use-geolocation';
 import { useRunTracker } from '../../hooks/use-run-tracker';
 import { DEFAULT_CENTER } from '../../utils/geolocation';
 
@@ -23,6 +25,9 @@ export default function ArtRunRunPage() {
   const { artRun, me, status } = useArtRun(id);
   const [mapCenter, setMapCenter] = useState(null);
   const [recenterKey, setRecenterKey] = useState(0);
+  // 달리기 전에는 추적 위치(run.position)가 없어, 내 위치 버튼은 따로 조회한 현재 위치를 쓴다
+  const { position: geoPosition, requestLocation } = useGeolocation();
+  const isLocateRequestedRef = useRef(false);
 
   // 개인 러닝(타이머·실제 거리·세션·기록 저장) — 메인 페이지와 동일한 훅 재사용
   const run = useRunTracker();
@@ -60,6 +65,7 @@ export default function ArtRunRunPage() {
   const { paths, markers, closed } = useArtRunRealtime({
     active: canRun,
     sessionId: id,
+    runSessionId: isRunning ? run.sessionId : null,
     myUserId,
     participants,
     position: isRunning ? run.position : null,
@@ -126,7 +132,8 @@ export default function ArtRunRunPage() {
     try {
       await endRunSession(active.sessionId, {
         endTime: new Date().toISOString(),
-        totalDistance: 0,
+        // 그동안 달린 거리를 0 으로 덮어쓰지 않는다
+        totalDistance: active.distance ?? 0,
       });
       setActive(null);
       await run.start(thisId);
@@ -157,8 +164,20 @@ export default function ArtRunRunPage() {
     if (run.position) {
       setMapCenter({ ...run.position });
       setRecenterKey((key) => key + 1);
+      return;
     }
+    isLocateRequestedRef.current = true;
+    requestLocation();
   };
+
+  // 내 위치 버튼으로 요청한 위치가 도착하면 그곳으로 지도를 옮긴다
+  useEffect(() => {
+    if (geoPosition && isLocateRequestedRef.current) {
+      isLocateRequestedRef.current = false;
+      setMapCenter(geoPosition);
+      setRecenterKey((key) => key + 1);
+    }
+  }, [geoPosition]);
 
   if (status === 'loading') {
     return (
@@ -232,13 +251,10 @@ export default function ArtRunRunPage() {
         <span className={styles.title}>{artRun.title}</span>
       </header>
 
-      <button
-        type="button"
-        className={styles.locateButton}
+      <LocateButton
         onClick={handleLocate}
-      >
-        내 위치
-      </button>
+        className={styles.locateButton}
+      />
 
       <footer className={styles.footer}>
         {run.error ? <p className={styles.error}>{run.error}</p> : null}

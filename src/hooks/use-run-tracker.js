@@ -125,7 +125,9 @@ export function useRunTracker() {
     busyRef.current = true;
 
     try {
-      const session = await startRunSession(new Date().toISOString(), artRunSessionId);
+      // 서버는 미래 시각을 거절한다. 기기 시계가 서버보다 조금 빨라도 통과하도록 1초 앞당겨 보낸다
+      const startTime = new Date(Date.now() - 1000).toISOString();
+      const session = await startRunSession(startTime, artRunSessionId);
       if (!session?.sessionId) {
         throw new Error('러닝 세션 생성에 실패했어요.');
       }

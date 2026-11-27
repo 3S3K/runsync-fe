@@ -22,18 +22,22 @@ const INITIAL_VALUES = {
 
 /**
  * 러닝 종료 후 세부 기록(사용자 입력 5값)을 받는 폼.
- * @param {(record: object) => void} onSubmit 입력값을 숫자로 변환해 전달 (빈 칸은 제외)
+ * @param {(record: object) => void | Promise<void>} onSubmit 입력값을 숫자로 변환해 전달 (빈 칸은 제외)
  */
 export default function RunRecordForm({ onSubmit }) {
   const [values, setValues] = useState(INITIAL_VALUES);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
 
     const record = {};
     FIELDS.forEach(({ name }) => {
@@ -46,7 +50,13 @@ export default function RunRecordForm({ onSubmit }) {
         : parseFloat(values[name]);
     });
 
-    onSubmit(record);
+    // 저장이 끝날 때까지 버튼을 막아 같은 기록이 두 번 저장되지 않게 한다
+    setIsSubmitting(true);
+    try {
+      await onSubmit(record);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -78,8 +88,9 @@ export default function RunRecordForm({ onSubmit }) {
       <button
         type="submit"
         className={styles.submitButton}
+        disabled={isSubmitting}
       >
-        Input
+        {isSubmitting ? '저장 중...' : 'Input'}
       </button>
     </form>
   );

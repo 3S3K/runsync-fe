@@ -74,3 +74,15 @@ export async function refreshAccessToken() {
     return { accessToken: "" };
   }
 }
+
+/** 서버의 리프레시 토큰을 지운다. 호출하지 않으면 새로고침 때 재발급으로 다시 로그인된다 */
+export async function logout() {
+  const res = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+}

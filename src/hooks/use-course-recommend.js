@@ -9,6 +9,7 @@ import { mapCourse } from '../utils/course-mapper';
  *   courses: Array<object>,
  *   status: 'idle' | 'loading' | 'success' | 'error',
  *   error: string | null,
+ *   cancel: () => void,
  *   recommend: (request: { startLat: number, startLng: number, targetDistanceKm: number, intensity: string }) => Promise<void>,
  * }}
  */
@@ -51,5 +52,12 @@ export function useCourseRecommend() {
     }
   }, []);
 
-  return { courses, status, error, recommend };
+  // 진행 중인 요청을 버린다. 뒤늦게 온 결과나 오류가 화면에 나타나지 않는다
+  const cancel = useCallback(() => {
+    latestRequestIdRef.current += 1;
+    setError(null);
+    setStatus('idle');
+  }, []);
+
+  return { courses, status, error, recommend, cancel };
 }

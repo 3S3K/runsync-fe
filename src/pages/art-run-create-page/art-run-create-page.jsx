@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { createArtRun } from '../../api/art-run';
 import KakaoMap from '../../components/map/kakao-map';
+import LocateButton from '../../components/map/locate-button';
 import { useGeolocation } from '../../hooks/use-geolocation';
 import { DEFAULT_CENTER } from '../../utils/geolocation';
 
@@ -19,12 +20,14 @@ export default function ArtRunCreatePage() {
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   // "내 위치" 클릭마다 증가시켜 좌표가 같아도 지도를 강제로 재중심시키는 신호
   const [recenterKey, setRecenterKey] = useState(0);
-  const { position, requestLocation } = useGeolocation();
+  const { position, error: locationError, requestLocation } = useGeolocation();
 
   // 현재 위치를 얻으면 지도 중심 이동 (진입 시 + "내 위치" 버튼)
   useEffect(() => {
     if (position) {
       setMapCenter(position);
+      // 위치를 받은 뒤에 재중심 신호를 보내야, 좌표가 직전과 같아도 그 위치로 돌아간다
+      setRecenterKey((key) => key + 1);
     }
   }, [position]);
 
@@ -165,17 +168,12 @@ export default function ArtRunCreatePage() {
                 onMapClick={addWaypoint}
                 className={styles.map}
               />
-              <button
-                type="button"
+              <LocateButton
+                onClick={requestLocation}
                 className={styles.locateButton}
-                onClick={() => {
-                  requestLocation();
-                  setRecenterKey((key) => key + 1);
-                }}
-              >
-                내 위치
-              </button>
+              />
             </div>
+            {locationError ? <p className={styles.locationError}>{locationError}</p> : null}
             <div className={styles.mapActions}>
               <button
                 type="button"

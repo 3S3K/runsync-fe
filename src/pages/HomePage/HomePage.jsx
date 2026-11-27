@@ -33,6 +33,7 @@ export default function HomePage() {
   // 앱 진입 시 진행 중(ACTIVE) 세션 감지 → 이어뛰기 배너
   const { active, setActive } = useActiveRunSession();
   const [resumeHandled, setResumeHandled] = useState(false);
+  const [startError, setStartError] = useState(null);
   const showResumeBanner = Boolean(active) && isIdle && !resumeHandled;
 
   const handleResumeActive = () => {
@@ -40,6 +41,8 @@ export default function HomePage() {
       navigate(`/art-runs/${active.artRunSessionId}/run`);
     } else {
       run.resume(active);
+      // 이어받은 세션은 이제 추적 훅이 관리한다. 남겨 두면 러닝을 끝낸 뒤 배너가 다시 뜬다
+      setActive(null);
     }
   };
 
@@ -47,7 +50,8 @@ export default function HomePage() {
     try {
       await endRunSession(active.sessionId, {
         endTime: new Date().toISOString(),
-        totalDistance: 0,
+        // 그동안 달린 거리를 0 으로 덮어쓰지 않는다
+        totalDistance: active.distance ?? 0,
       });
       setActive(null);
       setResumeHandled(true);
@@ -66,10 +70,13 @@ export default function HomePage() {
   };
 
   const handleStart = async () => {
+    setStartError(null);
     try {
       await run.start();
     } catch (error) {
       console.error('러닝 시작 실패', error);
+      // 서버가 준 안내(이미 진행 중인 러닝이 있음 등)를 보여준다
+      setStartError(error?.message || '러닝을 시작하지 못했어요. 다시 시도해 주세요.');
     }
   };
 
@@ -154,6 +161,14 @@ export default function HomePage() {
 
         {isIdle ? (
           <footer className={styles.footer}>
+            {startError ? (
+              <p
+                className={styles.runError}
+                role="alert"
+              >
+                {startError}
+              </p>
+            ) : null}
             <button
               type="button"
               className={styles.courseButton}

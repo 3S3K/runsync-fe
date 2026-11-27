@@ -135,6 +135,13 @@
   z-index: 2;
 }
 
+.mapLocate {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: 16px;
+  z-index: 2;
+}
+
 .legend {
   position: absolute;
   bottom: 36px;

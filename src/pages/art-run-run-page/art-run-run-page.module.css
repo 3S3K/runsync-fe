@@ -57,20 +57,12 @@
   white-space: nowrap;
 }
 
+/* 아래쪽 패널은 상태에 따라 높이가 달라져 버튼을 가릴 수 있어, 머리글 아래에 둔다 */
 .locateButton {
   position: absolute;
+  top: calc(max(12px, env(safe-area-inset-top)) + 60px);
   right: 16px;
-  bottom: 88px;
   z-index: 10;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 999px;
-  background: #243b55;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
 }
 
 .footer {

@@ -22,6 +22,7 @@ function appendPoint(trail = [], point) {
  * @param {{
  *   active: boolean,
  *   sessionId: number | string | null,
+ *   runSessionId?: number | null,
  *   myUserId: number | null,
  *   participants: Array<{ userId: number, nickname: string, profileImage: string }>,
  *   position: { lat: number, lng: number } | null,
@@ -37,6 +38,7 @@ function appendPoint(trail = [], point) {
 export function useArtRunRealtime({
   active,
   sessionId,
+  runSessionId = null,
   myUserId,
   participants,
   position,
@@ -137,11 +139,13 @@ export function useArtRunRealtime({
       type: 'LOCATION_UPDATE',
       data: {
         artRunSessionId: Number(sessionId),
+        // 러닝 세션 번호가 있어야 서버가 달린 경로를 저장한다 (없으면 결과 화면에 궤적이 남지 않는다)
+        ...(runSessionId != null ? { sessionId: runSessionId } : null),
         latitude: lat,
         longitude: lng,
       },
     });
-  }, [subscribed, sessionId, lat, lng, publish]);
+  }, [subscribed, sessionId, runSessionId, lat, lng, publish]);
 
   // userId → 닉네임/프로필 매핑 (payload 엔 닉네임이 없어 상세 participants 로 매칭)
   const participantMap = useMemo(() => {

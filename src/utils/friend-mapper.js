@@ -32,7 +32,10 @@ function mapActivityStatus(activityStatus, lastActiveAt) {
   }
 
   if (normalized === 'OFFLINE') {
-    return { status: 'offline', statusLabel: '오프라인' };
+    return {
+      status: 'offline',
+      statusLabel: lastActiveAt ? formatLastActiveLabel(lastActiveAt) : '오프라인',
+    };
   }
 
   if (lastActiveAt) {

@@ -12,6 +12,17 @@
   inset: 0;
 }
 
+.locate {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  left: 16px;
+  z-index: 2;
+}
+
+.locateBelow {
+  top: calc(max(16px, env(safe-area-inset-top)) + 52px);
+}
+
 .guide {
   position: absolute;
   left: 50%;

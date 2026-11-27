@@ -12,6 +12,7 @@ import {
   MdSpeed,
 } from 'react-icons/md';
 
+import { logout } from '../../api/auth';
 import { useMypageData } from '../../hooks/use-mypage-data';
 import { DEFAULT_PROFILE_AVATAR_SRC } from '../../utils/mypage-data';
 import {
@@ -148,12 +149,18 @@ export default function Mypage() {
     setIsSettingsOpen((prev) => !prev);
   };
 
-  const handleSettingsAction = (menuId) => {
+  const handleSettingsAction = async (menuId) => {
     setIsSettingsOpen(false);
 
     if (menuId === 'edit-profile') {
       navigate('/mypage/edit');
     } else if (menuId === 'logout') {
+      try {
+        // 서버의 리프레시 토큰까지 지워야 새로고침해도 로그아웃 상태가 유지된다
+        await logout();
+      } catch (error) {
+        console.error('로그아웃 요청 실패', error);
+      }
       clearAuthSession();
       navigate('/');
     }
