@@ -78,18 +78,22 @@ export default function CourseRecommendPage() {
     : null;
 
   // 내 위치 버튼으로 요청한 위치가 도착하면: 출발지 지도에서는 그곳을 출발지로, 결과 지도에서는 지도 중심으로 쓴다
+  // 화면이 바뀐 것만으로는 실행하지 않고, 새 위치 응답이 왔을 때만 실행한다 (화면은 ref 로 읽는다)
+  const viewRef = useRef(view);
+  viewRef.current = view;
   useEffect(() => {
     if (!geoPosition || !isLocateRequestedRef.current) {
       return;
     }
     isLocateRequestedRef.current = false;
-    if (step === 'condition') {
+    // 추천 실패로 조건 화면이 보이는 경우도 있어, step 이 아니라 실제 보이는 화면으로 판단한다
+    if (viewRef.current === 'condition') {
       setPickedStart(geoPosition);
     } else {
       setIsMapOnMyLocation(true);
     }
     setRecenterKey((key) => key + 1);
-  }, [geoPosition, step]);
+  }, [geoPosition]);
 
   const handleLocate = () => {
     isLocateRequestedRef.current = true;
