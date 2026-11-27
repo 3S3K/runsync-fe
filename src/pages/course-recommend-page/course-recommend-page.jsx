@@ -30,7 +30,8 @@ export default function CourseRecommendPage() {
   const start = pickedStart ?? geoPosition ?? DAEJEON_UNIV;
   // 추천을 요청한 뒤 출발 위치를 바꾸면, 이전 위치의 결과가 새 출발점과 함께 보이지 않게 숨긴다
   const isResultForStart = requestedStart?.lat === start.lat && requestedStart?.lng === start.lng;
-  const visibleCourses = isResultForStart ? courses : [];
+  // 요청 대기 중에도 이전 결과를 숨긴다 (목록 표시 조건과 같게)
+  const visibleCourses = isResultForStart && status === 'success' ? courses : [];
   const selectedCourse = visibleCourses.find((course) => course.rank === selectedRank) ?? visibleCourses[0] ?? null;
 
   const paths = useMemo(
@@ -106,7 +107,7 @@ export default function CourseRecommendPage() {
 
         {isResultForStart && status === 'error' ? <p className={styles.stateMessage}>{error}</p> : null}
 
-        {isResultForStart && status === 'success' ? (
+        {visibleCourses.length > 0 ? (
           <ul className={styles.list}>
             {visibleCourses.map((course) => (
               <CourseCard
