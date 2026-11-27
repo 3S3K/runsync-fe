@@ -17,9 +17,12 @@ const MIN_RECEIVED_GAP_SEC = 1;
  * @returns {number}
  */
 export function getElapsedSec(previous, current) {
-  const measuredGapSec = (current.measuredAt - previous.measuredAt) / 1000;
-  if (Number.isFinite(measuredGapSec) && measuredGapSec > 0) {
-    return measuredGapSec;
+  // 두 값이 모두 숫자인지 먼저 확인한다. null 은 뺄셈에서 0 으로 바뀌어 간격이 엉뚱하게 커진다
+  if (Number.isFinite(previous.measuredAt) && Number.isFinite(current.measuredAt)) {
+    const measuredGapSec = (current.measuredAt - previous.measuredAt) / 1000;
+    if (measuredGapSec > 0) {
+      return measuredGapSec;
+    }
   }
   return Math.max((current.receivedAt - previous.receivedAt) / 1000, MIN_RECEIVED_GAP_SEC);
 }

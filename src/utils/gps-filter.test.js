@@ -21,6 +21,18 @@ describe('getElapsedSec', () => {
     expect(getElapsedSec(previous, current)).toBe(4);
   });
 
+  it('둘 중 한쪽에만 취득 시각이 있어도 전달받은 시각의 간격을 쓴다', () => {
+    // null 을 0 으로 계산하면 간격이 1010초로 부풀려진다
+    expect(getElapsedSec(
+      { measuredAt: null, receivedAt: 5_000_000 },
+      { measuredAt: 1_010_000, receivedAt: 5_004_000 },
+    )).toBe(4);
+    expect(getElapsedSec(
+      { measuredAt: 1_010_000, receivedAt: 5_000_000 },
+      { measuredAt: undefined, receivedAt: 5_004_000 },
+    )).toBe(4);
+  });
+
   it('취득 시각이 같거나 뒤집혀 있으면 전달받은 시각의 간격을 쓴다', () => {
     const previous = { measuredAt: 1_010_000, receivedAt: 5_000_000 };
 
