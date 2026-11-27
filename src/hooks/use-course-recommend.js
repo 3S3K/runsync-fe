@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { recommendCourses } from '../api/course';
 import { mapCourse } from '../utils/course-mapper';
@@ -16,16 +16,27 @@ export function useCourseRecommend() {
   const [courses, setCourses] = useState([]);
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState(null);
+  // 요청을 연달아 보냈을 때 먼저 보낸 요청의 응답이 늦게 와서 최신 결과를 덮어쓰지 않게 한다
+  const latestRequestIdRef = useRef(0);
 
   const recommend = useCallback(async (request) => {
+    latestRequestIdRef.current += 1;
+    const requestId = latestRequestIdRef.current;
+
     setStatus('loading');
     setError(null);
 
     try {
       const result = await recommendCourses(request);
+      if (requestId !== latestRequestIdRef.current) {
+        return;
+      }
       setCourses(result.map(mapCourse));
       setStatus('success');
     } catch (requestError) {
+      if (requestId !== latestRequestIdRef.current) {
+        return;
+      }
       setCourses([]);
       // 서비스 지역 밖, 코스 없음 등은 서버가 안내 문구를 내려준다
       setError(requestError?.message || '코스를 추천받지 못했어요. 다시 시도해 주세요.');

@@ -21,13 +21,17 @@ export default function CourseRecommendPage() {
   const { courses, status, error, recommend } = useCourseRecommend();
 
   const [pickedStart, setPickedStart] = useState(null);
+  const [requestedStart, setRequestedStart] = useState(null);
   const [intensity, setIntensity] = useState('NORMAL');
   const [distanceKm, setDistanceKm] = useState(DEFAULT_DISTANCE_KM);
   const [selectedRank, setSelectedRank] = useState(1);
 
   // 지도에서 직접 고른 위치 > 현재 위치 > 대전대 순으로 출발 위치를 정한다
   const start = pickedStart ?? geoPosition ?? DAEJEON_UNIV;
-  const selectedCourse = courses.find((course) => course.rank === selectedRank) ?? courses[0] ?? null;
+  // 추천을 요청한 뒤 출발 위치를 바꾸면, 이전 위치의 결과가 새 출발점과 함께 보이지 않게 숨긴다
+  const isResultForStart = requestedStart?.lat === start.lat && requestedStart?.lng === start.lng;
+  const visibleCourses = isResultForStart ? courses : [];
+  const selectedCourse = visibleCourses.find((course) => course.rank === selectedRank) ?? visibleCourses[0] ?? null;
 
   const paths = useMemo(
     () => (selectedCourse
@@ -42,6 +46,7 @@ export default function CourseRecommendPage() {
 
   const handleSubmit = () => {
     setSelectedRank(1);
+    setRequestedStart(start);
     recommend({
       startLat: start.lat,
       startLng: start.lng,
@@ -93,17 +98,17 @@ export default function CourseRecommendPage() {
         <CourseConditionForm
           intensity={intensity}
           distanceKm={distanceKm}
-          isLoading={status === 'loading'}
+          isLoading={isResultForStart && status === 'loading'}
           onIntensityChange={setIntensity}
           onDistanceChange={setDistanceKm}
           onSubmit={handleSubmit}
         />
 
-        {status === 'error' ? <p className={styles.stateMessage}>{error}</p> : null}
+        {isResultForStart && status === 'error' ? <p className={styles.stateMessage}>{error}</p> : null}
 
-        {status === 'success' ? (
+        {isResultForStart && status === 'success' ? (
           <ul className={styles.list}>
-            {courses.map((course) => (
+            {visibleCourses.map((course) => (
               <CourseCard
                 key={course.rank}
                 course={course}

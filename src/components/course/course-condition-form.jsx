@@ -38,15 +38,14 @@ export default function CourseConditionForm({
     >
       <div
         className={styles.tabs}
-        role="radiogroup"
+        role="group"
         aria-label="강도"
       >
         {INTENSITIES.map((item) => (
           <button
             key={item.value}
             type="button"
-            role="radio"
-            aria-checked={intensity === item.value}
+            aria-pressed={intensity === item.value}
             className={intensity === item.value ? `${styles.tab} ${styles.tabActive}` : styles.tab}
             onClick={() => onIntensityChange(item.value)}
           >
