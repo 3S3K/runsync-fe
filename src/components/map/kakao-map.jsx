@@ -207,7 +207,7 @@ export default function KakaoMap({
       } else {
         const polyline = new kakao.maps.Polyline({
           path: latLngs,
-          strokeWeight: 4,
+          strokeWeight: path.weight || 4,
           strokeColor: path.color || '#ff5a1f',
           strokeOpacity: 0.9,
           strokeStyle: path.dashed ? 'shortdash' : 'solid',

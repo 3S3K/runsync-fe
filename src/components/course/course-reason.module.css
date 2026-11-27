@@ -1,0 +1,40 @@
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headline,
+.detail {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.headline {
+  font-weight: 800;
+  color: #1f2a44;
+}
+
+.detail {
+  color: #4b5563;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: #f4f2ed;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2a44;
+}
