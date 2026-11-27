@@ -111,6 +111,15 @@ export default function HomePage() {
                     협동
                   </button>
                 ) : null}
+                {isIdle ? (
+                  <button
+                    type="button"
+                    className={styles.artRunButton}
+                    onClick={() => navigate('/courses')}
+                  >
+                    추천
+                  </button>
+                ) : null}
                 <FriendButton onClick={handleFriendsClick} />
               </div>
             ) : null}

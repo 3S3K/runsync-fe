@@ -1,0 +1,85 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.tabActive {
+  background: #ff5a1f;
+  border-color: #ff5a1f;
+  color: #fff;
+}
+
+.distance {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.distanceLabel {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.slider {
+  flex: 1;
+  min-width: 0;
+  accent-color: #ff5a1f;
+}
+
+.distanceValue {
+  flex-shrink: 0;
+  width: 44px;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 800;
+  color: #111;
+}
+
+.submitButton {
+  padding: 14px 0;
+  border: none;
+  border-radius: 14px;
+  background: #ff5a1f;
+  box-shadow: 0 4px 14px rgba(255, 90, 31, 0.28);
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.submitButton:active {
+  transform: scale(0.98);
+  background: #e64a14;
+}
+
+.submitButton:disabled {
+  background: #f3a98d;
+  box-shadow: none;
+  cursor: default;
+}
+
+.submitButton:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
+}
