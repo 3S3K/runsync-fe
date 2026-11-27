@@ -1,0 +1,105 @@
+.segment {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #f4f2ed;
+}
+
+.segmentItem {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8a8f9c;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.segmentItemActive {
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(31, 42, 68, 0.12);
+  color: #1f2a44;
+}
+
+.segmentItem:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 1px;
+}
+
+.current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.currentIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff1ea;
+  color: #ff5a1f;
+}
+
+.currentTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1f2a44;
+}
+
+.currentText {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #8a8f9c;
+}
+
+.mapBox {
+  height: 200px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ebebeb;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.mapRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 12px;
+  color: #8a8f9c;
+}
+
+.textButton {
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ff5a1f;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.area {
+  margin: -4px 0 0;
+  font-size: 11px;
+  color: #aab0bd;
+}

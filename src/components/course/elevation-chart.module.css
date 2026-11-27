@@ -1,0 +1,80 @@
+.aside {
+  font-size: 11px;
+  color: #8a8f9c;
+}
+
+.readout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  margin: -4px 0 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.readoutValue {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: #1f2a44;
+}
+
+.readoutDot {
+  flex-shrink: 0;
+  width: 12px;
+  height: 5px;
+  border-radius: 999px;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+  /* 세로 스크롤은 그대로 두고 가로로 끄는 동작만 차트가 받는다 */
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.gridLine {
+  stroke: #ece9e2;
+  stroke-width: 1;
+}
+
+.axisText {
+  fill: #8a8f9c;
+  font-size: 9px;
+}
+
+.area {
+  fill: #e6eaf2;
+}
+
+.line {
+  fill: none;
+  stroke: #1f2a44;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.peakDot {
+  fill: #1f2a44;
+}
+
+.peakText {
+  fill: #1f2a44;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.cursorLine {
+  stroke: #1f2a44;
+  stroke-width: 1;
+}
+
+.cursorDot {
+  fill: #1f2a44;
+  stroke: #fff;
+  stroke-width: 2;
+}

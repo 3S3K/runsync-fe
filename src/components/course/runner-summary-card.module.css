@@ -1,0 +1,154 @@
+.message {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.period {
+  margin: -10px 0 0;
+  font-size: 12px;
+  color: #8a8f9c;
+}
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: #fff1ea;
+  font-size: 15px;
+  font-weight: 800;
+  color: #ff5a1f;
+}
+
+.badgeLabel {
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f4f2ed;
+}
+
+.tileLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8a8f9c;
+}
+
+.tileValue {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: #1f2a44;
+}
+
+.tileUnit {
+  margin-left: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a8f9c;
+}
+
+.chart {
+  margin: 4px 0 0;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 8px;
+  height: 104px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barItem {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 100%;
+  min-width: 0;
+}
+
+.barValue {
+  font-size: 10px;
+  font-weight: 700;
+  color: #aab0bd;
+}
+
+.barValueLatest {
+  color: #1f2a44;
+}
+
+.barTrack {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+}
+
+.bar {
+  width: 18px;
+  min-height: 4px;
+  border-radius: 5px 5px 2px 2px;
+  background: #cfd6e4;
+}
+
+.barLatest {
+  background: #ff5a1f;
+}
+
+.barDate {
+  font-size: 10px;
+  color: #8a8f9c;
+}
+
+.chartCaption {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 11px;
+  color: #8a8f9c;
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #fff1ea;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: #e04a12;
+}
+
+.note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}

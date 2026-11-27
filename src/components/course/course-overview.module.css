@@ -1,0 +1,138 @@
+.overview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+}
+
+.name {
+  min-width: 0;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: #1f2a44;
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e3ebf7;
+  font-size: 11px;
+  font-weight: 700;
+  color: #2c4a7c;
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.ring {
+  width: 52px;
+  height: 52px;
+}
+
+.ringTrack,
+.ringValue {
+  fill: none;
+  stroke-width: 5;
+}
+
+.ringTrack {
+  stroke: #f0ede6;
+}
+
+.ringValue {
+  stroke: #ff5a1f;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 26px 26px;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.ringText {
+  fill: #1f2a44;
+  font-size: 16px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.scoreLabel {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #8a8f9c;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #efece5;
+  box-shadow:
+    0 1px 2px rgba(31, 42, 68, 0.04),
+    0 6px 20px rgba(31, 42, 68, 0.05);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 6px 12px;
+  background: #fff;
+  text-align: center;
+}
+
+.statIcon {
+  color: #ff5a1f;
+}
+
+.statValue {
+  margin: 2px 0 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: #1f2a44;
+}
+
+.statUnit {
+  margin-left: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a8f9c;
+}
+
+.statLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8a8f9c;
+}
+
+.statDetail {
+  margin: 0;
+  font-size: 10px;
+  color: #aab0bd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ringValue {
+    transition: none;
+  }
+}

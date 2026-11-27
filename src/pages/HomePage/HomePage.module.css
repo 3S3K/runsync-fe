@@ -163,6 +163,38 @@
   pointer-events: auto;
 }
 
+.courseButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin: 0 auto 14px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(11, 43, 69, 0.14);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: #1f2a44;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.courseButton svg {
+  color: #ff5a1f;
+}
+
+.courseButton:active {
+  transform: scale(0.97);
+}
+
+.courseButton:focus-visible {
+  outline: 3px solid rgba(255, 90, 31, 0.35);
+  outline-offset: 2px;
+}
+
 .resumeBanner {
   display: flex;
   flex-direction: column;

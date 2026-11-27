@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MdAutoAwesome } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 import { endRunSession } from '../../api/run-session';
@@ -111,15 +112,6 @@ export default function HomePage() {
                     협동
                   </button>
                 ) : null}
-                {isIdle ? (
-                  <button
-                    type="button"
-                    className={styles.artRunButton}
-                    onClick={() => navigate('/courses')}
-                  >
-                    추천
-                  </button>
-                ) : null}
                 <FriendButton onClick={handleFriendsClick} />
               </div>
             ) : null}
@@ -162,6 +154,17 @@ export default function HomePage() {
 
         {isIdle ? (
           <footer className={styles.footer}>
+            <button
+              type="button"
+              className={styles.courseButton}
+              onClick={() => navigate('/courses')}
+            >
+              <MdAutoAwesome
+                size={16}
+                aria-hidden="true"
+              />
+              AI 코스 추천
+            </button>
             {showResumeBanner ? (
               <div className={styles.resumeBanner}>
                 <p className={styles.resumeText}>진행 중인 러닝이 있어요. 이어서 뛸까요?</p>
