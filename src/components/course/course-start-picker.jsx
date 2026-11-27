@@ -29,6 +29,8 @@ function getCurrentLocationText(geoStatus, hasGeoPosition) {
  * @param {string} geoStatus 위치 조회 상태 (use-geolocation 의 status)
  * @param {boolean} [hasGeoPosition] 현재 위치를 받아왔는지
  * @param {number} [recenterKey] 값이 바뀌면 지도를 출발 위치로 다시 옮긴다
+ * @param {boolean} [isLocating] 위치를 조회하는 중인지
+ * @param {string | null} [locateError] 내 위치 버튼으로 위치를 가져오지 못했을 때의 안내
  * @param {() => void} onLocate 내 위치 버튼 또는 위치 다시 확인을 눌렀을 때
  * @param {(mode: string) => void} onModeChange
  * @param {(position: { lat: number, lng: number }) => void} onPick 지도에서 위치를 골랐을 때
@@ -40,6 +42,8 @@ export default function CourseStartPicker({
   geoStatus,
   hasGeoPosition = false,
   recenterKey = 0,
+  isLocating = false,
+  locateError = null,
   onLocate,
   onModeChange,
   onPick,
@@ -82,6 +86,7 @@ export default function CourseStartPicker({
               type="button"
               className={styles.textButton}
               onClick={onLocate}
+              disabled={isLocating}
             >
               다시 확인
             </button>
@@ -100,9 +105,18 @@ export default function CourseStartPicker({
             />
             <LocateButton
               onClick={onLocate}
+              isLocating={isLocating}
               className={styles.locate}
             />
           </div>
+          {locateError ? (
+            <p
+              className={styles.locateError}
+              role="alert"
+            >
+              {locateError}
+            </p>
+          ) : null}
           <div className={styles.mapRow}>
             <p className={styles.hint}>지도를 눌러 출발 위치를 정하세요.</p>
             <button

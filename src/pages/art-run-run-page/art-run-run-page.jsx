@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import RunRecordForm from '../../components/home/run-record-form';
@@ -26,8 +26,8 @@ export default function ArtRunRunPage() {
   const [mapCenter, setMapCenter] = useState(null);
   const [recenterKey, setRecenterKey] = useState(0);
   // 달리기 전에는 추적 위치(run.position)가 없어, 내 위치 버튼은 따로 조회한 현재 위치를 쓴다
-  const { position: geoPosition, requestLocation } = useGeolocation();
-  const isLocateRequestedRef = useRef(false);
+  const { status: geoStatus, error: geoError, requestLocation } = useGeolocation();
+  const [hasLocateFailed, setHasLocateFailed] = useState(false);
 
   // 개인 러닝(타이머·실제 거리·세션·기록 저장) — 메인 페이지와 동일한 훅 재사용
   const run = useRunTracker();
@@ -160,24 +160,17 @@ export default function ArtRunRunPage() {
     }
   };
 
-  const handleLocate = () => {
-    if (run.position) {
-      setMapCenter({ ...run.position });
-      setRecenterKey((key) => key + 1);
+  // 달리는 중에는 추적 중인 위치로, 그 전에는 이 버튼이 직접 요청한 위치로 지도를 옮긴다
+  const handleLocate = async () => {
+    setHasLocateFailed(false);
+    const target = run.position ?? await requestLocation();
+    if (!target) {
+      setHasLocateFailed(true);
       return;
     }
-    isLocateRequestedRef.current = true;
-    requestLocation();
+    setMapCenter({ ...target });
+    setRecenterKey((key) => key + 1);
   };
-
-  // 내 위치 버튼으로 요청한 위치가 도착하면 그곳으로 지도를 옮긴다
-  useEffect(() => {
-    if (geoPosition && isLocateRequestedRef.current) {
-      isLocateRequestedRef.current = false;
-      setMapCenter(geoPosition);
-      setRecenterKey((key) => key + 1);
-    }
-  }, [geoPosition]);
 
   if (status === 'loading') {
     return (
@@ -253,8 +246,17 @@ export default function ArtRunRunPage() {
 
       <LocateButton
         onClick={handleLocate}
+        isLocating={!run.position && geoStatus === 'loading'}
         className={styles.locateButton}
       />
+      {hasLocateFailed ? (
+        <p
+          className={styles.locateNotice}
+          role="alert"
+        >
+          {geoError || '위치를 가져오지 못했어요.'}
+        </p>
+      ) : null}
 
       <footer className={styles.footer}>
         {run.error ? <p className={styles.error}>{run.error}</p> : null}

@@ -75,6 +75,7 @@ export default function RunningMap({
       {status !== 'unsupported' ? (
         <LocateButton
           onClick={handleLocate}
+          isLocating={!trackingPosition && status === 'loading'}
           className={hasTopLeftControl ? `${styles.locate} ${styles.locateBelow}` : styles.locate}
         />
       ) : null}

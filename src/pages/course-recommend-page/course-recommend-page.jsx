@@ -135,6 +135,11 @@ export default function CourseRecommendPage() {
     });
   };
 
+  const handleStartModeChange = (mode) => {
+    setHasLocateFailed(false);
+    setStartMode(mode);
+  };
+
   const handleSelectRank = (rank) => {
     setSelectedRank(rank);
     setActiveProfileIndex(null);
@@ -148,6 +153,7 @@ export default function CourseRecommendPage() {
     if (status === 'loading') {
       cancel();
     }
+    setHasLocateFailed(false);
     setStep('condition');
   };
 
@@ -181,8 +187,10 @@ export default function CourseRecommendPage() {
               geoStatus={geoStatus}
               hasGeoPosition={Boolean(geoPosition)}
               recenterKey={recenterKey}
+              isLocating={geoStatus === 'loading'}
+              locateError={hasLocateFailed ? geoError || '위치를 가져오지 못했어요.' : null}
               onLocate={handleLocate}
-              onModeChange={setStartMode}
+              onModeChange={handleStartModeChange}
               onPick={setPickedStart}
               onPickDefault={() => setPickedStart(DAEJEON_UNIV)}
             />
@@ -253,6 +261,7 @@ export default function CourseRecommendPage() {
           {isResult ? (
             <LocateButton
               onClick={handleLocate}
+              isLocating={geoStatus === 'loading'}
               className={styles.mapLocate}
             />
           ) : null}

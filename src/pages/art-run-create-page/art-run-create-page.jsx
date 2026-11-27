@@ -20,7 +20,7 @@ export default function ArtRunCreatePage() {
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   // "내 위치" 클릭마다 증가시켜 좌표가 같아도 지도를 강제로 재중심시키는 신호
   const [recenterKey, setRecenterKey] = useState(0);
-  const { position, error: locationError, requestLocation } = useGeolocation();
+  const { position, status: locationStatus, error: locationError, requestLocation } = useGeolocation();
 
   // 현재 위치를 얻으면 지도 중심 이동 (진입 시 + "내 위치" 버튼)
   useEffect(() => {
@@ -170,10 +170,18 @@ export default function ArtRunCreatePage() {
               />
               <LocateButton
                 onClick={requestLocation}
+                isLocating={locationStatus === 'loading'}
                 className={styles.locateButton}
               />
             </div>
-            {locationError ? <p className={styles.locationError}>{locationError}</p> : null}
+            {locationError ? (
+              <p
+                className={styles.locationError}
+                role="alert"
+              >
+                {locationError}
+              </p>
+            ) : null}
             <div className={styles.mapActions}>
               <button
                 type="button"
