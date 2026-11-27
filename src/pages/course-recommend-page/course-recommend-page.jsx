@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { MdArrowBackIosNew, MdAutoAwesome } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -65,7 +65,6 @@ export default function CourseRecommendPage() {
   // 결과 지도에서 내 위치 버튼을 누르면 코스 대신 내 위치를 가운데에 둔다
   const [isMapOnMyLocation, setIsMapOnMyLocation] = useState(false);
   const [recenterKey, setRecenterKey] = useState(0);
-  const isLocateRequestedRef = useRef(false);
 
   const currentStart = geoPosition ?? DAEJEON_UNIV;
   const start = startMode === 'map' ? pickedStart ?? currentStart : currentStart;
@@ -77,27 +76,23 @@ export default function CourseRecommendPage() {
     ? selectedCourse?.profile[activeProfileIndex]?.position ?? null
     : null;
 
-  // 내 위치 버튼으로 요청한 위치가 도착하면: 출발지 지도에서는 그곳을 출발지로, 결과 지도에서는 지도 중심으로 쓴다
-  // 화면이 바뀐 것만으로는 실행하지 않고, 새 위치 응답이 왔을 때만 실행한다 (화면은 ref 로 읽는다)
+  // 화면이 바뀌어도 응답이 도착한 시점에 보이는 화면을 기준으로 적용한다
   const viewRef = useRef(view);
   viewRef.current = view;
-  useEffect(() => {
-    if (!geoPosition || !isLocateRequestedRef.current) {
+
+  // 내 위치 버튼: 이 버튼이 요청한 위치만 쓴다 (페이지 진입 때의 자동 조회 결과와 섞이지 않는다).
+  // 출발지 지도에서는 그곳을 출발지로, 결과 지도에서는 지도 중심으로 쓴다
+  const handleLocate = async () => {
+    const position = await requestLocation();
+    if (!position) {
       return;
     }
-    isLocateRequestedRef.current = false;
-    // 추천 실패로 조건 화면이 보이는 경우도 있어, step 이 아니라 실제 보이는 화면으로 판단한다
     if (viewRef.current === 'condition') {
-      setPickedStart(geoPosition);
+      setPickedStart(position);
     } else {
       setIsMapOnMyLocation(true);
     }
     setRecenterKey((key) => key + 1);
-  }, [geoPosition]);
-
-  const handleLocate = () => {
-    isLocateRequestedRef.current = true;
-    requestLocation();
   };
 
   // 결과 지도에 내 현재 위치를 표시한다
