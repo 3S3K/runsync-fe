@@ -8,6 +8,7 @@ import {
 } from '../api/run-session';
 import { getDistanceKm } from '../utils/distance';
 import { GEO_OPTIONS, getGeolocationErrorMessage } from '../utils/geolocation';
+import { isReliableFix } from '../utils/gps-filter';
 
 const TIMER_INTERVAL_MS = 1000;
 const LOCATION_SAVE_INTERVAL_MS = 5000;
@@ -41,6 +42,7 @@ export function useRunTracker() {
   const timerIdRef = useRef(null);
   const saveIdRef = useRef(null);
   const lastPositionRef = useRef(null);
+  const lastFixTimeRef = useRef(0);
   const distanceRef = useRef(0);
   const elapsedRef = useRef(0);
   const sessionIdRef = useRef(null);
@@ -67,18 +69,32 @@ export function useRunTracker() {
       lng: geoPosition.coords.longitude,
     };
 
+    const fixTime = geoPosition.timestamp || Date.now();
     const last = lastPositionRef.current;
-    if (last) {
-      const delta = getDistanceKm(last, next);
-      if (delta >= MIN_MOVE_KM) {
-        distanceRef.current += delta;
-        setDistance(distanceRef.current);
-        lastPositionRef.current = next;
-      }
-    } else {
-      lastPositionRef.current = next;
+
+    // 오차가 큰 위치와 순간이동하듯 튄 위치는 버린다. 그대로 쓰면 경로가 삐뚤빼뚤해지고 거리가 부풀려진다
+    const isReliable = isReliableFix({
+      accuracy: geoPosition.coords.accuracy,
+      last,
+      next,
+      elapsedSec: last ? (fixTime - lastFixTimeRef.current) / 1000 : 0,
+    });
+    if (!isReliable) {
+      return;
     }
 
+    if (last) {
+      const delta = getDistanceKm(last, next);
+      // 멈춰 있을 때의 떨림은 거리뿐 아니라 경로(지도의 내 위치)에도 남기지 않는다
+      if (delta < MIN_MOVE_KM) {
+        return;
+      }
+      distanceRef.current += delta;
+      setDistance(distanceRef.current);
+    }
+
+    lastPositionRef.current = next;
+    lastFixTimeRef.current = fixTime;
     setPosition(next);
   }, []);
 

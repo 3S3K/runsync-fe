@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdAutoAwesome } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,6 +29,23 @@ export default function HomePage() {
     position: run.position,
   });
   const runError = run.error || realtime.error;
+
+  // 이번 러닝에서 지나온 위치들. 지도에 달린 길을 선으로 그리는 데 쓴다
+  const [trail, setTrail] = useState([]);
+  const runLat = run.position?.lat;
+  const runLng = run.position?.lng;
+  useEffect(() => {
+    if (!isRunning || runLat == null || runLng == null) {
+      return;
+    }
+    setTrail((prev) => [...prev, { lat: runLat, lng: runLng }]);
+  }, [isRunning, runLat, runLng]);
+  // 러닝을 마치고 기록 입력까지 끝나면(대기 상태) 선을 지운다
+  useEffect(() => {
+    if (isIdle) {
+      setTrail([]);
+    }
+  }, [isIdle]);
 
   // 앱 진입 시 진행 중(ACTIVE) 세션 감지 → 이어뛰기 배너
   const { active, setActive } = useActiveRunSession();
@@ -128,6 +145,7 @@ export default function HomePage() {
             position={isIdle ? null : run.position}
             isTracking={!isIdle}
             friendMarkers={realtime.friendMarkers}
+            trail={trail}
           />
         </div>
 

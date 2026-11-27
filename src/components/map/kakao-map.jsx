@@ -207,7 +207,8 @@ export default function KakaoMap({
       } else {
         const polyline = new kakao.maps.Polyline({
           path: latLngs,
-          strokeWeight: path.weight || 4,
+          // 기본 굵기. 달린 경로가 지도 위에서 잘 보이도록 두껍게 둔다
+          strokeWeight: path.weight || 6,
           strokeColor: path.color || '#ff5a1f',
           strokeOpacity: 0.9,
           strokeStyle: path.dashed ? 'shortdash' : 'solid',

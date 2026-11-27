@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useGeolocation } from '../../hooks/use-geolocation';
 import { useMyProfileImage } from '../../hooks/use-my-profile-image';
 import { DEFAULT_CENTER } from '../../utils/geolocation';
+import { smoothPath } from '../../utils/smooth-path';
 import KakaoMap from '../map/kakao-map';
 import LocateButton from '../map/locate-button';
 
@@ -14,6 +15,7 @@ import styles from './RunningMap.module.css';
  * @param {{ lat: number, lng: number } | null} [position] 외부에서 주입하는 추적 위치
  * @param {boolean} [isTracking] 러닝 추적 중 여부 (true면 권한 안내 숨김)
  * @param {Array<{ id: number, lat: number, lng: number, title?: string }>} [friendMarkers] 친구 실시간 위치 마커
+ * @param {Array<{ lat: number, lng: number }>} [trail] 이번 러닝에서 지나온 위치들. 다듬어서 선으로 그린다
  * @param {boolean} [hasTopLeftControl] 화면 왼쪽 위에 다른 버튼(뒤로 가기 등)이 있으면 내 위치 버튼을 그 아래에 둔다
  */
 export default function RunningMap({
@@ -21,6 +23,7 @@ export default function RunningMap({
   isTracking = false,
   friendMarkers = [],
   hasTopLeftControl = false,
+  trail = [],
 }) {
   const { position: geoPosition, status, error, requestLocation } = useGeolocation();
   const myProfileImage = useMyProfileImage();
@@ -57,6 +60,12 @@ export default function RunningMap({
     return list;
   }, [lat, lng, friendMarkers, myProfileImage]);
 
+  // 달리는 동안 지나온 길. 저장된 기록을 볼 때와 같은 방식으로 GPS 떨림을 다듬어 그린다
+  const paths = useMemo(
+    () => (trail.length >= 2 ? [{ id: 'my-trail', points: smoothPath(trail), color: '#ff5a1f' }] : []),
+    [trail],
+  );
+
   const showGuide =
     !isTracking &&
     (status === 'denied' || status === 'error' || status === 'unsupported');
@@ -70,6 +79,7 @@ export default function RunningMap({
         center={center}
         recenterKey={recenterKey}
         markers={markers}
+        paths={paths}
         className={styles.mapCanvas}
       />
       {status !== 'unsupported' ? (
